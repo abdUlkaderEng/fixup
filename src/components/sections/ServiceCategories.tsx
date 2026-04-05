@@ -2,6 +2,7 @@ import {
    Card,
    CardContent,
    CardDescription,
+   CardFooter,
    CardHeader,
    CardTitle,
 } from '@/components/ui/card';
@@ -14,7 +15,9 @@ import {
    Droplets,
    Lightbulb,
    Shield,
+   ArrowLeft,
 } from 'lucide-react';
+import Link from 'next/link';
 
 const categories = [
    {
@@ -77,13 +80,13 @@ const categories = [
 
 export function ServiceCategories() {
    return (
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-background min-h-full">
          <div className="container mx-auto px-4">
             <div className="text-center mb-16">
-               <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+               <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
                   استعراض فئات الخدمات
                </h2>
-               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+               <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
                   اعثر على المحترف المثالي لاحتياجات خدمات المنزل. خبراؤنا
                   الموثوقون يغطون كل فئة.
                </p>
@@ -95,23 +98,59 @@ export function ServiceCategories() {
                   return (
                      <Card
                         key={category.id}
-                        className="group cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 border-gray-200"
+                        className="group transition-all duration-500 border-border bg-card relative  hover:border-transparent max-h-80 flex flex-col"
+                        style={
+                           {
+                              '--hover-bg': category.color
+                                 .replace('bg-', '')
+                                 .replace('-500', ''),
+                           } as React.CSSProperties
+                        }
                      >
-                        <CardHeader className="text-center pb-4">
-                           <div
-                              className={`mx-auto w-16 h-16 rounded-full ${category.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}
-                           >
-                              <IconComponent className="w-8 h-8 text-white" />
+                        <div
+                           className={`absolute inset-0 ${category.color} opacity-0 group-hover:opacity-30 transition-opacity duration-500 pointer-events-none`}
+                        ></div>
+                        <CardHeader className="text-center pb-4 transition-all duration-500">
+                           <div className="flex items-center flex-col  justify-center transition-all duration-500">
+                              <div
+                                 className={`mx-auto w-16 h-16 rounded-full ${category.color} flex items-center justify-center mb-4 
+                                    group-hover:w-10 group-hover:h-10 group-hover:translate-x-[275%]
+                                    transition-all duration-500`}
+                              >
+                                 <IconComponent className="w-8 h-8 text-white group-hover:w-6 group-hover:h-6 transition-all duration-500" />
+                              </div>
+                              <CardTitle
+                                 className="text-3xl   text-foreground   
+                                                    group-hover:text-foreground group-hover:font-regular  group-hover:-translate-y-[145%]  
+                                                    transition-all duration-500"
+                              >
+                                 <h1>{category.title}</h1>
+                              </CardTitle>
                            </div>
-                           <CardTitle className="text-xl font-semibold text-gray-900">
-                              {category.title}
-                           </CardTitle>
                         </CardHeader>
-                        <CardContent>
-                           <CardDescription className="text-center text-gray-600 leading-relaxed">
-                              {category.description}
+                        <CardContent className=" flex flex-col">
+                           <CardDescription
+                              className="flex flex-col h-full  text-center text-muted-foreground leading-relaxed
+                                                       group-hover:-translate-y-[60%] group-hover:text-foreground
+                                                       transition-all duration-500"
+                           >
+                              <span>{category.description}</span>
                            </CardDescription>
                         </CardContent>
+                        <CardFooter
+                           className="bg-transparent border-2 border-transparent z-20 
+                                                  translate-y-full group-hover:translate-y-0 transition-all duration-500 pt-0 flex justify-start mt-auto pb-4"
+                        >
+                           <Link
+                              href="/services"
+                              className="group/link flex items-center gap-2 text-sm text-card-foreground/60 font-medium transition-all duration-300 hover:gap-4 hover:text-card-foreground"
+                           >
+                              <span className="relative">
+                                 معاينة الخدمات
+                                 <span className="absolute bottom-0 right-0 w-0 h-px  bg-foreground group-hover/link:w-full transition-all duration-300"></span>
+                              </span>
+                           </Link>
+                        </CardFooter>
                      </Card>
                   );
                })}
