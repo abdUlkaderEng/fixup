@@ -19,7 +19,6 @@ import {
 const navigationItems = [
    { name: 'الرئيسية', href: '/' },
    { name: 'الخدمات', href: '/services' },
-   { name: 'من نحن', href: '/about' },
    { name: 'اتصل بنا', href: '/contact' },
 ];
 
@@ -38,21 +37,14 @@ export function Navbar({ className = '' }: NavbarProps) {
             <div className="flex h-20 items-center justify-between">
                {/* Logo */}
                <Link href="/" className="max-w-40">
-                  {/* <Image
-                     src="/LOGO.svg"
-                     alt="فكس أب"
-                     width={80}
-                     height={80}
-                     className="h-15 w-30 "
-                  /> */}
                   <h1 className="text-2xl font-bold">FIXUP</h1>
                </Link>
 
                {/* Desktop Navigation */}
-               <div className="h-full hidden md:flex md:items-center md:space-x-6 md:space-x-reverse">
-                  {navigationItems.map((item) => (
+               <div className="h-full hidden md:flex md:items-center md:gap-8">
+                  {navigationItems.map((item, index) => (
                      <Link
-                        key={item.name}
+                        key={index}
                         href={item.href}
                         className="flex items-center h-full font-medium transition-colors border-b-2 border-transparent hover:border-secondary-foreground"
                      >
@@ -61,18 +53,17 @@ export function Navbar({ className = '' }: NavbarProps) {
                   ))}
                </div>
 
-               {/* Right side actions */}
-               <div className="flex items-center space-x-2 space-x-reverse">
+               {/* Left side actions */}
+               <div className="flex items-center space-x-8 space-x-reverse">
                   <ThemeToggle />
 
                   {/* Login Button - Desktop */}
-                  <Button
-                     variant="ghost"
-                     size="icon-lg"
-                     className="hidden  sm:flex"
+                  <Link
+                     href="/auth/login"
+                     className="hover:translate-x-0.5 transition-all duration-300"
                   >
                      <LogIn className="" />
-                  </Button>
+                  </Link>
 
                   {/* Mobile Menu */}
                   <Sheet
@@ -115,10 +106,12 @@ export function Navbar({ className = '' }: NavbarProps) {
 
                            {/* Mobile Login Button */}
                            <div className="pt-4 border-t">
-                              <Button className="w-full" variant="outline">
-                                 <LogIn className="h-4 w-4 ml-2" />
-                                 تسجيل الدخول
-                              </Button>
+                              <Link
+                                 href="/auth/login"
+                                 className="hover:translate-x-0.5 transition-all duration-300"
+                              >
+                                 <LogIn className="" />
+                              </Link>
                            </div>
 
                            {/* User Profile Section */}
