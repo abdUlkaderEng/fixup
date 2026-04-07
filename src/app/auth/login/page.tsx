@@ -1,8 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Eye, EyeOff, Loader2, Mail, Lock, ArrowLeft } from 'lucide-react';
+import { toast } from 'sonner';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
@@ -18,6 +20,9 @@ import {
    FormMessage,
 } from '@/components/ui/form';
 import { loginSchema, type LoginInput } from '../schemas';
+import { authApi } from '@/api/auth';
+import { useSession, signIn } from 'next-auth/react';
+import { useAuthStore } from '@/store/auth';
 
 export default function LoginPage() {
    const [showPassword, setShowPassword] = useState(false);
@@ -32,12 +37,59 @@ export default function LoginPage() {
       },
    });
 
+   const router = useRouter();
+   const { data: session, status } = useSession();
+   const setUser = useAuthStore((state) => state.setUser);
+
+   // Redirect if already authenticated
+   useEffect(() => {
+      if (status === 'authenticated' && session?.user) {
+         router.push('/');
+      }
+   }, [status, session, router]);
+   // if (status === 'authenticated' && session?.user) {
+   //    router.push('/');
+   // }
+
    const onSubmit = async (data: LoginInput) => {
       setIsLoading(true);
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      console.log('Login data:', data);
-      setIsLoading(false);
+      try {
+         const result = await signIn('credentials', {
+            email: data.email,
+            password: data.password,
+            redirect: false,
+         });
+
+         if (result?.error) {
+            toast.error('فشل تسجيل الدخول', {
+               description: 'البريد الإلكتروني أو كلمة المرور غير صحيحة',
+            });
+         } else {
+            toast.success(`أهلاً بك !`, {
+               description: 'تم تسجيل الدخول بنجاح',
+            });
+            // const response = await authApi.login({
+            //    email: data.email,
+            //    password: data.password,
+            // });
+            // setUser(response.user);
+            // toast.success(`أهلاً بك ${response.user.name}!`, {
+            //    description: 'تم تسجيل الدخول بنجاح',
+            // });
+            router.push('/');
+            router.refresh();
+         }
+      } catch (error) {
+         const message =
+            error instanceof Error
+               ? error.message
+               : 'حدث خطأ أثناء تسجيل الدخول';
+         toast.error('فشل تسجيل الدخول', {
+            description: message,
+         });
+      } finally {
+         setIsLoading(false);
+      }
    };
 
    return (
@@ -196,6 +248,7 @@ export default function LoginPage() {
                      variant="outline"
                      className="h-11"
                      disabled={isLoading}
+                     onClick={() => signIn('google', { callbackUrl: '/' })}
                   >
                      <svg className="h-5 w-5 ml-2" viewBox="0 0 24 24">
                         <path
@@ -221,6 +274,7 @@ export default function LoginPage() {
                      variant="outline"
                      className="h-11"
                      disabled={isLoading}
+                     onClick={() => signIn('facebook', { callbackUrl: '/' })}
                   >
                      <svg
                         className="h-5 w-5 ml-2"

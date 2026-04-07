@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
    Eye,
    EyeOff,
@@ -29,6 +30,8 @@ import {
    FormMessage,
 } from '@/components/ui/form';
 import { signupSchema, type SignupInput } from '../schemas';
+import { toast } from 'sonner';
+import { authApi } from '@/api/auth';
 
 export default function SignupPage() {
    const [showPassword, setShowPassword] = useState(false);
@@ -57,16 +60,37 @@ export default function SignupPage() {
       { label: 'رمز خاص', met: /[^A-Za-z0-9]/.test(password || '') },
    ];
 
+   const router = useRouter();
+
    const onSubmit = async (data: SignupInput) => {
       setIsLoading(true);
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      console.log('Signup data:', data);
-      setIsLoading(false);
+      try {
+         await authApi.register({
+            name: data.fullName,
+            email: data.email,
+            phone: data.phone,
+            password: data.password,
+            password_confirmation: data.confirmPassword,
+         });
+         toast.success('تم إنشاء الحساب بنجاح!', {
+            description: 'بإمكانك الآن تسجيل الدخول',
+         });
+         router.push('/login');
+      } catch (error) {
+         const message =
+            error instanceof Error
+               ? error.message
+               : 'حدث خطأ أثناء إنشاء الحساب';
+         toast.error('فشل إنشاء الحساب', {
+            description: message,
+         });
+      } finally {
+         setIsLoading(false);
+      }
    };
 
    return (
-      <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-linear-to-br from-background via-muted/50 to-background p-4 sm:p-6 lg:p-8">
+      <div className="min-h-[calc(100vh-4rem)] mt-16 flex items-center justify-center bg-linear-to-br from-background via-muted/50 to-background p-4 sm:p-6 lg:p-8">
          <div className="w-full max-w-lg">
             {/* Back Button */}
             <Link

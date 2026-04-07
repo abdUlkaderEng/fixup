@@ -4,6 +4,8 @@ import './globals.css';
 import { cn } from '@/lib/utils';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Navbar } from '@/components/layout/Navbar';
+import { Toaster } from '@/components/ui/sonner';
+import { AuthProvider } from '@/components/providers/auth-provider';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -56,8 +58,11 @@ export default function RootLayout({
                enableSystem
                disableTransitionOnChange={false}
             >
-               <Navbar />
-               <main className="flex-1">{children}</main>
+               <AuthProvider>
+                  <Navbar />
+                  <main className="flex-1">{children}</main>
+                  <Toaster position="top-center" richColors closeButton />
+               </AuthProvider>
             </ThemeProvider>
          </body>
       </html>

@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import { Menu, User, LogIn } from 'lucide-react';
@@ -15,6 +14,8 @@ import {
    SheetTitle,
    SheetTrigger,
 } from '@/components/ui/sheet';
+import { useSession, signOut } from 'next-auth/react';
+import ClearCashComponents from '@/app/services/components/ClearCashComponents';
 
 const navigationItems = [
    { name: 'الرئيسية', href: '/' },
@@ -28,6 +29,8 @@ interface NavbarProps {
 
 export function Navbar({ className = '' }: NavbarProps) {
    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+   const { data: session, status } = useSession();
+   const isAuthenticated = status === 'authenticated';
 
    return (
       <nav
@@ -57,13 +60,24 @@ export function Navbar({ className = '' }: NavbarProps) {
                <div className="flex items-center space-x-8 space-x-reverse">
                   <ThemeToggle />
 
-                  {/* Login Button - Desktop */}
-                  <Link
-                     href="/auth/login"
-                     className="hover:translate-x-0.5 transition-all duration-300"
-                  >
-                     <LogIn className="" />
-                  </Link>
+                  {/* User Icon or Login Button - Desktop */}
+                  {isAuthenticated ? (
+                     <Link
+                        href="/profile"
+                        className="hover:scale-110 transition-all duration-300"
+                     >
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                           <User className="h-5 w-5 text-primary" />
+                        </div>
+                     </Link>
+                  ) : (
+                     <Link
+                        href="/auth/login"
+                        className="hover:translate-x-0.5 transition-all duration-300"
+                     >
+                        <LogIn className="" />
+                     </Link>
+                  )}
 
                   {/* Mobile Menu */}
                   <Sheet
@@ -104,23 +118,46 @@ export function Navbar({ className = '' }: NavbarProps) {
                               ))}
                            </nav>
 
-                           {/* Mobile Login Button */}
+                           {/* Mobile Login/Profile Button */}
                            <div className="pt-4 border-t">
-                              <Link
-                                 href="/auth/login"
-                                 className="hover:translate-x-0.5 transition-all duration-300"
-                              >
-                                 <LogIn className="" />
-                              </Link>
+                              {isAuthenticated ? (
+                                 <Link
+                                    href="/profile"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                 >
+                                    <Button className="w-full" variant="ghost">
+                                       <User className="h-4 w-4 ml-2" />
+                                       {session?.user?.name || 'حسابي'}
+                                    </Button>
+                                 </Link>
+                              ) : (
+                                 <Link
+                                    href="/auth/login"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                 >
+                                    <Button className="w-full" variant="ghost">
+                                       <LogIn className="h-4 w-4 ml-2" />
+                                       تسجيل الدخول
+                                    </Button>
+                                 </Link>
+                              )}
                            </div>
 
                            {/* User Profile Section */}
-                           <div className="pt-4 border-t">
-                              <Button className="w-full" variant="ghost">
-                                 <User className="h-4 w-4 ml-2" />
-                                 حسابي
-                              </Button>
-                           </div>
+                           {isAuthenticated && (
+                              <div className="pt-4 border-t">
+                                 <Button
+                                    className="w-full"
+                                    variant="destructive"
+                                    onClick={() => {
+                                       signOut();
+                                       setIsMobileMenuOpen(false);
+                                    }}
+                                 >
+                                    تسجيل الخروج
+                                 </Button>
+                              </div>
+                           )}
                         </div>
                      </SheetContent>
                   </Sheet>
