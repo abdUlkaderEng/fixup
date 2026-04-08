@@ -77,6 +77,17 @@ export default function SignupPage() {
          });
          router.push('/auth/login');
       } catch (error) {
+         // Check if server is down (network error)
+         if (
+            error instanceof Error &&
+            (error.message.includes('fetch') ||
+               error.message.includes('NetworkError') ||
+               error.message.includes('Failed to fetch') ||
+               error.message.includes('Network Error'))
+         ) {
+            router.push('/server-error');
+            return;
+         }
          const message =
             error instanceof Error
                ? error.message

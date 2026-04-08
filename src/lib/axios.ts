@@ -31,6 +31,20 @@ class ApiClient {
       this.client.interceptors.response.use(
          (response) => response,
          (error: AxiosError) => {
+            // Server is down or network error
+            if (
+               !error.response ||
+               error.code === 'ERR_NETWORK' ||
+               error.code === 'ECONNREFUSED' ||
+               error.response?.status === 503
+            ) {
+               // Only redirect if not already on server-error page
+               if (!window.location.pathname.includes('/server-error')) {
+                  window.location.href = '/server-error';
+               }
+               return Promise.reject(error);
+            }
+
             if (error.response?.status === 401) {
                window.location.href = '/auth/login';
             }

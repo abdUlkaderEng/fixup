@@ -63,11 +63,18 @@ export default function ProfilePage() {
             label: 'تأكيد',
             onClick: async () => {
                try {
+                  // Call backend logout to invalidate token
+                  const { authApi } = await import('@/api/auth');
+                  await authApi.logout();
+
                   await signOut({ redirect: false });
                   toast.success('تم تسجيل الخروج بنجاح');
                   router.push('/');
                } catch {
-                  toast.error('حدث خطأ أثناء تسجيل الخروج');
+                  toast.error('حدث خطأ أثناء تسجيل الخروج', {
+                     description:
+                        'لا يمكن الاتصال بالخادم، يرجى المحاولة لاحقاً',
+                  });
                }
             },
          },
