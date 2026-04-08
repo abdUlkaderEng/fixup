@@ -7,6 +7,8 @@ export interface RegisterRequest {
    name: string;
    email: string;
    phone: string;
+   address?: string;
+   birth_date?: string;
    password: string;
    password_confirmation: string;
 }
@@ -16,6 +18,8 @@ export interface User {
    name: string;
    email: string;
    phone: string | null;
+   address: string | null;
+   birth_date: string | null;
    profile_picture: string | null;
    role: string;
    is_active: number;

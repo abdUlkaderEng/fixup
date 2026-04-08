@@ -9,6 +9,8 @@ declare module 'next-auth' {
       id: string;
       accessToken?: string;
       phone?: string | null;
+      address?: string | null;
+      birth_date?: string | null;
       role?: string;
       email_verified_at?: string | null;
       created_at?: string;
@@ -25,6 +27,8 @@ declare module 'next-auth' {
          accessToken?: string;
          provider?: string;
          phone?: string | null;
+         address?: string | null;
+         birth_date?: string | null;
          role?: string;
          email_verified_at?: string | null;
          created_at?: string;
@@ -44,6 +48,8 @@ declare module 'next-auth/jwt' {
       email?: string | null;
       image?: string | null;
       phone?: string | null;
+      address?: string | null;
+      birth_date?: string | null;
       role?: string;
       email_verified_at?: string | null;
       created_at?: string;
@@ -80,6 +86,8 @@ export const authOptions: NextAuthOptions = {
                      image: response.data.user.profile_picture,
                      accessToken: response.data.token,
                      phone: response.data.user.phone,
+                     address: response.data.user.address,
+                     birth_date: response.data.user.birth_date,
                      role: response.data.user.role,
                      email_verified_at: response.data.user.email_verified_at,
                      created_at: response.data.user.created_at,
@@ -104,6 +112,8 @@ export const authOptions: NextAuthOptions = {
             token.email = user.email;
             token.image = user.image;
             token.phone = user.phone;
+            token.address = user.address;
+            token.birth_date = user.birth_date;
             token.role = user.role;
             token.email_verified_at = user.email_verified_at;
             token.created_at = user.created_at;
@@ -125,6 +135,8 @@ export const authOptions: NextAuthOptions = {
             session.user.email = token.email as string | null;
             session.user.image = token.image as string | null;
             session.user.phone = token.phone as string | null;
+            session.user.address = token.address as string | null;
+            session.user.birth_date = token.birth_date as string | null;
             session.user.role = token.role as string;
             session.user.email_verified_at = token.email_verified_at as
                | string
@@ -139,6 +151,8 @@ export const authOptions: NextAuthOptions = {
          // Include all user data from authorize
          if (user) {
             session.user.phone = user.phone;
+            session.user.address = user.address;
+            session.user.birth_date = user.birth_date;
             session.user.role = user.role;
             session.user.email_verified_at = user.email_verified_at;
             session.user.created_at = user.created_at;
@@ -166,6 +180,8 @@ export const authOptions: NextAuthOptions = {
                   user.accessToken = response.data.token;
                   user.role = response.data.user.role;
                   user.phone = response.data.user.phone;
+                  user.address = response.data.user.address;
+                  user.birth_date = response.data.user.birth_date;
                   user.email_verified_at = response.data.user.email_verified_at;
                   user.created_at = response.data.user.created_at;
                   user.updated_at = response.data.user.updated_at;

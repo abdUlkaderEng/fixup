@@ -11,6 +11,8 @@ import {
    Mail,
    Lock,
    Phone,
+   MapPin,
+   Calendar,
    ArrowLeft,
    Check,
    X,
@@ -44,6 +46,8 @@ export default function SignupPage() {
          fullName: '',
          email: '',
          phone: '',
+         address: '',
+         birthDate: '',
          password: '',
          confirmPassword: '',
          termsAccepted: false,
@@ -69,6 +73,8 @@ export default function SignupPage() {
             name: data.fullName,
             email: data.email,
             phone: data.phone,
+            address: data.address,
+            birth_date: data.birthDate,
             password: data.password,
             password_confirmation: data.confirmPassword,
          });
@@ -190,6 +196,52 @@ export default function SignupPage() {
                                        label="رقم الهاتف"
                                        type="tel"
                                        placeholder="+963*********"
+                                       className="pr-8"
+                                       disabled={isLoading}
+                                       error={!!fieldState.error}
+                                    />
+                                 </div>
+                                 <FormMessage />
+                              </FormItem>
+                           )}
+                        />
+                     </div>
+
+                     {/* Address & Birth Date Row */}
+                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <FormField
+                           control={form.control}
+                           name="address"
+                           render={({ field, fieldState }) => (
+                              <FormItem className="space-y-0">
+                                 <div className="relative">
+                                    <MapPin className="absolute right-0 top-3 h-5 w-5 text-muted-foreground z-10" />
+                                    <FloatingLabelInput
+                                       {...field}
+                                       label="العنوان"
+                                       type="text"
+                                       placeholder="دمشق، سوريا"
+                                       className="pr-8"
+                                       disabled={isLoading}
+                                       error={!!fieldState.error}
+                                    />
+                                 </div>
+                                 <FormMessage />
+                              </FormItem>
+                           )}
+                        />
+
+                        <FormField
+                           control={form.control}
+                           name="birthDate"
+                           render={({ field, fieldState }) => (
+                              <FormItem className="space-y-0">
+                                 <div className="relative">
+                                    <Calendar className="absolute right-0 top-3 h-5 w-5 text-muted-foreground z-10" />
+                                    <FloatingLabelInput
+                                       {...field}
+                                       label="تاريخ الميلاد"
+                                       type="date"
                                        className="pr-8"
                                        disabled={isLoading}
                                        error={!!fieldState.error}

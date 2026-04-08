@@ -11,6 +11,8 @@ import {
    Shield,
    Pencil,
    LogOut,
+   MapPin,
+   Cake,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useSession, signOut } from 'next-auth/react';
@@ -63,18 +65,11 @@ export default function ProfilePage() {
             label: 'تأكيد',
             onClick: async () => {
                try {
-                  // Call backend logout to invalidate token
-                  const { authApi } = await import('@/api/auth');
-                  await authApi.logout();
-
                   await signOut({ redirect: false });
                   toast.success('تم تسجيل الخروج بنجاح');
                   router.push('/');
                } catch {
-                  toast.error('حدث خطأ أثناء تسجيل الخروج', {
-                     description:
-                        'لا يمكن الاتصال بالخادم، يرجى المحاولة لاحقاً',
-                  });
+                  toast.error('حدث خطأ أثناء تسجيل الخروج');
                }
             },
          },
@@ -137,6 +132,36 @@ export default function ProfilePage() {
                   <CardContent>
                      <p className="text-muted-foreground">
                         {user.phone || 'غير متوفر'}
+                     </p>
+                  </CardContent>
+               </Card>
+
+               <Card>
+                  <CardHeader className="pb-3">
+                     <CardTitle className="text-lg flex items-center gap-2">
+                        <MapPin className="h-5 w-5 text-primary" />
+                        العنوان
+                     </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                     <p className="text-muted-foreground">
+                        {user.address || 'غير متوفر'}
+                     </p>
+                  </CardContent>
+               </Card>
+
+               <Card>
+                  <CardHeader className="pb-3">
+                     <CardTitle className="text-lg flex items-center gap-2">
+                        <Cake className="h-5 w-5 text-primary" />
+                        تاريخ الميلاد
+                     </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                     <p className="text-muted-foreground">
+                        {user.birth_date
+                           ? new Date(user.birth_date).toLocaleDateString()
+                           : 'غير متوفر'}
                      </p>
                   </CardContent>
                </Card>

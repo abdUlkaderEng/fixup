@@ -28,6 +28,24 @@ export const signupSchema = z
          .min(1, 'رقم الهاتف مطلوب')
          .regex(/^[\d\s\-\+\(\)]+$/, 'رقم الهاتف يجب أن يحتوي على أرقام فقط')
          .min(10, 'رقم الهاتف يجب أن يكون 10 أرقام على الأقل'),
+      address: z
+         .string()
+         .min(5, 'العنوان يجب أن يكون 5 أحرف على الأقل')
+         .max(200, 'العنوان يجب أن لا يتجاوز 200 حرف')
+         .optional(),
+      birthDate: z
+         .string()
+         .optional()
+         .refine((val) => {
+            if (!val) return true;
+            const date = new Date(val);
+            const now = new Date();
+            const minAge = new Date();
+            minAge.setFullYear(now.getFullYear() - 120);
+            const maxAge = new Date();
+            maxAge.setFullYear(now.getFullYear() - 13);
+            return date >= minAge && date <= maxAge;
+         }, 'تاريخ الميلاد يجب أن يكون بين 13 و 120 سنة'),
       password: z
          .string()
          .min(1, 'كلمة المرور مطلوبة')
