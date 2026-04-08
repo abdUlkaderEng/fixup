@@ -2,7 +2,16 @@
 
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, User, Mail, Phone, Calendar, Shield } from 'lucide-react';
+import {
+   ArrowLeft,
+   User,
+   Mail,
+   Phone,
+   Calendar,
+   Shield,
+   Pencil,
+   LogOut,
+} from 'lucide-react';
 import { toast } from 'sonner';
 import { useSession, signOut } from 'next-auth/react';
 
@@ -14,7 +23,7 @@ export default function ProfilePage() {
    const { data: session, status } = useSession();
    const isAuthenticated = status === 'authenticated';
    const user = session?.user;
-
+   console.log(user);
    if (status === 'loading') {
       return (
          <div className="min-h-[calc(100vh-4rem)] mt-16 flex items-center justify-center p-4">
@@ -47,14 +56,26 @@ export default function ProfilePage() {
       );
    }
 
-   const handleLogout = async () => {
-      try {
-         await signOut({ redirect: false });
-         toast.success('تم تسجيل الخروج بنجاح');
-         router.push('/');
-      } catch {
-         toast.error('حدث خطأ أثناء تسجيل الخروج');
-      }
+   const handleLogout = () => {
+      toast.warning('هل تريد تسجيل الخروج؟', {
+         description: 'سيتم إنهاء جلستك الحالية',
+         action: {
+            label: 'تأكيد',
+            onClick: async () => {
+               try {
+                  await signOut({ redirect: false });
+                  toast.success('تم تسجيل الخروج بنجاح');
+                  router.push('/');
+               } catch {
+                  toast.error('حدث خطأ أثناء تسجيل الخروج');
+               }
+            },
+         },
+         cancel: {
+            label: 'إلغاء',
+            onClick: () => {},
+         },
+      });
    };
 
    return (
@@ -135,9 +156,7 @@ export default function ProfilePage() {
                   <CardContent>
                      <p className="text-muted-foreground">
                         {user.created_at
-                           ? new Date(user.created_at).toLocaleDateString(
-                                'ar-SA'
-                             )
+                           ? new Date(user.created_at).toLocaleDateString()
                            : 'غير متوفر'}
                      </p>
                   </CardContent>
@@ -145,23 +164,20 @@ export default function ProfilePage() {
             </div>
 
             {/* Actions */}
-            <Card>
-               <CardHeader>
-                  <CardTitle>الإجراءات</CardTitle>
-               </CardHeader>
-               <CardContent className="flex gap-4">
-                  <Button variant="outline" className="flex-1">
-                     تعديل الملف الشخصي
-                  </Button>
-                  <Button
-                     variant="destructive"
-                     onClick={handleLogout}
-                     className="flex-1"
-                  >
-                     تسجيل الخروج
-                  </Button>
-               </CardContent>
-            </Card>
+            <div className="w-1/2 h-12 flex  gap-3">
+               <Button variant="outline" className="w-full h-full gap-2">
+                  <Pencil className="h-4 w-4" />
+                  تعديل الملف الشخصي
+               </Button>
+               <Button
+                  variant="destructive"
+                  onClick={handleLogout}
+                  className="w-full h-full gap-2"
+               >
+                  <LogOut className="h-4 w-4" />
+                  تسجيل الخروج
+               </Button>
+            </div>
          </div>
       </div>
    );

@@ -40,6 +40,16 @@ declare module 'next-auth/jwt' {
       id?: string;
       accessToken?: string;
       provider?: string;
+      name?: string | null;
+      email?: string | null;
+      image?: string | null;
+      phone?: string | null;
+      role?: string;
+      email_verified_at?: string | null;
+      created_at?: string;
+      updated_at?: string;
+      is_active?: number;
+      profile_picture?: string | null;
    }
 }
 
@@ -48,10 +58,6 @@ export const authOptions: NextAuthOptions = {
       GoogleProvider({
          clientId: process.env.GOOGLE_CLIENT_ID!,
          clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      }),
-      FacebookProvider({
-         clientId: process.env.FACEBOOK_CLIENT_ID!,
-         clientSecret: process.env.FACEBOOK_CLIENT_SECRET!,
       }),
       CredentialsProvider({
          name: 'credentials',
@@ -94,6 +100,16 @@ export const authOptions: NextAuthOptions = {
          if (user) {
             token.id = user.id;
             token.accessToken = user.accessToken;
+            token.name = user.name;
+            token.email = user.email;
+            token.image = user.image;
+            token.phone = user.phone;
+            token.role = user.role;
+            token.email_verified_at = user.email_verified_at;
+            token.created_at = user.created_at;
+            token.updated_at = user.updated_at;
+            token.is_active = user.is_active;
+            token.profile_picture = user.profile_picture;
          }
          if (account) {
             token.provider = account.provider;
@@ -105,6 +121,20 @@ export const authOptions: NextAuthOptions = {
             session.user.id = token.id as string;
             session.user.accessToken = token.accessToken as string;
             session.user.provider = token.provider as string;
+            session.user.name = token.name as string | null;
+            session.user.email = token.email as string | null;
+            session.user.image = token.image as string | null;
+            session.user.phone = token.phone as string | null;
+            session.user.role = token.role as string;
+            session.user.email_verified_at = token.email_verified_at as
+               | string
+               | null;
+            session.user.created_at = token.created_at as string;
+            session.user.updated_at = token.updated_at as string;
+            session.user.is_active = token.is_active as number;
+            session.user.profile_picture = token.profile_picture as
+               | string
+               | null;
          }
          // Include all user data from authorize
          if (user) {
@@ -117,6 +147,38 @@ export const authOptions: NextAuthOptions = {
             session.user.profile_picture = user.profile_picture;
          }
          return session;
+      },
+      async signIn({ user, account, profile }) {
+         // Only sync for Google OAuth
+         if (account?.provider === 'google' && profile?.email) {
+            try {
+               // Call your backend to create/find user
+               const response = await apiClient.post('/auth/google/callback', {
+                  email: profile.email,
+                  name: profile.name,
+                  google_id: profile.sub,
+                  profile_picture: profile.image,
+               });
+
+               // Update user with backend data
+               if (response.data.user) {
+                  user.id = String(response.data.user.id);
+                  user.accessToken = response.data.token;
+                  user.role = response.data.user.role;
+                  user.phone = response.data.user.phone;
+                  user.email_verified_at = response.data.user.email_verified_at;
+                  user.created_at = response.data.user.created_at;
+                  user.updated_at = response.data.user.updated_at;
+                  user.is_active = response.data.user.is_active;
+                  user.profile_picture = response.data.user.profile_picture;
+               }
+               return true;
+            } catch (error) {
+               console.error('Google signup error:', error);
+               return false;
+            }
+         }
+         return true;
       },
    },
    pages: {
