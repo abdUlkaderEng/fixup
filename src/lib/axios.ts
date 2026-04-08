@@ -6,6 +6,7 @@ const API_BASE_URL =
 class ApiClient {
    private static instance: ApiClient;
    public readonly client: AxiosInstance;
+   private authToken: string | null = null;
 
    private constructor() {
       this.client = axios.create({
@@ -20,6 +21,10 @@ class ApiClient {
       this.setupInterceptors();
    }
 
+   public setAuthToken(token: string | null): void {
+      this.authToken = token;
+   }
+
    public static getInstance(): ApiClient {
       if (!ApiClient.instance) {
          ApiClient.instance = new ApiClient();
@@ -28,6 +33,18 @@ class ApiClient {
    }
 
    private setupInterceptors(): void {
+      // Request interceptor to attach Bearer token
+      this.client.interceptors.request.use(
+         (config) => {
+            if (this.authToken) {
+               config.headers.Authorization = `Bearer ${this.authToken}`;
+            }
+            return config;
+         },
+         (error) => Promise.reject(error)
+      );
+
+      // Response interceptor for error handling
       this.client.interceptors.response.use(
          (response) => response,
          (error: AxiosError) => {
@@ -54,5 +71,8 @@ class ApiClient {
    }
 }
 
-export const apiClient = ApiClient.getInstance().client;
+const instance = ApiClient.getInstance();
+export const apiClient = instance.client;
+export const setAuthToken = (token: string | null): void =>
+   instance.setAuthToken(token);
 export default apiClient;

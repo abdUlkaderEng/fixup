@@ -33,6 +33,18 @@ export interface AuthResponse {
    user: User;
 }
 
+export interface UpdateProfileRequest {
+   name: string;
+   phone: string;
+   address?: string;
+   birth_date?: string;
+}
+
+export interface UpdateProfileResponse {
+   message: string;
+   user: User;
+}
+
 export interface ApiError {
    message: string;
    errors?: Record<string, string[]>;

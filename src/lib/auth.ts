@@ -104,7 +104,7 @@ export const authOptions: NextAuthOptions = {
       }),
    ],
    callbacks: {
-      async jwt({ token, user, account }) {
+      async jwt({ token, user, account, trigger, session }) {
          if (user) {
             token.id = user.id;
             token.accessToken = user.accessToken;
@@ -120,6 +120,20 @@ export const authOptions: NextAuthOptions = {
             token.updated_at = user.updated_at;
             token.is_active = user.is_active;
             token.profile_picture = user.profile_picture;
+         }
+         // Handle session update from client
+         if (trigger === 'update' && session?.user) {
+            token.name = session.user.name ?? token.name;
+            token.phone = session.user.phone ?? token.phone;
+            token.address = session.user.address ?? token.address;
+            token.birth_date = session.user.birth_date ?? token.birth_date;
+            token.email = session.user.email ?? token.email;
+            token.role = session.user.role ?? token.role;
+            token.profile_picture =
+               session.user.profile_picture ?? token.profile_picture;
+            token.email_verified_at =
+               session.user.email_verified_at ?? token.email_verified_at;
+            token.updated_at = session.user.updated_at ?? token.updated_at;
          }
          if (account) {
             token.provider = account.provider;
