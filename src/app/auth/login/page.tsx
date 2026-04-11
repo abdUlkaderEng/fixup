@@ -20,9 +20,7 @@ import {
    FormMessage,
 } from '@/components/ui/form';
 import { loginSchema, type LoginInput } from '../schemas';
-import { authApi } from '@/api/auth';
 import { useSession, signIn } from 'next-auth/react';
-import { useAuthStore } from '@/store/auth';
 
 export default function LoginPage() {
    const [showPassword, setShowPassword] = useState(false);
@@ -39,7 +37,6 @@ export default function LoginPage() {
 
    const router = useRouter();
    const { data: session, status } = useSession();
-   const setUser = useAuthStore((state) => state.setUser);
 
    // Redirect if already authenticated
    useEffect(() => {
