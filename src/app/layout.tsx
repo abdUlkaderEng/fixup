@@ -26,7 +26,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-   title: 'فكس أب - خدمات المنزل الاحترافية',
+   title: 'FIXUP مجتمع متكامل من الفنيين',
    description:
       'تواصل مع محترفين محليين موثوقين لجميع احتياجات الإصلاح والصيانة المنزلية',
 };

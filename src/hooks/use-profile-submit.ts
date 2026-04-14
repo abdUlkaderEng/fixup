@@ -5,7 +5,7 @@ import { useSession } from 'next-auth/react';
 import { toast } from 'sonner';
 import type { User } from 'next-auth';
 import { userApi } from '@/api/user';
-import type { ProfileFormData } from '@/app/profile/schemas';
+import type { ProfileFormData } from '@/app/customer/profile/schemas';
 
 interface UseProfileSubmitReturn {
    isSubmitting: boolean;

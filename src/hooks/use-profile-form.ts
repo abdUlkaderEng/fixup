@@ -4,7 +4,10 @@ import { useState, useCallback, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { User } from 'next-auth';
-import { profileSchema, type ProfileFormData } from '@/app/profile/schemas';
+import {
+   profileSchema,
+   type ProfileFormData,
+} from '@/app/customer/profile/schemas';
 
 interface UseProfileFormReturn {
    form: ReturnType<typeof useForm<ProfileFormData>>;

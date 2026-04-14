@@ -63,7 +63,7 @@ export function Navbar({ className = '' }: NavbarProps) {
                   {/* User Icon or Login Button - Desktop */}
                   {isAuthenticated ? (
                      <Link
-                        href="/profile"
+                        href="/customer/profile"
                         className="hover:scale-110 transition-all duration-300"
                      >
                         <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
