@@ -131,7 +131,7 @@
    html {
       @apply font-sans;
    }
-   button{
+   button {
       cursor: pointer;
    }
 }
@@ -142,3 +142,85 @@
       color 0.3s ease,
       border-color 0.3s ease;
 } */
+
+/* ============================================
+   MODERN SCROLLBAR STYLING - App Wide
+   ============================================ */
+
+/* Global scrollbar - Clean, thin, modern */
+::-webkit-scrollbar {
+   width: 6px;
+   height: 6px;
+}
+
+::-webkit-scrollbar-track {
+   background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+   background: rgba(255, 255, 255, 0.15);
+   border-radius: 3px;
+   transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+   background: rgba(255, 255, 255, 0.35);
+}
+
+/* Firefox scrollbar */
+* {
+   scrollbar-width: thin;
+   scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+
+/* Custom scrollbar utility classes */
+.scrollbar-modern {
+   scrollbar-width: thin;
+   scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.scrollbar-modern::-webkit-scrollbar {
+   width: 5px;
+   height: 5px;
+}
+
+.scrollbar-modern::-webkit-scrollbar-track {
+   background: transparent;
+}
+
+.scrollbar-modern::-webkit-scrollbar-thumb {
+   background: rgba(255, 255, 255, 0.2);
+   border-radius: 3px;
+}
+
+.scrollbar-modern::-webkit-scrollbar-thumb:hover {
+   background: rgba(255, 255, 255, 0.4);
+}
+
+/* Invisible scrollbar - for clean UI areas */
+.scrollbar-invisible {
+   scrollbar-width: none;
+   -ms-overflow-style: none;
+}
+
+.scrollbar-invisible::-webkit-scrollbar {
+   display: none;
+}
+
+/* Visible on hover only */
+.scrollbar-hover {
+   scrollbar-width: thin;
+   scrollbar-color: transparent transparent;
+}
+
+.scrollbar-hover::-webkit-scrollbar-thumb {
+   background: transparent;
+}
+
+.scrollbar-hover:hover {
+   scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.scrollbar-hover:hover::-webkit-scrollbar-thumb {
+   background: rgba(255, 255, 255, 0.2);
+}

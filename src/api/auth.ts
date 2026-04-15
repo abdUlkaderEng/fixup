@@ -27,20 +27,27 @@ export const authApi = {
             AUTH_ENDPOINTS.LOGIN,
             data
          );
-         console.log('LOGIN RESPONSE _______', response.data);
          return response.data;
       } catch (error) {
          return handleApiError(error);
       }
    },
 
-   async register(data: RegisterRequest): Promise<AuthResponse> {
+   // async register(data: RegisterRequest): Promise<AuthResponse> {
+   //    try {
+   //       const response = await apiClient.post<AuthResponse>(
+   //          AUTH_ENDPOINTS.REGISTER,
+   //          data
+   //       );
+   //       return response.data;
+   //    } catch (error) {
+   //       return handleApiError(error);
+   //    }
+   // },
+
+   async register(data: RegisterRequest): Promise<void> {
       try {
-         const response = await apiClient.post<AuthResponse>(
-            AUTH_ENDPOINTS.REGISTER,
-            data
-         );
-         return response.data;
+         await apiClient.post(AUTH_ENDPOINTS.REGISTER, data);
       } catch (error) {
          return handleApiError(error);
       }

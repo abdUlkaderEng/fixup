@@ -1,0 +1,70 @@
+/**
+ * Admin Navigation Configuration
+ * Centralized navigation items for admin sidebar
+ */
+
+import {
+   Briefcase,
+   Users,
+   MapPin,
+   MessageSquare,
+   Star,
+   UserPlus,
+   Wrench,
+} from 'lucide-react';
+import type { NavItem } from '@/types/admin';
+
+/**
+ * Admin navigation items - Arabic
+ */
+export const ADMIN_NAVIGATION: NavItem[] = [
+   {
+      id: 'services',
+      label: 'الخدمات',
+      href: '/admin/dashboard?modal=services',
+      icon: Wrench,
+      description: 'إدارة كتالوج الخدمات',
+   },
+   {
+      id: 'jobs',
+      label: 'الوظائف',
+      href: '/admin/dashboard?modal=jobs',
+      icon: Briefcase,
+      description: 'إدارة طلبات العمل',
+   },
+   {
+      id: 'customers',
+      label: 'العملاء',
+      href: '/admin/dashboard?modal=customers',
+      icon: Users,
+      description: 'حسابات العملاء',
+   },
+   {
+      id: 'addresses',
+      label: 'العناوين',
+      href: '/admin/dashboard?modal=addresses',
+      icon: MapPin,
+      description: 'إدارة العناوين',
+   },
+   {
+      id: 'messages',
+      label: 'رسائل الدردشة',
+      href: '/admin/dashboard?modal=messages',
+      icon: MessageSquare,
+      description: 'رسائل الدردشة الثابتة',
+   },
+   {
+      id: 'reviews',
+      label: 'التقييمات',
+      href: '/admin/dashboard?modal=reviews',
+      icon: Star,
+      description: 'تقييمات العمال',
+   },
+   {
+      id: 'create-worker',
+      label: 'إضافة عامل',
+      href: '/admin/dashboard?modal=create-worker',
+      icon: UserPlus,
+      description: 'إضافة عامل جديد',
+   },
+];

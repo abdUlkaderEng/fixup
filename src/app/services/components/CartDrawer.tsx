@@ -42,7 +42,7 @@ export default function CartDrawer({ open, setOpen }: CartDrawerProps) {
                   </div>
                ) : (
                   <>
-                     <div className="space-y-3 max-h-64 overflow-y-auto">
+                     <div className="space-y-3 max-h-64 overflow-y-auto scrollbar-modern">
                         {items.map((i) => (
                            <div
                               key={i.id}

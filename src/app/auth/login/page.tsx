@@ -20,7 +20,47 @@ import {
    FormMessage,
 } from '@/components/ui/form';
 import { loginSchema, type LoginInput } from '../schemas';
-import { useSession, signIn } from 'next-auth/react';
+import { useSession, signIn, getSession } from 'next-auth/react';
+
+/**
+ * Route constants for role-based navigation
+ * Centralized routing configuration for maintainability
+ */
+const ROUTES = {
+   ADMIN_DASHBOARD: '/admin/dashboard',
+   HOME: '/',
+   SERVER_ERROR: '/server-error',
+} as const;
+
+/**
+ * User roles for authorization
+ */
+const USER_ROLES = {
+   ADMIN: 'admin',
+} as const;
+
+/**
+ * Determines the redirect path based on user role
+ * @param role - The user's role from session
+ * @returns The appropriate route path for the user
+ */
+function getRedirectPath(role?: string): string {
+   return role === USER_ROLES.ADMIN ? ROUTES.ADMIN_DASHBOARD : ROUTES.HOME;
+}
+
+/**
+ * Checks if error is a network-related error
+ * @param error - The error to check
+ * @returns True if network error, false otherwise
+ */
+function isNetworkError(error: unknown): boolean {
+   if (!(error instanceof Error)) return false;
+
+   const networkErrorIndicators = ['fetch', 'NetworkError', 'Failed to fetch'];
+   return networkErrorIndicators.some((indicator) =>
+      error.message.includes(indicator)
+   );
+}
 
 export default function LoginPage() {
    const [showPassword, setShowPassword] = useState(false);
@@ -38,54 +78,82 @@ export default function LoginPage() {
    const router = useRouter();
    const { data: session, status } = useSession();
 
-   // Redirect if already authenticated
+   /**
+    * Effect: Redirect already authenticated users based on their role
+    * This prevents authenticated users from accessing the login page
+    */
    useEffect(() => {
       if (status === 'authenticated' && session?.user) {
-         router.push('/');
+         const redirectPath = getRedirectPath(session.user.role);
+         router.push(redirectPath);
       }
    }, [status, session, router]);
    // if (status === 'authenticated' && session?.user) {
    //    router.push('/');
    // }
 
-   const onSubmit = async (data: LoginInput) => {
-      setIsLoading(true);
-      try {
-         const result = await signIn('credentials', {
-            email: data.email,
-            password: data.password,
-            redirect: false,
-         });
+   /**
+    * Handles form submission for credentials sign-in
+    * Authenticates user and redirects based on their role
+    * @param data - Login form data (email, password, rememberMe)
+    */
+   const handleCredentialsSignIn = async (data: LoginInput): Promise<void> => {
+      const signInResult = await signIn('credentials', {
+         email: data.email,
+         password: data.password,
+         redirect: false,
+      });
 
-         if (result?.error) {
-            toast.error('فشل تسجيل الدخول', {
-               description: 'البريد الإلكتروني أو كلمة المرور غير صحيحة',
-            });
-         } else {
-            toast.success(`أهلاً بك ! ${session?.user?.name || ''}`, {
-               description: 'تم تسجيل الدخول بنجاح',
-            });
-            router.push('/');
-            router.refresh();
-         }
-      } catch (error) {
-         // Check if server is down (network error)
-         if (
-            error instanceof Error &&
-            (error.message.includes('fetch') ||
-               error.message.includes('NetworkError') ||
-               error.message.includes('Failed to fetch'))
-         ) {
-            router.push('/server-error');
-            return;
-         }
-         const message =
-            error instanceof Error
-               ? error.message
-               : 'حدث خطأ أثناء تسجيل الدخول';
+      if (signInResult?.error) {
          toast.error('فشل تسجيل الدخول', {
-            description: message,
+            description: 'البريد الإلكتروني أو كلمة المرور غير صحيحة',
          });
+         return;
+      }
+
+      // Fetch fresh session to get user role after sign-in
+      const freshSession = await getSession();
+      const userRole = freshSession?.user?.role;
+      const redirectPath = getRedirectPath(userRole);
+
+      toast.success(`أهلاً بك ! ${freshSession?.user?.name || ''}`, {
+         description: 'تم تسجيل الدخول بنجاح',
+      });
+
+      router.push(redirectPath);
+      router.refresh();
+   };
+
+   /**
+    * Handles errors during sign-in process
+    * @param error - The error that occurred
+    */
+   const handleSignInError = (error: unknown): void => {
+      if (isNetworkError(error)) {
+         router.push(ROUTES.SERVER_ERROR);
+         return;
+      }
+
+      const errorMessage =
+         error instanceof Error ? error.message : 'حدث خطأ أثناء تسجيل الدخول';
+
+      toast.error('فشل تسجيل الدخول', {
+         description: errorMessage,
+      });
+   };
+
+   /**
+    * Main form submission handler
+    * Orchestrates the sign-in flow with loading states and error handling
+    * @param data - Login form data
+    */
+   const onSubmit = async (data: LoginInput): Promise<void> => {
+      setIsLoading(true);
+
+      try {
+         await handleCredentialsSignIn(data);
+      } catch (error) {
+         handleSignInError(error);
       } finally {
          setIsLoading(false);
       }
@@ -247,7 +315,7 @@ export default function LoginPage() {
                   variant="outline"
                   className="h-11 w-full"
                   disabled={isLoading}
-                  onClick={() => signIn('google', { callbackUrl: '/' })}
+                  onClick={() => signIn('google', { callbackUrl: ROUTES.HOME })}
                >
                   <svg className="h-5 w-5 ml-2" viewBox="0 0 24 24">
                      <path

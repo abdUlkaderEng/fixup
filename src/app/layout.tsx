@@ -3,7 +3,7 @@ import { Geist, Geist_Mono, Inter, Noto_Sans_Arabic } from 'next/font/google';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { ThemeProvider } from '@/components/theme-provider';
-import { Navbar } from '@/components/layout/Navbar';
+import { ConditionalNavbar } from '@/components/layout/conditional-navbar';
 import { Toaster } from '@/components/ui/sonner';
 import { AuthProvider } from '@/components/providers/auth-provider';
 
@@ -59,7 +59,7 @@ export default function RootLayout({
                disableTransitionOnChange={false}
             >
                <AuthProvider>
-                  <Navbar />
+                  <ConditionalNavbar />
                   <main className="flex-1">{children}</main>
                   <Toaster position="top-center" richColors closeButton />
                </AuthProvider>
