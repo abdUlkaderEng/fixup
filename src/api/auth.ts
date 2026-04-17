@@ -4,6 +4,7 @@ import {
    LoginRequest,
    RegisterRequest,
    ApiError,
+   RegisterWorkerRequest,
 } from '@/types/auth';
 import { AxiosError } from 'axios';
 
@@ -11,6 +12,7 @@ const AUTH_ENDPOINTS = {
    LOGIN: '/login',
    REGISTER: '/register',
    LOGOUT: '/logout',
+   REGISTER_WORKER: '/register-worker',
 } as const;
 
 const handleApiError = (error: unknown): never => {
@@ -58,6 +60,36 @@ export const authApi = {
          await apiClient.post(AUTH_ENDPOINTS.LOGOUT);
       } catch (error) {
          handleApiError(error);
+      }
+   },
+
+   async registerWorker(data: RegisterWorkerRequest): Promise<void> {
+      try {
+         const formData = new FormData();
+         formData.append('career_id', String(data.career_id));
+         formData.append('about', data.about);
+         formData.append('years_experience', String(data.years_experience));
+         data.services.forEach((service) => {
+            formData.append('services[]', String(service));
+         });
+         if (data.images) {
+            data.images.forEach((image) => {
+               formData.append('images[]', image);
+            });
+         }
+
+         const response = await apiClient.post(
+            AUTH_ENDPOINTS.REGISTER_WORKER,
+            formData,
+            {
+               headers: {
+                  'Content-Type': 'multipart/form-data',
+               },
+            }
+         );
+         return response.data;
+      } catch (error) {
+         return handleApiError(error);
       }
    },
 };

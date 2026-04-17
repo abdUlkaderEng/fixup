@@ -16,9 +16,11 @@ import {
    ArrowLeft,
    Check,
    X,
+   BriefcaseBusiness,
 } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
 import { FloatingLabelInput } from '@/components/ui/floating-input';
@@ -32,15 +34,18 @@ import {
    FormMessage,
 } from '@/components/ui/form';
 import { signupSchema, type SignupInput } from '../schemas';
+import { clearWorkerSignupDraft, saveWorkerSignupDraft } from '../signup-flow';
 import { toast } from 'sonner';
 import { authApi } from '@/api/auth';
+
+type SignupFormValues = z.input<typeof signupSchema>;
 
 export default function SignupPage() {
    const [showPassword, setShowPassword] = useState(false);
    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
    const [isLoading, setIsLoading] = useState(false);
 
-   const form = useForm<SignupInput>({
+   const form = useForm<SignupFormValues, unknown, SignupInput>({
       resolver: zodResolver(signupSchema),
       defaultValues: {
          fullName: '',
@@ -50,6 +55,7 @@ export default function SignupPage() {
          birthDate: '',
          password: '',
          confirmPassword: '',
+         registerAsWorker: false,
          termsAccepted: false,
       },
    });
@@ -68,6 +74,7 @@ export default function SignupPage() {
 
    const onSubmit = async (data: SignupInput) => {
       setIsLoading(true);
+
       try {
          await authApi.register({
             name: data.fullName,
@@ -78,12 +85,31 @@ export default function SignupPage() {
             password: data.password,
             password_confirmation: data.confirmPassword,
          });
+
+         if (data.registerAsWorker) {
+            saveWorkerSignupDraft({
+               fullName: data.fullName,
+               email: data.email,
+               phone: data.phone,
+               address: data.address,
+               birthDate: data.birthDate,
+               password: data.password,
+            });
+
+            toast.success('تم إنشاء الحساب بنجاح!', {
+               description: 'أكمل بيانات العامل في الخطوة التالية',
+            });
+            router.push('/auth/worker-info');
+            return;
+         }
+
+         clearWorkerSignupDraft();
+
          toast.success('تم إنشاء الحساب بنجاح!', {
             description: 'بإمكانك الآن تسجيل الدخول',
          });
          router.push('/auth/login');
       } catch (error) {
-         // Check if server is down (network error)
          if (
             error instanceof Error &&
             (error.message.includes('fetch') ||
@@ -94,10 +120,12 @@ export default function SignupPage() {
             router.push('/server-error');
             return;
          }
+
          const message =
             error instanceof Error
                ? error.message
                : 'حدث خطأ أثناء إنشاء الحساب';
+
          toast.error('فشل إنشاء الحساب', {
             description: message,
          });
@@ -109,42 +137,37 @@ export default function SignupPage() {
    return (
       <div className="min-h-[calc(100vh-4rem)] mt-16 flex items-center justify-center bg-linear-to-br from-background via-muted/50 to-background p-4 sm:p-6 lg:p-8">
          <div className="w-full max-w-lg">
-            {/* Back Button */}
             <Link
                href="/"
-               className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
+               className="mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
                <ArrowLeft className="h-4 w-4" />
                <span>العودة للرئيسية</span>
             </Link>
 
-            {/* Card */}
-            <div className="bg-card border rounded-2xl shadow-lg p-6 sm:p-8">
-               {/* Header */}
-               <div className="text-center mb-8">
-                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="rounded-2xl border bg-card p-6 shadow-lg sm:p-8">
+               <div className="mb-8 text-center">
+                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
                      <User className="h-8 w-8 text-primary" />
                   </div>
-                  <h1 className="text-2xl font-bold mb-2">إنشاء حساب جديد</h1>
-                  <p className="text-muted-foreground text-sm">
+                  <h1 className="mb-2 text-2xl font-bold">إنشاء حساب جديد</h1>
+                  <p className="text-sm text-muted-foreground">
                      أنشئ حسابك الآن واكتشف خدماتنا المميزة
                   </p>
                </div>
 
-               {/* Form */}
                <Form {...form}>
                   <form
                      onSubmit={form.handleSubmit(onSubmit)}
                      className="space-y-5"
                   >
-                     {/* Full Name Field */}
                      <FormField
                         control={form.control}
                         name="fullName"
                         render={({ field, fieldState }) => (
                            <FormItem className="space-y-0">
                               <div className="relative">
-                                 <User className="absolute right-0 top-3 h-5 w-5 text-muted-foreground z-10" />
+                                 <User className="absolute top-3 right-0 z-10 h-5 w-5 text-muted-foreground" />
                                  <FloatingLabelInput
                                     {...field}
                                     label="الاسم الكامل"
@@ -160,15 +183,14 @@ export default function SignupPage() {
                         )}
                      />
 
-                     {/* Email & Phone Row */}
-                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <FormField
                            control={form.control}
                            name="email"
                            render={({ field, fieldState }) => (
                               <FormItem className="space-y-0">
                                  <div className="relative">
-                                    <Mail className="absolute right-0 top-3 h-5 w-5 text-muted-foreground z-10" />
+                                    <Mail className="absolute top-3 right-0 z-10 h-5 w-5 text-muted-foreground" />
                                     <FloatingLabelInput
                                        {...field}
                                        label="البريد الإلكتروني"
@@ -190,7 +212,7 @@ export default function SignupPage() {
                            render={({ field, fieldState }) => (
                               <FormItem className="space-y-0">
                                  <div className="relative">
-                                    <Phone className="absolute right-0 top-3 h-5 w-5 text-muted-foreground z-10" />
+                                    <Phone className="absolute top-3 right-0 z-10 h-5 w-5 text-muted-foreground" />
                                     <FloatingLabelInput
                                        {...field}
                                        label="رقم الهاتف"
@@ -207,17 +229,17 @@ export default function SignupPage() {
                         />
                      </div>
 
-                     {/* Address & Birth Date Row */}
-                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <FormField
                            control={form.control}
                            name="address"
                            render={({ field, fieldState }) => (
                               <FormItem className="space-y-0">
                                  <div className="relative">
-                                    <MapPin className="absolute right-0 top-3 h-5 w-5 text-muted-foreground z-10" />
+                                    <MapPin className="absolute top-3 right-0 z-10 h-5 w-5 text-muted-foreground" />
                                     <FloatingLabelInput
                                        {...field}
+                                       value={field.value ?? ''}
                                        label="العنوان"
                                        type="text"
                                        placeholder="دمشق، سوريا"
@@ -237,9 +259,10 @@ export default function SignupPage() {
                            render={({ field, fieldState }) => (
                               <FormItem className="space-y-0">
                                  <div className="relative">
-                                    <Calendar className="absolute right-0 top-3 h-5 w-5 text-muted-foreground z-10" />
+                                    <Calendar className="absolute top-3 right-0 z-10 h-5 w-5 text-muted-foreground" />
                                     <FloatingLabelInput
                                        {...field}
+                                       value={field.value ?? ''}
                                        label="تاريخ الميلاد"
                                        type="date"
                                        className="pr-8"
@@ -253,14 +276,13 @@ export default function SignupPage() {
                         />
                      </div>
 
-                     {/* Password Field */}
                      <FormField
                         control={form.control}
                         name="password"
                         render={({ field, fieldState }) => (
                            <FormItem className="space-y-0">
                               <div className="relative">
-                                 <Lock className="absolute right-0 top-3 h-5 w-5 text-muted-foreground z-10" />
+                                 <Lock className="absolute top-3 right-0 z-10 h-5 w-5 text-muted-foreground" />
                                  <FloatingLabelInput
                                     {...field}
                                     label="كلمة المرور"
@@ -275,7 +297,7 @@ export default function SignupPage() {
                                     onClick={() =>
                                        setShowPassword(!showPassword)
                                     }
-                                    className="absolute left-0 top-3 text-muted-foreground hover:text-foreground transition-colors"
+                                    className="absolute top-3 left-0 text-muted-foreground transition-colors hover:text-foreground"
                                  >
                                     {showPassword ? (
                                        <EyeOff className="h-5 w-5" />
@@ -286,10 +308,9 @@ export default function SignupPage() {
                               </div>
                               <FormMessage />
 
-                              {/* Password Requirements */}
                               {password && (
-                                 <div className="mt-3 p-3 bg-muted rounded-lg">
-                                    <p className="text-xs text-muted-foreground mb-2">
+                                 <div className="mt-3 rounded-lg bg-muted p-3">
+                                    <p className="mb-2 text-xs text-muted-foreground">
                                        متطلبات كلمة المرور:
                                     </p>
                                     <div className="space-y-1">
@@ -323,14 +344,13 @@ export default function SignupPage() {
                         )}
                      />
 
-                     {/* Confirm Password Field */}
                      <FormField
                         control={form.control}
                         name="confirmPassword"
                         render={({ field, fieldState }) => (
                            <FormItem className="space-y-0">
                               <div className="relative">
-                                 <Lock className="absolute right-0 top-3 h-5 w-5 text-muted-foreground z-10" />
+                                 <Lock className="absolute top-3 right-0 z-10 h-5 w-5 text-muted-foreground" />
                                  <FloatingLabelInput
                                     {...field}
                                     label="تأكيد كلمة المرور"
@@ -349,7 +369,7 @@ export default function SignupPage() {
                                           !showConfirmPassword
                                        )
                                     }
-                                    className="absolute left-0 top-3 text-muted-foreground hover:text-foreground transition-colors"
+                                    className="absolute top-3 left-0 text-muted-foreground transition-colors hover:text-foreground"
                                  >
                                     {showConfirmPassword ? (
                                        <EyeOff className="h-5 w-5" />
@@ -363,21 +383,52 @@ export default function SignupPage() {
                         )}
                      />
 
-                     {/* Terms Checkbox */}
+                     <FormField
+                        control={form.control}
+                        name="registerAsWorker"
+                        render={({ field }) => (
+                           <FormItem className="rounded-xl border border-border/70 bg-muted/40 p-4">
+                              <div className="flex items-start gap-3">
+                                 <FormControl>
+                                    <Checkbox
+                                       checked={field.value}
+                                       onCheckedChange={(checked) =>
+                                          field.onChange(Boolean(checked))
+                                       }
+                                       disabled={isLoading}
+                                    />
+                                 </FormControl>
+                                 <div className="space-y-1">
+                                    <FormLabel className="flex cursor-pointer items-center gap-2 text-sm font-medium text-foreground">
+                                       <BriefcaseBusiness className="h-4 w-4 text-primary" />
+                                       <span>التسجيل كعامل</span>
+                                    </FormLabel>
+                                    <p className="text-sm text-muted-foreground">
+                                       عند التفعيل سننقلك لخطوة إضافية لاستكمال
+                                       بيانات العمل والخدمات.
+                                    </p>
+                                 </div>
+                              </div>
+                           </FormItem>
+                        )}
+                     />
+
                      <FormField
                         control={form.control}
                         name="termsAccepted"
                         render={({ field }) => (
-                           <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                           <FormItem className="flex flex-row items-start space-y-0 space-x-3">
                               <FormControl>
                                  <Checkbox
                                     checked={field.value}
-                                    onCheckedChange={field.onChange}
+                                    onCheckedChange={(checked) =>
+                                       field.onChange(Boolean(checked))
+                                    }
                                     disabled={isLoading}
                                  />
                               </FormControl>
-                              <div className="space-y-1 leading-none mr-3">
-                                 <FormLabel className="text-sm text-muted-foreground font-normal cursor-pointer">
+                              <div className="mr-3 space-y-1 leading-none">
+                                 <FormLabel className="cursor-pointer text-sm font-normal text-muted-foreground">
                                     أوافق على{' '}
                                     <Link
                                        href="/terms"
@@ -399,10 +450,9 @@ export default function SignupPage() {
                         )}
                      />
 
-                     {/* Submit Button */}
                      <Button
                         type="submit"
-                        className="w-full h-11"
+                        className="h-11 w-full"
                         disabled={isLoading}
                      >
                         {isLoading ? (
@@ -417,7 +467,6 @@ export default function SignupPage() {
                   </form>
                </Form>
 
-               {/* Divider */}
                <div className="relative my-6">
                   <div className="absolute inset-0 flex items-center">
                      <span className="w-full border-t" />
@@ -429,14 +478,12 @@ export default function SignupPage() {
                   </div>
                </div>
 
-               {/* Social Signup */}
-
                <Button
                   variant="outline"
                   className="h-11 w-full"
                   disabled={isLoading}
                >
-                  <svg className="h-5 w-5 ml-2" viewBox="0 0 24 24">
+                  <svg className="ml-2 h-5 w-5" viewBox="0 0 24 24">
                      <path
                         d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
                         fill="#4285F4"
@@ -457,12 +504,11 @@ export default function SignupPage() {
                   Google
                </Button>
 
-               {/* Login Link */}
-               <p className="text-center text-sm text-muted-foreground mt-6">
+               <p className="mt-6 text-center text-sm text-muted-foreground">
                   لديك حساب بالفعل؟{' '}
                   <Link
                      href="/auth/login"
-                     className="text-primary font-medium hover:underline"
+                     className="font-medium text-primary hover:underline"
                   >
                      تسجيل الدخول
                   </Link>

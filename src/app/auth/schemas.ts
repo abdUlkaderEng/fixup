@@ -1,5 +1,10 @@
 import { z } from 'zod';
 
+const fileSchema = z.custom<File>(
+   (value) => value instanceof File,
+   'الملف غير صالح'
+);
+
 export const loginSchema = z.object({
    email: z
       .string()
@@ -30,15 +35,16 @@ export const signupSchema = z
          .min(10, 'رقم الهاتف يجب أن يكون 10 أرقام على الأقل'),
       address: z
          .string()
+         .min(1, 'العنوان مطلوب')
          .min(5, 'العنوان يجب أن يكون 5 أحرف على الأقل')
-         .max(200, 'العنوان يجب أن لا يتجاوز 200 حرف')
-         .optional(),
+         .max(200, 'العنوان يجب أن لا يتجاوز 200 حرف'),
       birthDate: z
          .string()
-         .optional()
+         .min(1, 'تاريخ الميلاد مطلوب')
          .refine((val) => {
-            if (!val) return true;
             const date = new Date(val);
+            if (Number.isNaN(date.getTime())) return false;
+
             const now = new Date();
             const minAge = new Date();
             minAge.setFullYear(now.getFullYear() - 120);
@@ -58,6 +64,7 @@ export const signupSchema = z
             'كلمة المرور يجب أن تحتوي على رمز خاص واحد على الأقل'
          ),
       confirmPassword: z.string().min(1, 'تأكيد كلمة المرور مطلوب'),
+      registerAsWorker: z.boolean(),
       termsAccepted: z.boolean().refine((val) => val === true, {
          message: 'يجب الموافقة على شروط الاستخدام',
       }),
@@ -67,5 +74,17 @@ export const signupSchema = z
       path: ['confirmPassword'],
    });
 
+export const workerInfoSchema = z.object({
+   career_id: z.number().min(1, 'المجال مطلوب'),
+   about: z
+      .string()
+      .trim()
+      .min(20, 'نبذة العامل يجب أن تكون 20 حرفاً على الأقل'),
+   years_experience: z.number().min(0, 'سنوات الخبرة يجب أن تكون 0 أو أكثر'),
+   images: z.array(fileSchema).optional(),
+   services: z.array(z.number()).min(1, 'يجب اختيار خدمة واحدة على الأقل'),
+});
+
 export type LoginInput = z.infer<typeof loginSchema>;
 export type SignupInput = z.infer<typeof signupSchema>;
+export type WorkerInfoInput = z.infer<typeof workerInfoSchema>;

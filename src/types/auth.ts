@@ -49,3 +49,25 @@ export interface ApiError {
    message: string;
    errors?: Record<string, string[]>;
 }
+
+export interface RegisterWorkerRequest {
+   career_id: number;
+   about: string;
+   years_experience: number;
+   services: number[];
+   images?: File[];
+}
+
+// register work didnt return anything
+// export interface RegisterWorkerResponse {
+//    message: string;
+//    worker: {
+//       id: number;
+//       career_id: string;
+//       about: string;
+//       years_experience: number;
+//       user_id: number;
+//       created_at: string;
+//       updated_at: string;
+//    };
+// }
