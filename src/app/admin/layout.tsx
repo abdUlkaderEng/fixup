@@ -17,11 +17,11 @@ export default function AdminLayout({
    children: React.ReactNode;
 }) {
    return (
-      <div className="min-h-screen bg-black text-white">
+      <div className="min-h-screen bg-white text-gray-900">
          {/* Fixed Sidebar - Desktop */}
-         <aside className="fixed right-0 top-0 z-40 hidden h-screen w-64 flex-col border-l border-white/10 bg-zinc-950 lg:flex">
+         <aside className="fixed right-0 top-0 z-40 hidden h-screen w-64 flex-col border-l border-gray-200 bg-gray-50 lg:flex">
             {/* Logo */}
-            <div className="flex h-16 items-center px-5 border-b border-white/10">
+            <div className="flex h-16 items-center px-5 border-b border-gray-200">
                <Link
                   href="/admin/dashboard"
                   className="flex items-center gap-2.5"
@@ -33,7 +33,7 @@ export default function AdminLayout({
                      <span className="text-base font-bold tracking-tight">
                         FIXUP
                      </span>
-                     <p className="text-[10px] text-white/50 leading-tight">
+                     <p className="text-[10px] text-gray-500 leading-tight">
                         لوحة الإدارة
                      </p>
                   </div>
@@ -46,14 +46,14 @@ export default function AdminLayout({
             </div>
 
             {/* User Profile */}
-            <div className="border-t border-white/10 p-3">
+            <div className="border-t border-gray-200 p-3">
                <div className="flex items-center gap-2.5 mb-3 px-2">
-                  <div className="h-8 w-8 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+                  <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center shrink-0 text-gray-700">
                      <span className="text-xs font-bold">A</span>
                   </div>
                   <div className="min-w-0">
                      <p className="text-sm font-medium truncate">المشرف</p>
-                     <p className="text-[10px] text-white/40 truncate">
+                     <p className="text-[10px] text-gray-500 truncate">
                         admin@fixup.com
                      </p>
                   </div>
@@ -61,7 +61,7 @@ export default function AdminLayout({
                <Button
                   variant="ghost"
                   size="sm"
-                  className="w-full justify-start gap-2 text-white/60 hover:text-white hover:bg-white/10 h-9"
+                  className="w-full justify-start gap-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 h-9"
                   onClick={() => signOut({ callbackUrl: '/' })}
                >
                   <LogOut className="h-4 w-4" />
@@ -73,7 +73,7 @@ export default function AdminLayout({
          {/* Main Content Area */}
          <div className="lg:mr-64 flex min-h-screen flex-col">
             <AdminHeader />
-            <main className="flex-1 bg-zinc-950">{children}</main>
+            <main className="flex-1 bg-gray-100">{children}</main>
          </div>
       </div>
    );

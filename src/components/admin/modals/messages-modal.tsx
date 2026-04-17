@@ -29,10 +29,10 @@ import type { MessageCategory, StaticMessage } from '@/types/admin';
  */
 function CategoryBadge({ category }: { category: MessageCategory }) {
    const styles = {
-      greeting: 'bg-blue-500/20 text-blue-400',
-      status: 'bg-yellow-500/20 text-yellow-400',
-      notification: 'bg-purple-500/20 text-purple-400',
-      system: 'bg-zinc-500/20 text-zinc-400',
+      greeting: 'bg-blue-100 text-blue-700',
+      status: 'bg-yellow-100 text-yellow-700',
+      notification: 'bg-purple-100 text-purple-700',
+      system: 'bg-gray-200 text-gray-700',
    };
 
    const labels = MESSAGE_CATEGORY_LABELS;
@@ -72,32 +72,32 @@ export function MessagesModal({ open }: BaseModalProps) {
             {/* Search and Add */}
             <div className="flex items-center gap-3">
                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <Input
                      placeholder="البحث بالمفتاح أو المحتوى..."
                      value={searchQuery}
                      onChange={(e) => setSearchQuery(e.target.value)}
-                     className="pl-10 bg-zinc-900 border-white/10 text-white placeholder:text-white/40"
+                     className="pl-10 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
                   />
                </div>
-               <Button className="bg-white text-black hover:bg-white/90 gap-2">
+               <Button className="bg-gray-900 text-white hover:bg-gray-800 gap-2">
                   <Plus className="h-4 w-4" />
                   إضافة رسالة
                </Button>
             </div>
 
             {/* Messages Table */}
-            <div className="border border-white/10 rounded-md overflow-hidden">
+            <div className="border border-gray-200 rounded-md overflow-hidden">
                <Table>
                   <TableHeader>
-                     <TableRow className="border-white/10 hover:bg-transparent">
-                        <TableHead className="text-white/60">المفتاح</TableHead>
-                        <TableHead className="text-white/60">الرسالة</TableHead>
-                        <TableHead className="text-white/60">الفئة</TableHead>
-                        <TableHead className="text-white/60">
+                     <TableRow className="border-gray-200 hover:bg-transparent">
+                        <TableHead className="text-gray-500">المفتاح</TableHead>
+                        <TableHead className="text-gray-500">الرسالة</TableHead>
+                        <TableHead className="text-gray-500">الفئة</TableHead>
+                        <TableHead className="text-gray-500">
                            الاستخدام
                         </TableHead>
-                        <TableHead className="text-white/60 text-right">
+                        <TableHead className="text-gray-500 text-right">
                            الإجراءات
                         </TableHead>
                      </TableRow>
@@ -106,21 +106,21 @@ export function MessagesModal({ open }: BaseModalProps) {
                      {filteredMessages.map((message) => (
                         <TableRow
                            key={message.id}
-                           className="border-white/10 hover:bg-white/5"
+                           className="border-gray-200 hover:bg-gray-50"
                         >
                            <TableCell>
                               <div className="flex items-center gap-2">
-                                 <MessageSquare className="h-4 w-4 text-white/40" />
-                                 <span className="font-mono text-sm text-white/80">
+                                 <MessageSquare className="h-4 w-4 text-gray-400" />
+                                 <span className="font-mono text-sm text-gray-700">
                                     {message.key}
                                  </span>
                               </div>
-                              <p className="text-xs text-white/40 mt-1">
+                              <p className="text-xs text-gray-400 mt-1">
                                  {message.id}
                               </p>
                            </TableCell>
                            <TableCell>
-                              <p className="text-white/80 max-w-xs truncate">
+                              <p className="text-gray-700 max-w-xs truncate">
                                  {message.content}
                               </p>
                            </TableCell>
@@ -129,11 +129,11 @@ export function MessagesModal({ open }: BaseModalProps) {
                            </TableCell>
                            <TableCell>
                               <div className="flex items-center gap-2">
-                                 <Send className="h-3 w-3 text-white/40" />
-                                 <span className="text-white/80">
+                                 <Send className="h-3 w-3 text-gray-400" />
+                                 <span className="text-gray-700">
                                     {message.usage}
                                  </span>
-                                 <span className="text-xs text-white/40">
+                                 <span className="text-xs text-gray-400">
                                     ({message.lastUsed})
                                  </span>
                               </div>
@@ -143,14 +143,14 @@ export function MessagesModal({ open }: BaseModalProps) {
                                  <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="h-8 w-8 text-white/60 hover:text-white hover:bg-white/10"
+                                    className="h-8 w-8 text-gray-500 hover:text-gray-700 hover:bg-gray-100"
                                  >
                                     <Edit2 className="h-4 w-4" />
                                  </Button>
                                  <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="h-8 w-8 text-white/60 hover:text-red-400 hover:bg-red-500/10"
+                                    className="h-8 w-8 text-gray-500 hover:text-red-600 hover:bg-red-100"
                                     onClick={() =>
                                        handleDeleteMessage(message.id)
                                     }
@@ -166,12 +166,14 @@ export function MessagesModal({ open }: BaseModalProps) {
             </div>
 
             {/* Preview Section */}
-            <div className="border border-white/10 rounded-md p-4 bg-zinc-900/50">
-               <h4 className="text-sm font-medium text-white mb-2">معاينة</h4>
+            <div className="border border-gray-200 rounded-md p-4 bg-gray-50">
+               <h4 className="text-sm font-medium text-gray-900 mb-2">
+                  معاينة
+               </h4>
                <Textarea
                   readOnly
                   value="اختر رسالة للمعاينة..."
-                  className="bg-zinc-900 border-white/10 text-white/80 min-h-20 resize-none"
+                  className="bg-white border-gray-300 text-gray-700 min-h-20 resize-none"
                />
             </div>
 

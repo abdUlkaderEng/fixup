@@ -31,7 +31,7 @@ function AddressTypeIcon({ type }: { type: Address['type'] }) {
       other: MapPin,
    };
    const Icon = icons[type];
-   return <Icon className="h-4 w-4 text-white/40" />;
+   return <Icon className="h-4 w-4 text-gray-400" />;
 }
 
 /**
@@ -56,64 +56,64 @@ export function AddressesModal({ open }: BaseModalProps) {
          <div className="space-y-4">
             {/* Search */}
             <div className="relative">
-               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
+               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                <Input
                   placeholder="البحث بالشارع، المدينة، أو المالك..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 bg-zinc-900 border-white/10 text-white placeholder:text-white/40"
+                  className="pl-10 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
                />
             </div>
 
             {/* Addresses Table */}
-            <div className="border border-white/10 rounded-md overflow-hidden">
+            <div className="border border-gray-200 rounded-md overflow-hidden">
                <Table>
                   <TableHeader>
-                     <TableRow className="border-white/10 hover:bg-transparent">
-                        <TableHead className="text-white/60">التسمية</TableHead>
-                        <TableHead className="text-white/60">العنوان</TableHead>
-                        <TableHead className="text-white/60">الموقع</TableHead>
-                        <TableHead className="text-white/60">المالك</TableHead>
-                        <TableHead className="text-white/60">النوع</TableHead>
+                     <TableRow className="border-gray-200 hover:bg-transparent">
+                        <TableHead className="text-gray-500">التسمية</TableHead>
+                        <TableHead className="text-gray-500">العنوان</TableHead>
+                        <TableHead className="text-gray-500">الموقع</TableHead>
+                        <TableHead className="text-gray-500">المالك</TableHead>
+                        <TableHead className="text-gray-500">النوع</TableHead>
                      </TableRow>
                   </TableHeader>
                   <TableBody>
                      {filteredAddresses.map((address) => (
                         <TableRow
                            key={address.id}
-                           className="border-white/10 hover:bg-white/5"
+                           className="border-gray-200 hover:bg-gray-50"
                         >
                            <TableCell>
                               <div className="flex items-center gap-2">
                                  <AddressTypeIcon type={address.type} />
-                                 <span className="font-medium text-white">
+                                 <span className="font-medium text-gray-900">
                                     {address.label}
                                  </span>
                                  {address.isDefault && (
-                                    <Badge className="bg-white/10 text-white/80 text-xs">
+                                    <Badge className="bg-gray-100 text-gray-700 text-xs">
                                        افتراضي
                                     </Badge>
                                  )}
                               </div>
                            </TableCell>
                            <TableCell>
-                              <p className="text-white/80">{address.street}</p>
-                              <p className="text-xs text-white/40 font-mono">
+                              <p className="text-gray-700">{address.street}</p>
+                              <p className="text-xs text-gray-400 font-mono">
                                  {address.id}
                               </p>
                            </TableCell>
                            <TableCell>
-                              <p className="text-white/80">
+                              <p className="text-gray-700">
                                  {address.city}, {address.region}
                               </p>
-                              <p className="text-xs text-white/40">
+                              <p className="text-xs text-gray-400">
                                  {address.zipCode}
                               </p>
                            </TableCell>
                            <TableCell>
                               <div className="flex items-center gap-2">
-                                 <User className="h-3 w-3 text-white/40" />
-                                 <span className="text-white/80">
+                                 <User className="h-3 w-3 text-gray-400" />
+                                 <span className="text-gray-700">
                                     {address.owner}
                                  </span>
                               </div>
@@ -121,7 +121,7 @@ export function AddressesModal({ open }: BaseModalProps) {
                            <TableCell>
                               <Badge
                                  variant="secondary"
-                                 className="bg-white/10 text-white/80 capitalize"
+                                 className="bg-gray-100 text-gray-700 capitalize"
                               >
                                  {ADDRESS_TYPE_LABELS[address.type]}
                               </Badge>

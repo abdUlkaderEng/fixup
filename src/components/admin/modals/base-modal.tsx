@@ -58,19 +58,19 @@ export function AdminModal({
       <Dialog open={open} onOpenChange={handleOpenChange}>
          <DialogContent
             className={cn(
-               'max-w-4xl bg-zinc-950 border-white/10 text-white max-h-[95vh] p-0',
+               'max-w-4xl bg-white border-gray-200 text-gray-900 max-h-[95vh] p-0',
                'data-[state=open]:animate-in data-[state=closed]:animate-out',
                'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
                'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
                className
             )}
          >
-            <DialogHeader className="border-b border-white/10 p-6 pb-4">
-               <DialogTitle className="text-xl font-semibold text-white text-center">
+            <DialogHeader className="border-b border-gray-200 p-6 pb-4">
+               <DialogTitle className="text-xl font-semibold text-gray-900 text-center">
                   {title}
                </DialogTitle>
                {description && (
-                  <DialogDescription className="text-white/50 text-center">
+                  <DialogDescription className="text-gray-500 text-center">
                      {description}
                   </DialogDescription>
                )}
@@ -96,7 +96,7 @@ export function ModalActions({ children, className }: ModalActionsProps) {
    return (
       <div
          className={cn(
-            'flex items-center justify-end gap-2 pt-4 border-t border-white/10',
+            'flex items-center justify-end gap-2 pt-4 border-t border-gray-200',
             className
          )}
       >
@@ -118,7 +118,7 @@ export function CloseButton({ onClose }: CloseButtonProps) {
       <Button
          variant="outline"
          onClick={onClose}
-         className="border-white/20 bg-transparent text-white hover:bg-white hover:text-black"
+         className="border-gray-300 bg-white text-gray-700 hover:bg-gray-100"
       >
          إغلاق
       </Button>

@@ -14,14 +14,14 @@ import { SidebarNav } from './sidebar-nav';
  */
 export function AdminHeader() {
    return (
-      <header className="lg:hidden sticky top-0 z-30 flex h-14 items-center justify-between border-b border-white/10 bg-black px-4">
+      <header className="lg:hidden sticky top-0 z-30 flex h-14 items-center justify-between border-b border-gray-200 bg-white px-4">
          <div className="flex items-center gap-3">
             <Sheet>
                <SheetTrigger asChild>
                   <Button
                      variant="ghost"
                      size="icon"
-                     className="text-white hover:bg-white/10 h-9 w-9"
+                     className="text-gray-700 hover:bg-gray-100 h-9 w-9"
                   >
                      <Menu className="h-5 w-5" />
                      <span className="sr-only">فتح القائمة</span>
@@ -29,21 +29,21 @@ export function AdminHeader() {
                </SheetTrigger>
                <SheetContent
                   side="right"
-                  className="w-72 bg-black border-l border-white/10 p-0"
+                  className="w-72 bg-white border-l border-gray-200 p-0"
                >
                   <div className="flex h-full flex-col">
-                     <div className="flex h-16 items-center justify-between px-4 border-b border-white/10">
-                        <span className="text-lg font-semibold text-white">
+                     <div className="flex h-16 items-center justify-between px-4 border-b border-gray-200">
+                        <span className="text-lg font-semibold text-gray-900">
                            لوحة الإدارة
                         </span>
                      </div>
                      <div className="flex-1 overflow-auto py-4">
                         <SidebarNav />
                      </div>
-                     <div className="border-t border-white/10 p-4">
+                     <div className="border-t border-gray-200 p-4">
                         <Button
                            variant="outline"
-                           className="w-full justify-start gap-2 border-white/20 bg-transparent text-white hover:bg-white hover:text-black"
+                           className="w-full justify-start gap-2 border-gray-300 bg-transparent text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                            onClick={() => signOut({ callbackUrl: '/' })}
                         >
                            <LogOut className="h-4 w-4" />
@@ -57,7 +57,7 @@ export function AdminHeader() {
                <div className="h-7 w-7 bg-white text-black flex items-center justify-center font-bold text-sm rounded">
                   F
                </div>
-               <span className="font-bold text-white">FIXUP</span>
+               <span className="font-bold text-gray-900">FIXUP</span>
             </Link>
          </div>
       </header>

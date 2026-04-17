@@ -61,10 +61,10 @@ export const ADMIN_NAVIGATION: NavItem[] = [
       description: 'تقييمات العمال',
    },
    {
-      id: 'create-worker',
-      label: 'إضافة عامل',
-      href: '/admin/dashboard?modal=create-worker',
+      id: 'worker-requests',
+      label: 'طلبات العمال',
+      href: '/admin/dashboard?modal=worker-requests',
       icon: UserPlus,
-      description: 'إضافة عامل جديد',
+      description: 'إدارة طلبات التسجيل',
    },
 ];

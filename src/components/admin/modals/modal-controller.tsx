@@ -7,7 +7,7 @@ import { CustomersModal } from './customers-modal';
 import { AddressesModal } from './addresses-modal';
 import { MessagesModal } from './messages-modal';
 import { ReviewsModal } from './reviews-modal';
-import { CreateWorkerModal } from './create-worker-modal';
+import { WorkerRequestsModal } from './worker-requests-modal';
 
 /**
  * Modal controller component
@@ -26,7 +26,7 @@ export function ModalController() {
          <AddressesModal open={modal === 'addresses'} />
          <MessagesModal open={modal === 'messages'} />
          <ReviewsModal open={modal === 'reviews'} />
-         <CreateWorkerModal open={modal === 'create-worker'} />
+         <WorkerRequestsModal open={modal === 'worker-requests'} />
       </>
    );
 }

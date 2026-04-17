@@ -484,8 +484,8 @@ export const QUICK_ACTIONS: QuickActionProps[] = [
       description: 'إدارة حسابات العملاء',
    },
    {
-      label: 'إضافة عامل',
-      modal: 'create-worker',
-      description: 'تسجيل عامل جديد',
+      label: 'طلبات العمال',
+      modal: 'worker-requests',
+      description: 'إدارة طلبات التسجيل',
    },
 ];

@@ -57,33 +57,33 @@ export function ServicesModal({ open }: BaseModalProps) {
             {/* Search and Add */}
             <div className="flex items-center gap-3">
                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <Input
                      placeholder="البحث في الخدمات..."
                      value={searchQuery}
                      onChange={(e) => setSearchQuery(e.target.value)}
-                     className="pl-10 bg-zinc-900 border-white/10 text-white placeholder:text-white/40"
+                     className="pl-10 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
                   />
                </div>
-               <Button className="bg-white text-black hover:bg-white/90 gap-2">
+               <Button className="bg-gray-900 text-white hover:bg-gray-800 gap-2">
                   <Plus className="h-4 w-4" />
                   إضافة خدمة
                </Button>
             </div>
 
             {/* Services Table */}
-            <div className="border border-white/10 rounded-md overflow-hidden">
+            <div className="border border-gray-200 rounded-md overflow-hidden">
                <Table>
                   <TableHeader>
-                     <TableRow className="border-white/10 hover:bg-transparent">
-                        <TableHead className="text-white/60">الخدمة</TableHead>
-                        <TableHead className="text-white/60">الفئة</TableHead>
-                        <TableHead className="text-white/60">
+                     <TableRow className="border-gray-200 hover:bg-transparent">
+                        <TableHead className="text-gray-500">الخدمة</TableHead>
+                        <TableHead className="text-gray-500">الفئة</TableHead>
+                        <TableHead className="text-gray-500">
                            نطاق السعر
                         </TableHead>
-                        <TableHead className="text-white/60">العمال</TableHead>
-                        <TableHead className="text-white/60">الحالة</TableHead>
-                        <TableHead className="text-white/60 text-right">
+                        <TableHead className="text-gray-500">العمال</TableHead>
+                        <TableHead className="text-gray-500">الحالة</TableHead>
+                        <TableHead className="text-gray-500 text-right">
                            الإجراءات
                         </TableHead>
                      </TableRow>
@@ -92,30 +92,30 @@ export function ServicesModal({ open }: BaseModalProps) {
                      {filteredServices.map((service) => (
                         <TableRow
                            key={service.id}
-                           className="border-white/10 hover:bg-white/5"
+                           className="border-gray-200 hover:bg-gray-50"
                         >
                            <TableCell>
                               <div className="flex items-center gap-3">
-                                 <div className="h-8 w-8 bg-white/10 rounded flex items-center justify-center">
-                                    <Wrench className="h-4 w-4 text-white/60" />
+                                 <div className="h-8 w-8 bg-gray-100 rounded flex items-center justify-center">
+                                    <Wrench className="h-4 w-4 text-gray-500" />
                                  </div>
                                  <div>
-                                    <p className="font-medium text-white">
+                                    <p className="font-medium text-gray-900">
                                        {service.name}
                                     </p>
-                                    <p className="text-xs text-white/40">
+                                    <p className="text-xs text-gray-400">
                                        {service.description}
                                     </p>
                                  </div>
                               </div>
                            </TableCell>
-                           <TableCell className="text-white/80">
+                           <TableCell className="text-gray-700">
                               {service.category}
                            </TableCell>
-                           <TableCell className="text-white/80">
+                           <TableCell className="text-gray-700">
                               {service.price}
                            </TableCell>
-                           <TableCell className="text-white/80">
+                           <TableCell className="text-gray-700">
                               {service.workers}
                            </TableCell>
                            <TableCell>
@@ -125,8 +125,8 @@ export function ServicesModal({ open }: BaseModalProps) {
                                  }
                                  className={
                                     service.isActive
-                                       ? 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30'
-                                       : 'bg-zinc-500/20 text-zinc-400 hover:bg-zinc-500/30'
+                                       ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200'
+                                       : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
                                  }
                               >
                                  {service.isActive ? 'نشط' : 'غير نشط'}
@@ -137,7 +137,7 @@ export function ServicesModal({ open }: BaseModalProps) {
                                  <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="h-8 w-8 text-white/60 hover:text-white hover:bg-white/10"
+                                    className="h-8 w-8 text-gray-500 hover:text-gray-700 hover:bg-gray-100"
                                     onClick={() =>
                                        handleToggleStatus(service.id)
                                     }
@@ -147,7 +147,7 @@ export function ServicesModal({ open }: BaseModalProps) {
                                  <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="h-8 w-8 text-white/60 hover:text-red-400 hover:bg-red-500/10"
+                                    className="h-8 w-8 text-gray-500 hover:text-red-600 hover:bg-red-100"
                                     onClick={() =>
                                        handleDeleteService(service.id)
                                     }

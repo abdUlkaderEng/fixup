@@ -45,39 +45,39 @@ export function CustomersModal({ open }: BaseModalProps) {
          <div className="space-y-4">
             {/* Search */}
             <div className="relative">
-               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
+               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                <Input
                   placeholder="البحث بالاسم، البريد، أو الهاتف..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 bg-zinc-900 border-white/10 text-white placeholder:text-white/40"
+                  className="pl-10 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
                />
             </div>
 
             {/* Customers Table */}
-            <div className="border border-white/10 rounded-md overflow-hidden">
+            <div className="border border-gray-200 rounded-md overflow-hidden">
                <Table>
                   <TableHeader>
-                     <TableRow className="border-white/10 hover:bg-transparent">
-                        <TableHead className="text-white/60">العميل</TableHead>
-                        <TableHead className="text-white/60">
+                     <TableRow className="border-gray-200 hover:bg-transparent">
+                        <TableHead className="text-gray-500">العميل</TableHead>
+                        <TableHead className="text-gray-500">
                            جهة الاتصال
                         </TableHead>
-                        <TableHead className="text-white/60">الموقع</TableHead>
-                        <TableHead className="text-white/60">الوظائف</TableHead>
-                        <TableHead className="text-white/60">الحالة</TableHead>
+                        <TableHead className="text-gray-500">الموقع</TableHead>
+                        <TableHead className="text-gray-500">الوظائف</TableHead>
+                        <TableHead className="text-gray-500">الحالة</TableHead>
                      </TableRow>
                   </TableHeader>
                   <TableBody>
                      {filteredCustomers.map((customer) => (
                         <TableRow
                            key={customer.id}
-                           className="border-white/10 hover:bg-white/5"
+                           className="border-gray-200 hover:bg-gray-50"
                         >
                            <TableCell>
                               <div className="flex items-center gap-3">
-                                 <Avatar className="h-9 w-9 bg-white/10">
-                                    <AvatarFallback className="bg-white/10 text-white text-sm">
+                                 <Avatar className="h-9 w-9 bg-gray-200">
+                                    <AvatarFallback className="bg-gray-200 text-gray-700 text-sm">
                                        {customer.name
                                           .split(' ')
                                           .map((n) => n[0])
@@ -85,10 +85,10 @@ export function CustomersModal({ open }: BaseModalProps) {
                                     </AvatarFallback>
                                  </Avatar>
                                  <div>
-                                    <p className="font-medium text-white">
+                                    <p className="font-medium text-gray-900">
                                        {customer.name}
                                     </p>
-                                    <p className="text-xs text-white/40 font-mono">
+                                    <p className="text-xs text-gray-400 font-mono">
                                        {customer.id}
                                     </p>
                                  </div>
@@ -96,26 +96,26 @@ export function CustomersModal({ open }: BaseModalProps) {
                            </TableCell>
                            <TableCell>
                               <div className="space-y-1">
-                                 <div className="flex items-center gap-2 text-sm text-white/80">
-                                    <Mail className="h-3 w-3 text-white/40" />
+                                 <div className="flex items-center gap-2 text-sm text-gray-700">
+                                    <Mail className="h-3 w-3 text-gray-400" />
                                     {customer.email}
                                  </div>
-                                 <div className="flex items-center gap-2 text-sm text-white/80">
-                                    <Phone className="h-3 w-3 text-white/40" />
+                                 <div className="flex items-center gap-2 text-sm text-gray-700">
+                                    <Phone className="h-3 w-3 text-gray-400" />
                                     {customer.phone}
                                  </div>
                               </div>
                            </TableCell>
                            <TableCell>
-                              <div className="flex items-center gap-2 text-sm text-white/80">
-                                 <MapPin className="h-3 w-3 text-white/40" />
+                              <div className="flex items-center gap-2 text-sm text-gray-700">
+                                 <MapPin className="h-3 w-3 text-gray-400" />
                                  {customer.location}
                               </div>
                            </TableCell>
                            <TableCell>
                               <div className="flex items-center gap-2">
-                                 <BriefcaseIcon className="h-4 w-4 text-white/40" />
-                                 <span className="text-white/80">
+                                 <BriefcaseIcon className="h-4 w-4 text-gray-400" />
+                                 <span className="text-gray-700">
                                     {customer.jobsCount}
                                  </span>
                               </div>
@@ -127,8 +127,8 @@ export function CustomersModal({ open }: BaseModalProps) {
                                  }
                                  className={
                                     customer.isActive
-                                       ? 'bg-emerald-500/20 text-emerald-400'
-                                       : 'bg-zinc-500/20 text-zinc-400'
+                                       ? 'bg-emerald-100 text-emerald-700'
+                                       : 'bg-gray-200 text-gray-600'
                                  }
                               >
                                  {customer.isActive ? 'نشط' : 'غير نشط'}

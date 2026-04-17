@@ -42,7 +42,7 @@ function StarRating({ rating }: { rating: number }) {
                className={`h-4 w-4 ${
                   i < rating
                      ? 'text-yellow-400 fill-yellow-400'
-                     : 'text-white/20'
+                     : 'text-gray-300'
                }`}
             />
          ))}
@@ -55,9 +55,9 @@ function StarRating({ rating }: { rating: number }) {
  */
 function StatusBadge({ status }: { status: ReviewStatus }) {
    const styles = {
-      approved: 'bg-emerald-500/20 text-emerald-400',
-      pending: 'bg-yellow-500/20 text-yellow-400',
-      rejected: 'bg-red-500/20 text-red-400',
+      approved: 'bg-emerald-100 text-emerald-700',
+      pending: 'bg-yellow-100 text-yellow-700',
+      rejected: 'bg-red-100 text-red-700',
    };
 
    const labels = REVIEW_STATUS_LABELS;
@@ -99,19 +99,19 @@ export function ReviewsModal({ open }: BaseModalProps) {
             {/* Filters */}
             <div className="flex flex-col sm:flex-row gap-3">
                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <Input
                      placeholder="البحث بالعامل، العميل، أو الوظيفة..."
                      value={searchQuery}
                      onChange={(e) => setSearchQuery(e.target.value)}
-                     className="pl-10 bg-zinc-900 border-white/10 text-white placeholder:text-white/40"
+                     className="pl-10 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
                   />
                </div>
                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-full sm:w-40 bg-zinc-900 border-white/10 text-white">
+                  <SelectTrigger className="w-full sm:w-40 bg-white border-gray-300 text-gray-900">
                      <SelectValue placeholder="تصفية حسب الحالة" />
                   </SelectTrigger>
-                  <SelectContent className="bg-zinc-900 border-white/10">
+                  <SelectContent className="bg-white border-gray-300">
                      <SelectItem value="all">جميع الحالات</SelectItem>
                      <SelectItem value="approved">معتمد</SelectItem>
                      <SelectItem value="pending">معلق</SelectItem>
@@ -121,15 +121,15 @@ export function ReviewsModal({ open }: BaseModalProps) {
             </div>
 
             {/* Reviews Table */}
-            <div className="border border-white/10 rounded-md overflow-hidden">
+            <div className="border border-gray-200 rounded-md overflow-hidden">
                <Table>
                   <TableHeader>
-                     <TableRow className="border-white/10 hover:bg-transparent">
-                        <TableHead className="text-white/60">العامل</TableHead>
-                        <TableHead className="text-white/60">التقييم</TableHead>
-                        <TableHead className="text-white/60">التقييم</TableHead>
-                        <TableHead className="text-white/60">الحالة</TableHead>
-                        <TableHead className="text-white/60 text-right">
+                     <TableRow className="border-gray-200 hover:bg-transparent">
+                        <TableHead className="text-gray-500">العامل</TableHead>
+                        <TableHead className="text-gray-500">التقييم</TableHead>
+                        <TableHead className="text-gray-500">التقييم</TableHead>
+                        <TableHead className="text-gray-500">الحالة</TableHead>
+                        <TableHead className="text-gray-500 text-right">
                            الإجراءات
                         </TableHead>
                      </TableRow>
@@ -138,12 +138,12 @@ export function ReviewsModal({ open }: BaseModalProps) {
                      {filteredReviews.map((review) => (
                         <TableRow
                            key={review.id}
-                           className="border-white/10 hover:bg-white/5"
+                           className="border-gray-200 hover:bg-gray-50"
                         >
                            <TableCell>
                               <div className="flex items-center gap-3">
-                                 <Avatar className="h-9 w-9 bg-white/10">
-                                    <AvatarFallback className="bg-white/10 text-white text-sm">
+                                 <Avatar className="h-9 w-9 bg-gray-200">
+                                    <AvatarFallback className="bg-gray-200 text-gray-700 text-sm">
                                        {review.workerName
                                           .split(' ')
                                           .map((n) => n[0])
@@ -151,10 +151,10 @@ export function ReviewsModal({ open }: BaseModalProps) {
                                     </AvatarFallback>
                                  </Avatar>
                                  <div>
-                                    <p className="font-medium text-white">
+                                    <p className="font-medium text-gray-900">
                                        {review.workerName}
                                     </p>
-                                    <p className="text-xs text-white/40 font-mono">
+                                    <p className="text-xs text-gray-400 font-mono">
                                        {review.workerId}
                                     </p>
                                  </div>
@@ -162,14 +162,14 @@ export function ReviewsModal({ open }: BaseModalProps) {
                            </TableCell>
                            <TableCell>
                               <div className="space-y-1">
-                                 <p className="text-sm text-white/80 max-w-xs truncate">
+                                 <p className="text-sm text-gray-700 max-w-xs truncate">
                                     &ldquo;{review.comment}&rdquo;
                                  </p>
-                                 <div className="flex items-center gap-2 text-xs text-white/40">
+                                 <div className="flex items-center gap-2 text-xs text-gray-400">
                                     <User className="h-3 w-3" />
                                     {review.customerName}
                                  </div>
-                                 <div className="flex items-center gap-2 text-xs text-white/40">
+                                 <div className="flex items-center gap-2 text-xs text-gray-400">
                                     <Briefcase className="h-3 w-3" />
                                     {review.jobTitle}
                                  </div>
@@ -186,14 +186,14 @@ export function ReviewsModal({ open }: BaseModalProps) {
                                  <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="h-8 w-8 text-white/60 hover:text-white hover:bg-white/10"
+                                    className="h-8 w-8 text-gray-500 hover:text-gray-700 hover:bg-gray-100"
                                  >
                                     <Eye className="h-4 w-4" />
                                  </Button>
                                  <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="h-8 w-8 text-white/60 hover:text-red-400 hover:bg-red-500/10"
+                                    className="h-8 w-8 text-gray-500 hover:text-red-600 hover:bg-red-100"
                                  >
                                     <Trash2 className="h-4 w-4" />
                                  </Button>

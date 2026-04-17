@@ -40,10 +40,10 @@ import type { Job, JobStatus } from '@/types/admin';
  */
 function StatusBadge({ status }: { status: JobStatus }) {
    const variants = {
-      pending: 'bg-yellow-500/20 text-yellow-400',
-      'in-progress': 'bg-blue-500/20 text-blue-400',
-      completed: 'bg-emerald-500/20 text-emerald-400',
-      cancelled: 'bg-red-500/20 text-red-400',
+      pending: 'bg-yellow-100 text-yellow-700',
+      'in-progress': 'bg-blue-100 text-blue-700',
+      completed: 'bg-emerald-100 text-emerald-700',
+      cancelled: 'bg-red-100 text-red-700',
    };
 
    const labels = JOB_STATUS_LABELS;
@@ -86,20 +86,20 @@ export function JobsModal({ open }: BaseModalProps) {
             {/* Filters */}
             <div className="flex flex-col sm:flex-row gap-3">
                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <Input
                      placeholder="البحث بالمعرف، العنوان، أو العميل..."
                      value={searchQuery}
                      onChange={(e) => setSearchQuery(e.target.value)}
-                     className="pl-10 bg-zinc-900 border-white/10 text-white placeholder:text-white/40"
+                     className="pl-10 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
                   />
                </div>
                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-full sm:w-40 bg-zinc-900 border-white/10 text-white">
-                     <Filter className="h-4 w-4 mr-2 text-white/40" />
+                  <SelectTrigger className="w-full sm:w-40 bg-white border-gray-300 text-gray-900">
+                     <Filter className="h-4 w-4 mr-2 text-gray-400" />
                      <SelectValue placeholder="تصفية حسب الحالة" />
                   </SelectTrigger>
-                  <SelectContent className="bg-zinc-900 border-white/10">
+                  <SelectContent className="bg-white border-gray-300">
                      <SelectItem value="all">جميع الحالات</SelectItem>
                      <SelectItem value="pending">معلق</SelectItem>
                      <SelectItem value="in-progress">قيد التنفيذ</SelectItem>
@@ -110,45 +110,45 @@ export function JobsModal({ open }: BaseModalProps) {
             </div>
 
             {/* Jobs Table */}
-            <div className="border border-white/10 rounded-md overflow-hidden">
+            <div className="border border-gray-200 rounded-md overflow-hidden">
                <Table>
                   <TableHeader>
-                     <TableRow className="border-white/10 hover:bg-transparent">
-                        <TableHead className="text-white/60">
+                     <TableRow className="border-gray-200 hover:bg-transparent">
+                        <TableHead className="text-gray-500">
                            معرف الوظيفة
                         </TableHead>
-                        <TableHead className="text-white/60">
+                        <TableHead className="text-gray-500">
                            التفاصيل
                         </TableHead>
-                        <TableHead className="text-white/60">الخدمة</TableHead>
-                        <TableHead className="text-white/60">العامل</TableHead>
-                        <TableHead className="text-white/60">الحالة</TableHead>
-                        <TableHead className="text-white/60">السعر</TableHead>
+                        <TableHead className="text-gray-500">الخدمة</TableHead>
+                        <TableHead className="text-gray-500">العامل</TableHead>
+                        <TableHead className="text-gray-500">الحالة</TableHead>
+                        <TableHead className="text-gray-500">السعر</TableHead>
                      </TableRow>
                   </TableHeader>
                   <TableBody>
                      {filteredJobs.map((job) => (
                         <TableRow
                            key={job.id}
-                           className="border-white/10 hover:bg-white/5"
+                           className="border-gray-200 hover:bg-gray-50"
                         >
-                           <TableCell className="font-mono text-sm text-white/60">
+                           <TableCell className="font-mono text-sm text-gray-500">
                               {job.id}
                            </TableCell>
                            <TableCell>
                               <div className="space-y-1">
-                                 <p className="font-medium text-white">
+                                 <p className="font-medium text-gray-900">
                                     {job.title}
                                  </p>
-                                 <div className="flex items-center gap-2 text-xs text-white/40">
+                                 <div className="flex items-center gap-2 text-xs text-gray-400">
                                     <User className="h-3 w-3" />
                                     {job.customer}
                                  </div>
-                                 <div className="flex items-center gap-2 text-xs text-white/40">
+                                 <div className="flex items-center gap-2 text-xs text-gray-400">
                                     <MapPin className="h-3 w-3" />
                                     {job.location}
                                  </div>
-                                 <div className="flex items-center gap-2 text-xs text-white/40">
+                                 <div className="flex items-center gap-2 text-xs text-gray-400">
                                     <Calendar className="h-3 w-3" />
                                     {job.date}
                                  </div>
@@ -156,15 +156,15 @@ export function JobsModal({ open }: BaseModalProps) {
                            </TableCell>
                            <TableCell>
                               <div className="flex items-center gap-2">
-                                 <Briefcase className="h-4 w-4 text-white/40" />
-                                 <span className="text-white/80">
+                                 <Briefcase className="h-4 w-4 text-gray-400" />
+                                 <span className="text-gray-700">
                                     {job.service}
                                  </span>
                               </div>
                            </TableCell>
-                           <TableCell className="text-white/80">
+                           <TableCell className="text-gray-700">
                               {job.worker || (
-                                 <span className="text-white/40 italic">
+                                 <span className="text-gray-400 italic">
                                     غير معين
                                  </span>
                               )}
@@ -172,7 +172,7 @@ export function JobsModal({ open }: BaseModalProps) {
                            <TableCell>
                               <StatusBadge status={job.status} />
                            </TableCell>
-                           <TableCell className="font-medium text-white">
+                           <TableCell className="font-medium text-gray-900">
                               {job.price}
                            </TableCell>
                         </TableRow>
