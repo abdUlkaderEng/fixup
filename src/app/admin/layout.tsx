@@ -1,10 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { LogOut } from 'lucide-react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { AdminHeader, SidebarNav } from '@/components/admin';
+import { useAuthToken } from '@/hooks/use-auth-token';
 
 /**
  * Admin layout component
@@ -16,6 +18,14 @@ export default function AdminLayout({
 }: {
    children: React.ReactNode;
 }) {
+   // Sync Bearer token from NextAuth session to axios for all API calls
+   useAuthToken();
+
+   const { data: session } = useSession();
+   const adminName = session?.user?.name || 'المشرف';
+   const adminEmail = session?.user?.email || 'admin@fixup.com';
+   const adminInitial = adminName.charAt(0).toUpperCase();
+
    return (
       <div className="min-h-screen bg-white text-gray-900">
          {/* Fixed Sidebar - Desktop */}
@@ -49,12 +59,24 @@ export default function AdminLayout({
             <div className="border-t border-gray-200 p-3">
                <div className="flex items-center gap-2.5 mb-3 px-2">
                   <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center shrink-0 text-gray-700">
-                     <span className="text-xs font-bold">A</span>
+                     {session?.user?.profile_picture ? (
+                        <Image
+                           src={session.user.profile_picture}
+                           alt={adminName}
+                           width={32}
+                           height={32}
+                           className="h-8 w-8 rounded-full object-cover"
+                        />
+                     ) : (
+                        <span className="text-xs font-bold">
+                           {adminInitial}
+                        </span>
+                     )}
                   </div>
                   <div className="min-w-0">
-                     <p className="text-sm font-medium truncate">المشرف</p>
+                     <p className="text-sm font-medium truncate">{adminName}</p>
                      <p className="text-[10px] text-gray-500 truncate">
-                        admin@fixup.com
+                        {adminEmail}
                      </p>
                   </div>
                </div>

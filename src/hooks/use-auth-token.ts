@@ -9,12 +9,18 @@ import { setAuthToken } from '@/lib/axios';
  * Single Responsibility: Authentication token synchronization
  */
 export function useAuthToken(): void {
-   const { data: session } = useSession();
+   const { data: session, status } = useSession();
 
    useEffect(() => {
       const token = session?.user?.accessToken;
+      console.log(
+         '[useAuthToken] Session status:',
+         status,
+         'Token exists:',
+         !!token
+      );
       setAuthToken(token || null);
-   }, [session]);
+   }, [session, status]);
 }
 
 export default useAuthToken;
