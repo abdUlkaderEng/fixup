@@ -48,7 +48,7 @@ export function PhoneField({ form, isEditing }: FieldProps) {
          {isEditing ? (
             <FormField
                control={form.control}
-               name="phone"
+               name="phone_number"
                render={({ field }) => (
                   <FormItem>
                      <FormControl>
@@ -64,7 +64,7 @@ export function PhoneField({ form, isEditing }: FieldProps) {
             />
          ) : (
             <p className="text-muted-foreground">
-               {(form.getValues('phone') as string) || 'غير متوفر'}
+               {(form.getValues('phone_number') as string) || 'غير متوفر'}
             </p>
          )}
       </InfoField>

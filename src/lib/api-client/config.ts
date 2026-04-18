@@ -6,8 +6,7 @@
  */
 
 /** Base URL for API requests - falls back to local dev server */
-export const API_BASE_URL =
-   process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 /** Default axios instance configuration */
 export const AXIOS_CONFIG = {

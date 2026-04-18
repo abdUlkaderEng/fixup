@@ -16,10 +16,6 @@ interface UseWorkerManagementReturn {
    approveWorker: (workerId: number) => Promise<boolean>;
 }
 
-/**
- * Hook for worker management operations (update, delete, approve)
- * Single Responsibility: Handle admin worker CRUD operations
- */
 export function useWorkerManagement(
    onSuccess: () => void
 ): UseWorkerManagementReturn {

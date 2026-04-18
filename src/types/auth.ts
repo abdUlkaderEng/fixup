@@ -6,7 +6,7 @@ export interface LoginRequest {
 export interface RegisterRequest {
    name: string;
    email: string;
-   phone: string;
+   phone_number: string;
    address?: string;
    birth_date?: string;
    password: string;
@@ -17,7 +17,7 @@ export interface User {
    id: number;
    name: string;
    email: string;
-   phone: string | null;
+   phone_number: string | null;
    address: string | null;
    birth_date: string | null;
    profile_picture: string | null;
@@ -35,7 +35,7 @@ export interface AuthResponse {
 
 export interface UpdateProfileRequest {
    name: string;
-   phone: string;
+   phone_number: string;
    address?: string;
    birth_date?: string;
 }

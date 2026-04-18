@@ -34,7 +34,7 @@ export function useProfileForm({
    const defaultValues = useMemo(
       () => ({
          name: user?.name || '',
-         phone: user?.phone || '',
+         phone_number: user?.phone_number || '',
          address: user?.address || '',
          birth_date: user?.birth_date || '',
          ...(isWorker && {
@@ -61,7 +61,7 @@ export function useProfileForm({
       if (user) {
          form.reset({
             name: user.name || '',
-            phone: user.phone || '',
+            phone_number: user.phone_number || '',
             address: user.address || '',
             birth_date: user.birth_date || '',
             ...(isWorker && {

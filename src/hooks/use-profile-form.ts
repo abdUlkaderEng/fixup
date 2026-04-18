@@ -26,7 +26,7 @@ export function useProfileForm(user: User | undefined): UseProfileFormReturn {
    const defaultValues = useMemo(
       () => ({
          name: user?.name || '',
-         phone: user?.phone || '',
+         phone_number: user?.phone_number || '',
          address: user?.address || '',
          birth_date: user?.birth_date || '',
       }),
@@ -42,7 +42,7 @@ export function useProfileForm(user: User | undefined): UseProfileFormReturn {
       if (user) {
          form.reset({
             name: user.name || '',
-            phone: user.phone || '',
+            phone_number: user.phone_number || '',
             address: user.address || '',
             birth_date: user.birth_date || '',
          });

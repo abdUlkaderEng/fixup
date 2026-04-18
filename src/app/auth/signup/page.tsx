@@ -50,7 +50,7 @@ export default function SignupPage() {
       defaultValues: {
          fullName: '',
          email: '',
-         phone: '',
+         phone_number: '',
          address: '',
          birthDate: '',
          password: '',
@@ -79,7 +79,7 @@ export default function SignupPage() {
          await authApi.register({
             name: data.fullName,
             email: data.email,
-            phone: data.phone,
+            phone_number: data.phone_number,
             address: data.address,
             birth_date: data.birthDate,
             password: data.password,
@@ -90,7 +90,7 @@ export default function SignupPage() {
             saveWorkerSignupDraft({
                fullName: data.fullName,
                email: data.email,
-               phone: data.phone,
+               phone_number: data.phone_number,
                address: data.address,
                birthDate: data.birthDate,
                password: data.password,
@@ -208,7 +208,7 @@ export default function SignupPage() {
 
                         <FormField
                            control={form.control}
-                           name="phone"
+                           name="phone_number"
                            render={({ field, fieldState }) => (
                               <FormItem className="space-y-0">
                                  <div className="relative">

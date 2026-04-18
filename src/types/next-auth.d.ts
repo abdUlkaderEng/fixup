@@ -5,7 +5,7 @@ declare module 'next-auth' {
    interface User {
       id: string;
       accessToken?: string;
-      phone?: string | null;
+      phone_number?: string | null;
       address?: string | null;
       birth_date?: string | null;
       role?: string;
@@ -24,7 +24,7 @@ declare module 'next-auth' {
          image?: string | null;
          accessToken?: string;
          provider?: string;
-         phone?: string | null;
+         phone_number?: string | null;
          address?: string | null;
          birth_date?: string | null;
          role?: string;
@@ -45,7 +45,7 @@ declare module 'next-auth/jwt' {
       name?: string | null;
       email?: string | null;
       image?: string | null;
-      phone?: string | null;
+      phone_number?: string | null;
       address?: string | null;
       birth_date?: string | null;
       role?: string;

@@ -28,7 +28,7 @@ export const signupSchema = z
          .string()
          .min(1, 'البريد الإلكتروني مطلوب')
          .email('البريد الإلكتروني غير صالح'),
-      phone: z
+      phone_number: z
          .string()
          .min(1, 'رقم الهاتف مطلوب')
          .regex(/^[\d\s\-\+\(\)]+$/, 'رقم الهاتف يجب أن يحتوي على أرقام فقط')
