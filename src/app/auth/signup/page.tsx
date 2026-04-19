@@ -37,6 +37,7 @@ import { signupSchema, type SignupInput } from '../schemas';
 import { clearWorkerSignupDraft, saveWorkerSignupDraft } from '../signup-flow';
 import { toast } from 'sonner';
 import { authApi } from '@/api/auth';
+import { MapPicker } from '@/components/map-picker';
 
 type SignupFormValues = z.input<typeof signupSchema>;
 
@@ -252,7 +253,6 @@ export default function SignupPage() {
                               </FormItem>
                            )}
                         />
-
                         <FormField
                            control={form.control}
                            name="birthDate"
@@ -275,7 +275,13 @@ export default function SignupPage() {
                            )}
                         />
                      </div>
-
+                     <MapPicker
+                        mapTilerKey={process.env.NEXT_PUBLIC_MAPTILER_KEY!}
+                        onLocationSelect={(lng, lat) => {
+                           console.log('Selected:', lng, lat);
+                           // Do something with coordinates
+                        }}
+                     />
                      <FormField
                         control={form.control}
                         name="password"
