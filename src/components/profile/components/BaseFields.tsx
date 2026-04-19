@@ -72,33 +72,112 @@ export function PhoneField({ form, isEditing }: FieldProps) {
 }
 
 export function AddressField({ form, isEditing }: FieldProps) {
+   const detailedAddress = form.getValues('detailed_address');
+   const areaId = form.getValues('area_address_id');
+   const lat = form.getValues('latitude');
+   const lng = form.getValues('longitude');
+
    return (
       <InfoField
          icon={<MapPin className="h-5 w-5 text-primary" />}
          title="العنوان"
       >
          {isEditing ? (
-            <FormField
-               control={form.control}
-               name="address"
-               render={({ field }) => (
-                  <FormItem>
-                     <FormControl>
-                        <Input
-                           {...field}
-                           value={field.value || ''}
-                           placeholder="أدخل العنوان"
-                           className="text-right"
-                        />
-                     </FormControl>
-                     <FormMessage />
-                  </FormItem>
-               )}
-            />
+            <div className="space-y-2">
+               <FormField
+                  control={form.control}
+                  name="detailed_address"
+                  render={({ field }) => (
+                     <FormItem>
+                        <FormControl>
+                           <Input
+                              {...field}
+                              value={field.value || ''}
+                              placeholder="العنوان التفصيلي"
+                              className="text-right"
+                           />
+                        </FormControl>
+                        <FormMessage />
+                     </FormItem>
+                  )}
+               />
+               <div className="grid grid-cols-2 gap-2">
+                  <FormField
+                     control={form.control}
+                     name="area_address_id"
+                     render={({ field }) => (
+                        <FormItem>
+                           <FormControl>
+                              <Input
+                                 {...field}
+                                 value={field.value || ''}
+                                 type="number"
+                                 placeholder="معرف المنطقة"
+                                 className="text-right"
+                              />
+                           </FormControl>
+                           <FormMessage />
+                        </FormItem>
+                     )}
+                  />
+               </div>
+               <div className="grid grid-cols-2 gap-2">
+                  <FormField
+                     control={form.control}
+                     name="latitude"
+                     render={({ field }) => (
+                        <FormItem>
+                           <FormControl>
+                              <Input
+                                 {...field}
+                                 value={field.value || ''}
+                                 type="number"
+                                 step="any"
+                                 placeholder="خط العرض"
+                                 className="text-right"
+                              />
+                           </FormControl>
+                           <FormMessage />
+                        </FormItem>
+                     )}
+                  />
+                  <FormField
+                     control={form.control}
+                     name="longitude"
+                     render={({ field }) => (
+                        <FormItem>
+                           <FormControl>
+                              <Input
+                                 {...field}
+                                 value={field.value || ''}
+                                 type="number"
+                                 step="any"
+                                 placeholder="خط الطول"
+                                 className="text-right"
+                              />
+                           </FormControl>
+                           <FormMessage />
+                        </FormItem>
+                     )}
+                  />
+               </div>
+            </div>
          ) : (
-            <p className="text-muted-foreground">
-               {(form.getValues('address') as string) || 'غير متوفر'}
-            </p>
+            <div className="space-y-1">
+               <p className="text-muted-foreground">
+                  {detailedAddress || 'غير متوفر'}
+               </p>
+               {areaId && (
+                  <p className="text-xs text-muted-foreground">
+                     منطقة: {areaId}
+                  </p>
+               )}
+               {lat && lng && (
+                  <p className="text-xs text-muted-foreground">
+                     الإحداثيات: {lat.toFixed(6)}, {lng.toFixed(6)}
+                  </p>
+               )}
+            </div>
          )}
       </InfoField>
    );

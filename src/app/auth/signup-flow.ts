@@ -4,7 +4,15 @@ const WORKER_SIGNUP_STORAGE_KEY = 'worker-signup-draft';
 
 export type WorkerSignupDraft = Pick<
    SignupInput,
-   'fullName' | 'email' | 'phone_number' | 'address' | 'birthDate' | 'password'
+   | 'fullName'
+   | 'email'
+   | 'phone_number'
+   | 'latitude'
+   | 'longitude'
+   | 'address'
+   | 'area_address_id'
+   | 'birthDate'
+   | 'password'
 >;
 
 export const saveWorkerSignupDraft = (draft: WorkerSignupDraft): void => {

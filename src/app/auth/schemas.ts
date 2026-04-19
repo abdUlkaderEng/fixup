@@ -35,9 +35,12 @@ export const signupSchema = z
          .min(10, 'رقم الهاتف يجب أن يكون 10 أرقام على الأقل'),
       address: z
          .string()
-         .min(1, 'العنوان مطلوب')
+         .min(1, 'العنوان التفصيلي مطلوب')
          .min(5, 'العنوان يجب أن يكون 5 أحرف على الأقل')
-         .max(200, 'العنوان يجب أن لا يتجاوز 200 حرف'),
+         .max(500, 'العنوان يجب أن لا يتجاوز 500 حرف'),
+      area_address_id: z.number().min(1, 'معرف المنطقة مطلوب'),
+      latitude: z.number().default(0),
+      longitude: z.number().default(0),
       birthDate: z
          .string()
          .min(1, 'تاريخ الميلاد مطلوب')

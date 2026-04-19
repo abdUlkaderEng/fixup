@@ -137,7 +137,9 @@ export default function WorkerInfoPage() {
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                      <Phone className="h-4 w-4 text-primary" />
-                     <span className="truncate">{signupDraft.phone}</span>
+                     <span className="truncate">
+                        {signupDraft.phone_number}
+                     </span>
                   </div>
                </div>
 

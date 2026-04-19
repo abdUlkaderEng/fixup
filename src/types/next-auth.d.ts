@@ -6,7 +6,10 @@ declare module 'next-auth' {
       id: string;
       accessToken?: string;
       phone_number?: string | null;
-      address?: string | null;
+      latitude?: number | null;
+      longitude?: number | null;
+      detailed_address?: string | null;
+      area_address_id?: number | null;
       birth_date?: string | null;
       role?: string;
       email_verified_at?: string | null;
@@ -25,7 +28,10 @@ declare module 'next-auth' {
          accessToken?: string;
          provider?: string;
          phone_number?: string | null;
-         address?: string | null;
+         latitude?: number | null;
+         longitude?: number | null;
+         detailed_address?: string | null;
+         area_address_id?: number | null;
          birth_date?: string | null;
          role?: string;
          email_verified_at?: string | null;
@@ -46,7 +52,10 @@ declare module 'next-auth/jwt' {
       email?: string | null;
       image?: string | null;
       phone_number?: string | null;
-      address?: string | null;
+      latitude?: number | null;
+      longitude?: number | null;
+      detailed_address?: string | null;
+      area_address_id?: number | null;
       birth_date?: string | null;
       role?: string;
       email_verified_at?: string | null;

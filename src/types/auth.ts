@@ -7,7 +7,10 @@ export interface RegisterRequest {
    name: string;
    email: string;
    phone_number: string;
-   address?: string;
+   latitude: number;
+   longitude: number;
+   detailed_address: string;
+   area_address_id: number;
    birth_date?: string;
    password: string;
    password_confirmation: string;
@@ -18,7 +21,10 @@ export interface User {
    name: string;
    email: string;
    phone_number: string | null;
-   address: string | null;
+   latitude: number | null;
+   longitude: number | null;
+   detailed_address: string | null;
+   area_address_id: number | null;
    birth_date: string | null;
    profile_picture: string | null;
    role: string;
@@ -36,7 +42,10 @@ export interface AuthResponse {
 export interface UpdateProfileRequest {
    name: string;
    phone_number: string;
-   address?: string;
+   latitude?: number;
+   longitude?: number;
+   detailed_address?: string;
+   area_address_id?: number;
    birth_date?: string;
 }
 

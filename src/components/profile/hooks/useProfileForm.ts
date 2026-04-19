@@ -35,7 +35,10 @@ export function useProfileForm({
       () => ({
          name: user?.name || '',
          phone_number: user?.phone_number || '',
-         address: user?.address || '',
+         latitude: user?.latitude ?? undefined,
+         longitude: user?.longitude ?? undefined,
+         detailed_address: user?.detailed_address || '',
+         area_address_id: user?.area_address_id ?? undefined,
          birth_date: user?.birth_date || '',
          ...(isWorker && {
             about: (user as { about?: string })?.about || '',
@@ -62,7 +65,10 @@ export function useProfileForm({
          form.reset({
             name: user.name || '',
             phone_number: user.phone_number || '',
-            address: user.address || '',
+            latitude: user.latitude ?? undefined,
+            longitude: user.longitude ?? undefined,
+            detailed_address: user.detailed_address || '',
+            area_address_id: user.area_address_id ?? undefined,
             birth_date: user.birth_date || '',
             ...(isWorker && {
                about: (user as { about?: string })?.about || '',

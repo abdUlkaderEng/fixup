@@ -26,6 +26,13 @@ import { Button } from '@/components/ui/button';
 import { FloatingLabelInput } from '@/components/ui/floating-input';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
+   Select,
+   SelectContent,
+   SelectItem,
+   SelectTrigger,
+   SelectValue,
+} from '@/components/ui/select';
+import {
    Form,
    FormControl,
    FormField,
@@ -53,6 +60,9 @@ export default function SignupPage() {
          email: '',
          phone_number: '',
          address: '',
+         area_address_id: 0,
+         latitude: 0,
+         longitude: 0,
          birthDate: '',
          password: '',
          confirmPassword: '',
@@ -81,7 +91,10 @@ export default function SignupPage() {
             name: data.fullName,
             email: data.email,
             phone_number: data.phone_number,
-            address: data.address,
+            latitude: data.latitude,
+            longitude: data.longitude,
+            detailed_address: data.address,
+            area_address_id: data.area_address_id,
             birth_date: data.birthDate,
             password: data.password,
             password_confirmation: data.confirmPassword,
@@ -92,7 +105,10 @@ export default function SignupPage() {
                fullName: data.fullName,
                email: data.email,
                phone_number: data.phone_number,
+               latitude: data.latitude,
+               longitude: data.longitude,
                address: data.address,
+               area_address_id: data.area_address_id,
                birthDate: data.birthDate,
                password: data.password,
             });
@@ -241,9 +257,9 @@ export default function SignupPage() {
                                     <FloatingLabelInput
                                        {...field}
                                        value={field.value ?? ''}
-                                       label="العنوان"
+                                       label="العنوان التفصيلي"
                                        type="text"
-                                       placeholder="دمشق، سوريا"
+                                       placeholder="دمشق، المزة، بناء رقم ١"
                                        className="pr-8"
                                        disabled={isLoading}
                                        error={!!fieldState.error}
@@ -255,32 +271,81 @@ export default function SignupPage() {
                         />
                         <FormField
                            control={form.control}
-                           name="birthDate"
-                           render={({ field, fieldState }) => (
+                           name="area_address_id"
+                           render={({ field }) => (
                               <FormItem className="space-y-0">
-                                 <div className="relative">
-                                    <Calendar className="absolute top-3 right-0 z-10 h-5 w-5 text-muted-foreground" />
-                                    <FloatingLabelInput
-                                       {...field}
-                                       value={field.value ?? ''}
-                                       label="تاريخ الميلاد"
-                                       type="date"
-                                       className="pr-8"
-                                       disabled={isLoading}
-                                       error={!!fieldState.error}
-                                    />
-                                 </div>
+                                 <Select
+                                    value={
+                                       field.value ? String(field.value) : ''
+                                    }
+                                    onValueChange={(value) =>
+                                       field.onChange(Number(value))
+                                    }
+                                    disabled={isLoading}
+                                 >
+                                    <SelectTrigger className="w-full" dir="rtl">
+                                       <SelectValue placeholder="اختر المنطقة" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                       <SelectItem value="1">دمشق</SelectItem>
+                                       <SelectItem value="2">حلب</SelectItem>
+                                       <SelectItem value="3">حمص</SelectItem>
+                                       <SelectItem value="4">
+                                          اللاذقية
+                                       </SelectItem>
+                                       <SelectItem value="5">طرطوس</SelectItem>
+                                       <SelectItem value="6">
+                                          السويداء
+                                       </SelectItem>
+                                       <SelectItem value="7">درعا</SelectItem>
+                                       <SelectItem value="8">إدلب</SelectItem>
+                                       <SelectItem value="9">حماة</SelectItem>
+                                       <SelectItem value="10">الرقة</SelectItem>
+                                       <SelectItem value="11">
+                                          الحسكة
+                                       </SelectItem>
+                                       <SelectItem value="12">
+                                          دير الزور
+                                       </SelectItem>
+                                       <SelectItem value="13">
+                                          القنيطرة
+                                       </SelectItem>
+                                    </SelectContent>
+                                 </Select>
                                  <FormMessage />
                               </FormItem>
                            )}
                         />
                      </div>
+
                      <MapPicker
                         mapTilerKey={process.env.NEXT_PUBLIC_MAPTILER_KEY!}
                         onLocationSelect={(lng, lat) => {
-                           console.log('Selected:', lng, lat);
-                           // Do something with coordinates
+                           form.setValue('latitude', lat);
+                           form.setValue('longitude', lng);
                         }}
+                     />
+
+                     <FormField
+                        control={form.control}
+                        name="birthDate"
+                        render={({ field, fieldState }) => (
+                           <FormItem className="space-y-0">
+                              <div className="relative">
+                                 <Calendar className="absolute top-3 right-0 z-10 h-5 w-5 text-muted-foreground" />
+                                 <FloatingLabelInput
+                                    {...field}
+                                    value={field.value ?? ''}
+                                    label="تاريخ الميلاد"
+                                    type="date"
+                                    className="pr-8"
+                                    disabled={isLoading}
+                                    error={!!fieldState.error}
+                                 />
+                              </div>
+                              <FormMessage />
+                           </FormItem>
+                        )}
                      />
                      <FormField
                         control={form.control}
