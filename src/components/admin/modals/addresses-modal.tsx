@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Search, MapPin, Building, Home, User } from 'lucide-react';
+import { MapPin, Trash2, Plus, X, Check, Loader2 } from 'lucide-react';
 import {
    AdminModal,
    ModalActions,
@@ -9,130 +9,160 @@ import {
    type BaseModalProps,
 } from './base-modal';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import {
-   Table,
-   TableBody,
-   TableCell,
-   TableHead,
-   TableHeader,
-   TableRow,
-} from '@/components/ui/table';
-import { MOCK_ADDRESSES, ADDRESS_TYPE_LABELS } from '@/lib/admin/mock-data';
-import type { Address, AddressType } from '@/types/admin';
+import { Button } from '@/components/ui/button';
+import { useAddresses } from '@/hooks/use-addresses';
 
 /**
- * Address type icon component
- */
-function AddressTypeIcon({ type }: { type: Address['type'] }) {
-   const icons = {
-      home: Home,
-      work: Building,
-      other: MapPin,
-   };
-   const Icon = icons[type];
-   return <Icon className="h-4 w-4 text-gray-400" />;
-}
-
-/**
- * Addresses management modal
+ * Addresses management modal - Connected to backend
+ * Just name only, inline add button, input row on top
  */
 export function AddressesModal({ open }: BaseModalProps) {
-   const [searchQuery, setSearchQuery] = useState('');
+   const {
+      addresses,
+      isLoading,
+      isAdding: isAddingApi,
+      addAddress,
+      deleteAddress,
+   } = useAddresses();
 
-   const filteredAddresses = MOCK_ADDRESSES.filter(
-      (addr) =>
-         addr.street.toLowerCase().includes(searchQuery.toLowerCase()) ||
-         addr.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
-         addr.owner.toLowerCase().includes(searchQuery.toLowerCase())
-   );
+   const [isAdding, setIsAdding] = useState(false);
+   const [newAddressName, setNewAddressName] = useState('');
+
+   const handleAddAddress = async () => {
+      if (!newAddressName.trim()) return;
+
+      try {
+         await addAddress(newAddressName.trim());
+         setNewAddressName(newAddressName.trim());
+         setIsAdding(false);
+      } catch {
+         // Error handled by hook
+      }
+   };
+
+   const handleDeleteAddress = async (id: number) => {
+      try {
+         await deleteAddress(id);
+      } catch {
+         // Error handled by hook
+      }
+   };
+
+   const handleKeyDown = (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter') {
+         handleAddAddress();
+      }
+      if (e.key === 'Escape') {
+         setIsAdding(false);
+         setNewAddressName('');
+      }
+   };
 
    return (
       <AdminModal
          open={open}
          title="إدارة العناوين"
-         description="إدارة العناوين المحفوظة في المنصة"
+         description="إضافة وحذف العناوين"
       >
-         <div className="space-y-4">
-            {/* Search */}
-            <div className="relative">
-               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-               <Input
-                  placeholder="البحث بالشارع، المدينة، أو المالك..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
-               />
+         <div className="space-y-3">
+            {/* Add Input Row - Shows on top when adding */}
+            {isAdding && (
+               <div className="flex items-center gap-2 p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                  <MapPin className="h-4 w-4 text-gray-400 shrink-0" />
+                  <Input
+                     autoFocus
+                     placeholder="اكتب اسم العنوان..."
+                     value={newAddressName}
+                     onChange={(e) => setNewAddressName(e.target.value)}
+                     onKeyDown={handleKeyDown}
+                     className="flex-1 bg-white border-gray-300 text-gray-900 h-9"
+                  />
+                  <Button
+                     size="sm"
+                     onClick={handleAddAddress}
+                     disabled={!newAddressName.trim() || isAddingApi}
+                     className="bg-gray-900 hover:bg-gray-800 text-white h-9 px-3"
+                  >
+                     {isAddingApi ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                     ) : (
+                        <Check className="h-4 w-4" />
+                     )}
+                  </Button>
+                  <Button
+                     size="sm"
+                     variant="ghost"
+                     onClick={() => {
+                        setIsAdding(false);
+                        setNewAddressName('');
+                     }}
+                     className="h-9 px-2 text-gray-500 hover:text-gray-700"
+                  >
+                     <X className="h-4 w-4" />
+                  </Button>
+               </div>
+            )}
+
+            {/* Addresses List */}
+            <div className="space-y-2">
+               {isLoading ? (
+                  <div className="text-center py-8 text-gray-500">
+                     <Loader2 className="h-8 w-8 mx-auto mb-2 animate-spin text-gray-400" />
+                     <p className="text-sm">جاري تحميل العناوين...</p>
+                  </div>
+               ) : addresses.length === 0 ? (
+                  <div className="text-center py-8 text-gray-500">
+                     <MapPin className="h-10 w-10 mx-auto mb-2 text-gray-300" />
+                     <p className="text-sm">لا توجد عناوين</p>
+                  </div>
+               ) : (
+                  addresses.map((address) => (
+                     <div
+                        key={address.id}
+                        className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors group"
+                     >
+                        <div className="flex items-center gap-3">
+                           <MapPin className="h-4 w-4 text-gray-400" />
+                           <span className="text-gray-900">
+                              {address.area_name}
+                           </span>
+                        </div>
+
+                        <Button
+                           variant="ghost"
+                           size="sm"
+                           onClick={() => handleDeleteAddress(address.id)}
+                           disabled={isAddingApi}
+                           className="text-gray-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 p-0"
+                        >
+                           <Trash2 className="h-4 w-4" />
+                        </Button>
+                     </div>
+                  ))
+               )}
             </div>
 
-            {/* Addresses Table */}
-            <div className="border border-gray-200 rounded-md overflow-hidden">
-               <Table>
-                  <TableHeader>
-                     <TableRow className="border-gray-200 hover:bg-transparent">
-                        <TableHead className="text-gray-500">التسمية</TableHead>
-                        <TableHead className="text-gray-500">العنوان</TableHead>
-                        <TableHead className="text-gray-500">الموقع</TableHead>
-                        <TableHead className="text-gray-500">المالك</TableHead>
-                        <TableHead className="text-gray-500">النوع</TableHead>
-                     </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                     {filteredAddresses.map((address) => (
-                        <TableRow
-                           key={address.id}
-                           className="border-gray-200 hover:bg-gray-50"
-                        >
-                           <TableCell>
-                              <div className="flex items-center gap-2">
-                                 <AddressTypeIcon type={address.type} />
-                                 <span className="font-medium text-gray-900">
-                                    {address.label}
-                                 </span>
-                                 {address.isDefault && (
-                                    <Badge className="bg-gray-100 text-gray-700 text-xs">
-                                       افتراضي
-                                    </Badge>
-                                 )}
-                              </div>
-                           </TableCell>
-                           <TableCell>
-                              <p className="text-gray-700">{address.street}</p>
-                              <p className="text-xs text-gray-400 font-mono">
-                                 {address.id}
-                              </p>
-                           </TableCell>
-                           <TableCell>
-                              <p className="text-gray-700">
-                                 {address.city}, {address.region}
-                              </p>
-                              <p className="text-xs text-gray-400">
-                                 {address.zipCode}
-                              </p>
-                           </TableCell>
-                           <TableCell>
-                              <div className="flex items-center gap-2">
-                                 <User className="h-3 w-3 text-gray-400" />
-                                 <span className="text-gray-700">
-                                    {address.owner}
-                                 </span>
-                              </div>
-                           </TableCell>
-                           <TableCell>
-                              <Badge
-                                 variant="secondary"
-                                 className="bg-gray-100 text-gray-700 capitalize"
-                              >
-                                 {ADDRESS_TYPE_LABELS[address.type]}
-                              </Badge>
-                           </TableCell>
-                        </TableRow>
-                     ))}
-                  </TableBody>
-               </Table>
-            </div>
+            {/* Add Button - Inline at bottom */}
+            {!isAdding && !isLoading && (
+               <Button
+                  variant="outline"
+                  onClick={() => setIsAdding(true)}
+                  disabled={isAddingApi}
+                  className="w-full border-dashed border-gray-300 text-gray-600 hover:text-gray-900 hover:border-gray-400 hover:bg-gray-50 gap-2 h-10"
+               >
+                  {isAddingApi ? (
+                     <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                     <Plus className="h-4 w-4" />
+                  )}
+                  إضافة عنوان جديد
+               </Button>
+            )}
 
             <ModalActions>
+               <div className="text-sm text-gray-500">
+                  إجمالي العناوين: {addresses.length}
+               </div>
                <CloseButton />
             </ModalActions>
          </div>

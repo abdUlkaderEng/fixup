@@ -15,6 +15,13 @@ import {
    ServiceResponse,
    DeleteServiceResponse,
 } from '@/types/service';
+import {
+   Address,
+   CreateAddressRequest,
+   CreateAddressResponse,
+   DeleteAddressResponse,
+   GetAddressesResponse,
+} from '@/types/address';
 import { ApiError } from '@/types/auth';
 import { AxiosError } from 'axios';
 
@@ -44,6 +51,9 @@ const ADMIN_ENDPOINTS = {
    },
    CAREERS: {
       BASE: '/admin/careers',
+   },
+   ADDRESSES: {
+      BASE: '/admin/areas',
    },
 } as const;
 
@@ -245,6 +255,55 @@ export const adminApi = {
       try {
          const url = `${ADMIN_ENDPOINTS.WORKERS.BASE}/${workerId}`;
          const response = await apiClient.delete<DeleteWorkerResponse>(url);
+         return response.data;
+      } catch (error) {
+         return handleApiError(error);
+      }
+   },
+
+   /**
+    * Fetch all addresses
+    * @returns List of addresses
+    */
+   async getAddresses(): Promise<GetAddressesResponse> {
+      try {
+         const response = await apiClient.get<GetAddressesResponse>(
+            ADMIN_ENDPOINTS.ADDRESSES.BASE
+         );
+         return response.data;
+      } catch (error) {
+         return handleApiError(error);
+      }
+   },
+
+   /**
+    * Create a new address
+    * @param data - Address data to create
+    * @returns Created address response
+    */
+   async createAddress(
+      data: CreateAddressRequest
+   ): Promise<CreateAddressResponse> {
+      try {
+         const response = await apiClient.post<CreateAddressResponse>(
+            ADMIN_ENDPOINTS.ADDRESSES.BASE,
+            data
+         );
+         return response.data;
+      } catch (error) {
+         return handleApiError(error);
+      }
+   },
+
+   /**
+    * Delete address by ID
+    * @param addressId - Address ID to delete
+    * @returns Delete confirmation response
+    */
+   async deleteAddress(addressId: number): Promise<DeleteAddressResponse> {
+      try {
+         const url = `${ADMIN_ENDPOINTS.ADDRESSES.BASE}/${addressId}`;
+         const response = await apiClient.delete<DeleteAddressResponse>(url);
          return response.data;
       } catch (error) {
          return handleApiError(error);
