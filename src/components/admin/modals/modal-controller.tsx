@@ -2,7 +2,7 @@
 
 import { useSearchParams } from 'next/navigation';
 import { ServicesModal } from './services-modal';
-import { JobsModal } from './jobs-modal';
+import { CareersModal } from './careers-modal';
 import { CustomersModal } from './customers-modal';
 import { AddressesModal } from './addresses-modal';
 import { MessagesModal } from './messages-modal';
@@ -21,7 +21,7 @@ export function ModalController() {
    return (
       <>
          <ServicesModal open={modal === 'services'} />
-         <JobsModal open={modal === 'jobs'} />
+         <CareersModal open={modal === 'careers'} />
          <CustomersModal open={modal === 'customers'} />
          <AddressesModal open={modal === 'addresses'} />
          <MessagesModal open={modal === 'messages'} />

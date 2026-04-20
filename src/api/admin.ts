@@ -14,6 +14,10 @@ import {
    UpdateServiceRequest,
    ServiceResponse,
    DeleteServiceResponse,
+   CreateCareerRequest,
+   CareerResponse,
+   DeleteCareerResponse,
+   GetCareersResponse,
 } from '@/types/service';
 import {
    Address,
@@ -132,6 +136,53 @@ export const adminApi = {
             ADMIN_ENDPOINTS.CAREERS.BASE
          );
          return response.data.data;
+      } catch (error) {
+         return handleApiError(error);
+      }
+   },
+
+   /**
+    * Fetch all careers with timestamps
+    * @returns List of careers with created_at
+    */
+   async getCareersList(): Promise<GetCareersResponse> {
+      try {
+         const response = await apiClient.get<GetCareersResponse>(
+            ADMIN_ENDPOINTS.CAREERS.BASE
+         );
+         return response.data;
+      } catch (error) {
+         return handleApiError(error);
+      }
+   },
+
+   /**
+    * Create a new career
+    * @param data - Career data to create
+    * @returns Created career response
+    */
+   async createCareer(data: CreateCareerRequest): Promise<CareerResponse> {
+      try {
+         const response = await apiClient.post<CareerResponse>(
+            ADMIN_ENDPOINTS.CAREERS.BASE,
+            data
+         );
+         return response.data;
+      } catch (error) {
+         return handleApiError(error);
+      }
+   },
+
+   /**
+    * Delete career by ID
+    * @param careerId - Career ID to delete
+    * @returns Delete confirmation response
+    */
+   async deleteCareer(careerId: number): Promise<DeleteCareerResponse> {
+      try {
+         const url = `${ADMIN_ENDPOINTS.CAREERS.BASE}/${careerId}`;
+         const response = await apiClient.delete<DeleteCareerResponse>(url);
+         return response.data;
       } catch (error) {
          return handleApiError(error);
       }

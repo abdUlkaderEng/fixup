@@ -26,11 +26,11 @@ export const ADMIN_NAVIGATION: NavItem[] = [
       description: 'إدارة كتالوج الخدمات',
    },
    {
-      id: 'jobs',
-      label: 'الوظائف',
-      href: '/admin/dashboard?modal=jobs',
+      id: 'careers',
+      label: 'المهن',
+      href: '/admin/dashboard?modal=careers',
       icon: Briefcase,
-      description: 'إدارة طلبات العمل',
+      description: 'إدارة المهن المتاحة',
    },
    {
       id: 'customers',

@@ -70,6 +70,30 @@ export interface UpdateServiceRequest {
 }
 
 // ============================================
+// Career API Types
+// ============================================
+export interface CreateCareerRequest {
+   name: string;
+}
+
+export interface CareerWithTimestamp extends Career {
+   created_at: string;
+}
+
+export interface GetCareersResponse {
+   data: CareerWithTimestamp[];
+}
+
+export interface CareerResponse {
+   message: string;
+   career: CareerWithTimestamp;
+}
+
+export interface DeleteCareerResponse {
+   message: string;
+}
+
+// ============================================
 // API Responses
 // ============================================
 export interface ServiceResponse {
