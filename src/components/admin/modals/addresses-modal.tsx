@@ -9,7 +9,7 @@ import { ItemCount } from '@/components/ui/item-count';
 import { DeleteConfirmDialog } from '@/components/ui/confirm-dialog';
 import { ListItemRow } from '@/components/admin/ui/list-item-row';
 import { InlineAddRow } from '@/components/admin/ui/inline-add-row';
-import { useAddresses } from '@/hooks/use-addresses';
+import { useAddresses } from '@/hooks/admin';
 import type { Address } from '@/types/address';
 import type { BaseModalProps } from './base-modal';
 

@@ -8,8 +8,7 @@ import { EmptyState } from '@/components/ui/empty-state';
 import { ItemCount } from '@/components/ui/item-count';
 import { ListItemRow } from '@/components/admin/ui/list-item-row';
 import { InlineAddRow } from '@/components/admin/ui/inline-add-row';
-import { useCareers } from '@/hooks/use-careers';
-import { useCareerManagement } from '@/hooks/use-career-management';
+import { useCareers, useCareerMutations } from '@/hooks/admin';
 import type { CareerWithTimestamp } from '@/types/service';
 import type { BaseModalProps } from './base-modal';
 import { DeleteConfirmDialog } from '@/components/ui';
@@ -29,7 +28,7 @@ export function CareersModal({ open }: BaseModalProps) {
    });
 
    const { isCreating, isDeleting, createCareer, deleteCareer } =
-      useCareerManagement(refetch);
+      useCareerMutations(refetch);
 
    // UI states
    const [deletingCareer, setDeletingCareer] =

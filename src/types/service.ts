@@ -1,106 +1,23 @@
 /**
- * Service Types - Type definitions for admin services management
+ * Service Types - Backward Compatibility Re-export
+ * @deprecated Import from '@/types/admin' instead
  */
 
-// ============================================
-// Service Entity
-// ============================================
-export interface Service {
-   id: number;
-   name: string;
-   career_id: number;
-   created_at: string;
-}
+export type {
+   Service,
+   Career,
+   CareerWithTimestamp,
+   ServiceFilters,
+   CreateServiceRequest,
+   UpdateServiceRequest,
+   CreateCareerRequest,
+   GetCareersResponse,
+   CareerResponse,
+   DeleteCareerResponse,
+   ServiceResponse,
+   DeleteServiceResponse,
+   PaginatedServicesResponse,
+} from './admin/index';
 
-// ============================================
-// Career Entity (for dropdown)
-// ============================================
-export interface Career {
-   id: number;
-   name: string;
-}
-
-// ============================================
-// Pagination
-// ============================================
-export interface PaginationLink {
-   url: string | null;
-   label: string;
-   active: boolean;
-}
-
-export interface PaginatedResponse<T> {
-   current_page: number;
-   data: T[];
-   first_page_url: string;
-   from: number;
-   last_page: number;
-   last_page_url: string;
-   links: PaginationLink[];
-   next_page_url: string | null;
-   path: string;
-   per_page: number;
-   prev_page_url: string | null;
-   to: number;
-   total: number;
-}
-
-export type PaginatedServicesResponse = PaginatedResponse<Service>;
-
-// ============================================
-// Filters
-// ============================================
-export interface ServiceFilters {
-   career_id?: number;
-   page?: number;
-   perPage?: number;
-}
-
-// ============================================
-// API Requests
-// ============================================
-export interface CreateServiceRequest {
-   name: string;
-   career_id: number;
-}
-
-export interface UpdateServiceRequest {
-   name?: string;
-   career_id?: number;
-}
-
-// ============================================
-// Career API Types
-// ============================================
-export interface CreateCareerRequest {
-   name: string;
-}
-
-export interface CareerWithTimestamp extends Career {
-   created_at: string;
-}
-
-export interface GetCareersResponse {
-   data: CareerWithTimestamp[];
-}
-
-export interface CareerResponse {
-   message: string;
-   career: CareerWithTimestamp;
-}
-
-export interface DeleteCareerResponse {
-   message: string;
-}
-
-// ============================================
-// API Responses
-// ============================================
-export interface ServiceResponse {
-   message: string;
-   service: Service;
-}
-
-export interface DeleteServiceResponse {
-   message: string;
-}
+// Re-export PaginatedResponse for backward compatibility
+export type { PaginatedResponse, PaginationLink } from './admin/index';

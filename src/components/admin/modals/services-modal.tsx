@@ -18,8 +18,7 @@ import {
    SelectTrigger,
 } from '@/components/ui/select';
 import { DeleteConfirmDialog } from '@/components/ui/confirm-dialog';
-import { useServices } from '@/hooks/use-services';
-import { useServiceManagement } from '@/hooks/use-service-management';
+import { useServices, useServiceMutations } from '@/hooks/admin';
 import { adminApi } from '@/api/admin';
 import type { Service, Career } from '@/types/service';
 import type { BaseModalProps } from './base-modal';
@@ -188,7 +187,7 @@ export function ServicesModal({ open }: BaseModalProps) {
       createService,
       updateService,
       deleteService,
-   } = useServiceManagement(() => {
+   } = useServiceMutations(() => {
       refetch();
    });
 

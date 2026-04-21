@@ -36,8 +36,7 @@ import {
    DialogTitle,
 } from '@/components/ui/dialog';
 import { DeleteConfirmDialog } from '@/components/ui/confirm-dialog';
-import { usePendingWorkers } from '@/hooks/use-pending-workers';
-import { useWorkerManagement } from '@/hooks/use-worker-management';
+import { useWorkers, useWorkerMutations } from '@/hooks/admin';
 import type { Worker, WorkerStatus } from '@/types/worker';
 import { WORKER_SERVICES } from '@/lib/admin/mock-data';
 import type { BaseModalProps } from './base-modal';
@@ -72,10 +71,10 @@ export function WorkerRequestsModal({ open }: BaseModalProps) {
       fetch,
       hasNextPage,
       hasPrevPage,
-   } = usePendingWorkers({ perPage: 10 });
+   } = useWorkers({ perPage: 10, status: 'waiting', autoFetch: false });
 
    const { isUpdating, isDeleting, updateWorker, deleteWorker, approveWorker } =
-      useWorkerManagement(refetch);
+      useWorkerMutations(refetch);
 
    // Reset fetch flag when filter changes to allow new fetch
    const prevFilterRef = useRef(statusFilter);
@@ -202,7 +201,7 @@ export function WorkerRequestsModal({ open }: BaseModalProps) {
                            <AlertCircle className="h-12 w-12 text-destructive" />
                         }
                         title="حدث خطأ"
-                        description={error}
+                        description={error?.message ?? 'حدث خطأ غير متوقع'}
                         action={
                            <Button
                               variant="outline"
