@@ -19,14 +19,14 @@ export function AdminHeader() {
    const adminInitial = adminName.charAt(0).toUpperCase();
 
    return (
-      <header className="lg:hidden sticky top-0 z-30 flex h-14 items-center justify-between border-b border-gray-200 bg-white px-4">
+      <header className="lg:hidden sticky top-0 z-30 flex h-14 items-center justify-between border-b border-gray-200 bg-white px-4 shadow-sm">
          <div className="flex items-center gap-3">
             <Sheet>
                <SheetTrigger asChild>
                   <Button
                      variant="ghost"
                      size="icon"
-                     className="text-gray-700 hover:bg-gray-100 h-9 w-9"
+                     className="admin-btn-ghost h-9 w-9"
                   >
                      <Menu className="h-5 w-5" />
                      <span className="sr-only">فتح القائمة</span>
@@ -37,45 +37,57 @@ export function AdminHeader() {
                   className="w-72 bg-white border-l border-gray-200 p-0"
                >
                   <div className="flex h-full flex-col">
-                     <div className="flex h-16 items-center justify-between px-4 border-b border-gray-200">
-                        <span className="text-lg font-semibold text-gray-900">
-                           لوحة الإدارة
-                        </span>
+                     {/* Sheet Header - matches desktop sidebar logo area */}
+                     <div className="flex h-16 items-center px-5 border-b border-gray-200">
+                        <div className="flex items-center gap-2.5">
+                           <div className="h-7 w-7 bg-[#13377b] text-white flex items-center justify-center font-bold text-sm rounded-md shadow-sm">
+                              F
+                           </div>
+                           <div>
+                              <span className="text-sm font-bold tracking-tight text-gray-900">
+                                 FIXUP
+                              </span>
+                              <p className="text-[10px] text-[#13377b]/60 leading-tight font-medium">
+                                 لوحة الإدارة
+                              </p>
+                           </div>
+                        </div>
                      </div>
-                     <div className="flex-1 overflow-auto py-4">
+                     <div className="flex-1 overflow-auto py-3">
                         <SidebarNav />
                      </div>
                      {/* User Profile - Mobile Sheet */}
-                     <div className="border-t border-gray-200 p-4">
-                        <div className="flex items-center gap-3 mb-4">
-                           <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center shrink-0 text-gray-700">
+                     <div className="border-t border-gray-200 bg-gray-50/50 p-3">
+                        <div className="flex items-center gap-3 mb-2 px-1 py-2 rounded-lg">
+                           <div className="h-9 w-9 rounded-full bg-[#13377b]/10 flex items-center justify-center shrink-0 text-[#13377b]">
                               {session?.user?.profile_picture ? (
                                  <Image
                                     src={session.user.profile_picture}
                                     alt={adminName}
-                                    width={40}
-                                    height={40}
-                                    className="h-10 w-10 rounded-full object-cover"
+                                    width={36}
+                                    height={36}
+                                    className="h-9 w-9 rounded-full object-cover"
                                  />
                               ) : (
-                                 <User className="h-5 w-5" />
+                                 <User className="h-4 w-4" />
                               )}
                            </div>
                            <div className="min-w-0">
-                              <p className="text-sm font-medium truncate">
+                              <p className="text-sm font-semibold text-gray-900 truncate">
                                  {adminName}
                               </p>
-                              <p className="text-xs text-gray-500 truncate">
+                              <p className="text-xs text-gray-400 truncate">
                                  {session?.user?.email || 'admin@fixup.com'}
                               </p>
                            </div>
                         </div>
                         <Button
-                           variant="outline"
-                           className="w-full justify-start gap-2 border-gray-300 bg-transparent text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                           variant="ghost"
+                           size="sm"
+                           className="w-full justify-start gap-2 admin-btn-ghost h-9 text-xs"
                            onClick={() => signOut({ callbackUrl: '/' })}
                         >
-                           <LogOut className="h-4 w-4" />
+                           <LogOut className="h-3.5 w-3.5" />
                            تسجيل الخروج
                         </Button>
                      </div>
@@ -83,16 +95,21 @@ export function AdminHeader() {
                </SheetContent>
             </Sheet>
             <Link href="/admin/dashboard" className="flex items-center gap-2">
-               <div className="h-7 w-7 bg-white text-black flex items-center justify-center font-bold text-sm rounded">
+               <div className="h-7 w-7 bg-[#13377b] text-white flex items-center justify-center font-bold text-sm rounded-md shadow-sm">
                   F
                </div>
-               <span className="font-bold text-gray-900">FIXUP</span>
+               <div>
+                  <span className="font-bold text-gray-900 text-sm">FIXUP</span>
+                  <p className="text-[9px] text-[#13377b]/60 font-medium leading-tight hidden sm:block">
+                     لوحة الإدارة
+                  </p>
+               </div>
             </Link>
          </div>
 
-         {/* Admin Name */}
+         {/* Admin avatar */}
          <div className="flex items-center gap-2">
-            <div className="h-7 w-7 rounded-full bg-gray-200 flex items-center justify-center shrink-0 text-gray-700">
+            <div className="h-7 w-7 rounded-full bg-[#13377b]/10 flex items-center justify-center shrink-0 text-[#13377b]">
                {session?.user?.profile_picture ? (
                   <Image
                      src={session.user.profile_picture}

@@ -36,10 +36,10 @@ export function SidebarNav({ className, onNavigate }: SidebarNavProps) {
                   onClick={onNavigate}
                   className={cn(
                      'flex items-center gap-3 px-3 py-2.5 text-sm font-medium transition-all duration-200 rounded-lg',
-                     'bg-transparent hover:bg-gray-100 group border border-transparent',
+                     'bg-transparent hover:bg-[#13377b]/5 group border border-transparent',
                      (isActive && !hasModal) || isModalActive
-                        ? 'bg-gray-200 text-gray-900 border-gray-300'
-                        : 'text-gray-600 hover:text-gray-900'
+                        ? 'bg-[#13377b]/10 text-[#13377b] border-[#13377b]/20'
+                        : 'text-gray-600 hover:text-[#13377b]'
                   )}
                   title={item.description}
                >

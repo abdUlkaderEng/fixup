@@ -158,25 +158,25 @@
 }
 
 ::-webkit-scrollbar-thumb {
-   background: rgba(255, 255, 255, 0.15);
+   background: rgba(0, 0, 0, 0.12);
    border-radius: 3px;
    transition: background 0.2s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-   background: rgba(255, 255, 255, 0.35);
+   background: rgba(0, 0, 0, 0.25);
 }
 
 /* Firefox scrollbar */
 * {
    scrollbar-width: thin;
-   scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+   scrollbar-color: rgba(0, 0, 0, 0.12) transparent;
 }
 
 /* Custom scrollbar utility classes */
 .scrollbar-modern {
    scrollbar-width: thin;
-   scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+   scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
 }
 
 .scrollbar-modern::-webkit-scrollbar {
@@ -189,12 +189,12 @@
 }
 
 .scrollbar-modern::-webkit-scrollbar-thumb {
-   background: rgba(255, 255, 255, 0.2);
+   background: rgba(0, 0, 0, 0.15);
    border-radius: 3px;
 }
 
 .scrollbar-modern::-webkit-scrollbar-thumb:hover {
-   background: rgba(255, 255, 255, 0.4);
+   background: rgba(0, 0, 0, 0.3);
 }
 
 /* Invisible scrollbar - for clean UI areas */
@@ -218,9 +218,96 @@
 }
 
 .scrollbar-hover:hover {
-   scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+   scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
 }
 
 .scrollbar-hover:hover::-webkit-scrollbar-thumb {
-   background: rgba(255, 255, 255, 0.2);
+   background: rgba(0, 0, 0, 0.15);
+}
+
+/* ============================================
+   ADMIN DASHBOARD THEME - Consistent styling
+   for all admin modals and components
+   ============================================ */
+
+.admin-theme {
+   --admin-bg: #ffffff;
+   --admin-bg-muted: #f9fafb;
+   --admin-bg-subtle: #f3f4f6;
+   --admin-border: #e5e7eb;
+   --admin-text: #111827;
+   --admin-text-muted: #6b7280;
+   --admin-text-subtle: #9ca3af;
+   --admin-primary: #13377b;
+   --admin-primary-contrast: #ffffff;
+}
+
+/* Admin Modal Container - Matches layout theming */
+.admin-modal-content {
+   @apply bg-white text-gray-900;
+}
+
+/* Admin Card/Panel styling */
+.admin-panel {
+   @apply bg-white border border-gray-200 rounded-lg;
+}
+
+.admin-panel-subtle {
+   @apply bg-gray-50 border border-gray-200 rounded-lg;
+}
+
+/* Admin Input styling */
+.admin-input {
+   @apply bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-[#13377b] focus:ring-[#13377b]/20;
+}
+
+/* Admin Button variants */
+.admin-btn-primary {
+   @apply bg-[#13377b] text-white hover:bg-[#0f2d65];
+}
+
+.admin-btn-secondary {
+   @apply bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400;
+}
+
+.admin-btn-ghost {
+   @apply text-gray-500 hover:text-[#13377b] hover:bg-[#13377b]/5;
+}
+
+.admin-btn-danger {
+   @apply text-[#e62223] hover:bg-[#e62223]/8 hover:text-[#c41e1f];
+}
+
+/* Admin Text colors */
+.admin-text {
+   @apply text-gray-900;
+}
+
+.admin-text-muted {
+   @apply text-gray-500;
+}
+
+.admin-text-subtle {
+   @apply text-gray-400;
+}
+
+/* Admin Status badges */
+.admin-badge-success {
+   @apply bg-emerald-50 text-emerald-700 border border-emerald-200;
+}
+
+.admin-badge-warning {
+   @apply bg-[#f8c617]/15 text-yellow-700 border border-[#f8c617]/40;
+}
+
+.admin-badge-error {
+   @apply bg-[#e62223]/8 text-[#e62223] border border-[#e62223]/25;
+}
+
+.admin-badge-info {
+   @apply bg-[#13377b]/8 text-[#13377b] border border-[#13377b]/20;
+}
+
+.admin-badge-neutral {
+   @apply bg-gray-100 text-gray-600 border border-gray-200;
 }

@@ -1,10 +1,9 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSession } from 'next-auth/react';
 import {
    Check,
-   X,
    Edit2,
    Trash2,
    UserCheck,
@@ -15,12 +14,9 @@ import {
    ChevronRight,
    RefreshCw,
 } from 'lucide-react';
-import {
-   AdminModal,
-   ModalActions,
-   CloseButton,
-   type BaseModalProps,
-} from './base-modal';
+import { AppModal } from '@/components/ui/app-modal';
+import { LoadingState } from '@/components/ui/loading-state';
+import { EmptyState } from '@/components/ui/empty-state';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -39,10 +35,12 @@ import {
    DialogHeader,
    DialogTitle,
 } from '@/components/ui/dialog';
+import { DeleteConfirmDialog } from '@/components/ui/confirm-dialog';
 import { usePendingWorkers } from '@/hooks/use-pending-workers';
 import { useWorkerManagement } from '@/hooks/use-worker-management';
 import type { Worker, WorkerStatus } from '@/types/worker';
 import { WORKER_SERVICES } from '@/lib/admin/mock-data';
+import type { BaseModalProps } from './base-modal';
 
 const STATUS_OPTIONS: { value: WorkerStatus; label: string }[] = [
    { value: 'waiting', label: 'قيد الانتظار' },
@@ -155,11 +153,12 @@ export function WorkerRequestsModal({ open }: BaseModalProps) {
 
    return (
       <>
-         <AdminModal
+         <AppModal
             open={open}
             title="طلبات العمال"
             description={`إدارة طلبات التسجيل (${pendingCount} قيد الانتظار)`}
-            className="max-w-4xl"
+            closeHref="/admin/dashboard"
+            closeButtonText="إغلاق"
          >
             <div className="space-y-4">
                {/* Status Filter */}
@@ -171,10 +170,10 @@ export function WorkerRequestsModal({ open }: BaseModalProps) {
                         setStatusFilter(value as WorkerStatus)
                      }
                   >
-                     <SelectTrigger className="w-40 bg-white border-gray-300">
+                     <SelectTrigger className="w-40 admin-input">
                         <SelectValue />
                      </SelectTrigger>
-                     <SelectContent className="bg-white">
+                     <SelectContent>
                         {STATUS_OPTIONS.map((option) => (
                            <SelectItem key={option.value} value={option.value}>
                               {option.label}
@@ -189,34 +188,42 @@ export function WorkerRequestsModal({ open }: BaseModalProps) {
 
                {/* Loading State */}
                {isLoading && (
-                  <div className="text-center py-12 text-gray-500">
-                     <Loader2 className="h-12 w-12 mx-auto mb-4 animate-spin" />
-                     <p>جاري تحميل طلبات العمال...</p>
-                  </div>
+                  <LoadingState
+                     message="جاري تحميل طلبات العمال..."
+                     size="lg"
+                  />
                )}
 
                {/* Error State */}
                {!isLoading && error && (
-                  <div className="text-center py-12 text-red-500">
-                     <AlertCircle className="h-12 w-12 mx-auto mb-4" />
-                     <p className="mb-2">{error}</p>
-                     <Button
-                        variant="outline"
-                        onClick={refetch}
-                        className="mt-2 gap-2"
-                     >
-                        <RefreshCw className="h-4 w-4" />
-                        إعادة المحاولة
-                     </Button>
+                  <div className="text-center py-12">
+                     <EmptyState
+                        icon={
+                           <AlertCircle className="h-12 w-12 text-destructive" />
+                        }
+                        title="حدث خطأ"
+                        description={error}
+                        action={
+                           <Button
+                              variant="outline"
+                              onClick={refetch}
+                              className="mt-2 gap-2"
+                           >
+                              <RefreshCw className="h-4 w-4" />
+                              إعادة المحاولة
+                           </Button>
+                        }
+                     />
                   </div>
                )}
 
                {/* Empty State */}
                {!isLoading && !error && displayWorkers.length === 0 && (
-                  <div className="text-center py-12 text-gray-500">
-                     <AlertCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                     <p>لا توجد طلبات عمال حالياً</p>
-                  </div>
+                  <EmptyState
+                     icon={<AlertCircle className="h-12 w-12" />}
+                     title="لا توجد طلبات عمال"
+                     description="لا توجد طلبات عمال حالياً في هذه الفئة"
+                  />
                )}
 
                {/* Workers List */}
@@ -225,7 +232,7 @@ export function WorkerRequestsModal({ open }: BaseModalProps) {
                      {displayWorkers.map((worker) => (
                         <div
                            key={worker.id}
-                           className="bg-gray-50 border border-gray-200 rounded-lg p-4 space-y-3"
+                           className="admin-panel p-4 space-y-3"
                         >
                            <div className="flex items-start justify-between">
                               <div className="flex items-center gap-3">
@@ -249,8 +256,8 @@ export function WorkerRequestsModal({ open }: BaseModalProps) {
                                  }
                                  className={
                                     worker.status === 'active'
-                                       ? 'bg-green-100 text-green-700 border-green-300'
-                                       : 'bg-yellow-100 text-yellow-700 border-yellow-300'
+                                       ? 'admin-badge-success'
+                                       : 'admin-badge-warning'
                                  }
                               >
                                  {worker.status === 'active' ? (
@@ -268,21 +275,21 @@ export function WorkerRequestsModal({ open }: BaseModalProps) {
                            </div>
 
                            <div className="grid grid-cols-2 gap-2 text-sm">
-                              <div className="text-gray-600">
+                              <div className="text-gray-900">
                                  <span className="text-gray-400">الخدمة:</span>{' '}
                                  {worker.service}
                               </div>
-                              <div className="text-gray-600">
+                              <div className="text-gray-900">
                                  <span className="text-gray-400">
                                     سنوات الخبرة:
                                  </span>{' '}
                                  {worker.years_experience} سنة
                               </div>
-                              <div className="text-gray-600 col-span-2">
+                              <div className="text-gray-900 col-span-2">
                                  <span className="text-gray-400">نبذة:</span>{' '}
                                  {worker.about}
                               </div>
-                              <div className="text-gray-600 col-span-2">
+                              <div className="text-gray-900 col-span-2">
                                  <span className="text-gray-400">
                                     تاريخ الطلب:
                                  </span>{' '}
@@ -297,7 +304,8 @@ export function WorkerRequestsModal({ open }: BaseModalProps) {
                                  <Button
                                     size="sm"
                                     onClick={() => handleApprove(worker.id)}
-                                    className="bg-green-100 text-green-700 hover:bg-green-200 border border-green-300"
+                                    variant="outline"
+                                    className="border-emerald-300 text-emerald-700 hover:bg-emerald-50"
                                  >
                                     <Check className="h-4 w-4 mr-1" />
                                     قبول
@@ -307,7 +315,7 @@ export function WorkerRequestsModal({ open }: BaseModalProps) {
                                  size="sm"
                                  variant="outline"
                                  onClick={() => handleEdit(worker)}
-                                 className="border-gray-300 text-gray-700 hover:bg-gray-100"
+                                 className="admin-btn-secondary"
                               >
                                  <Edit2 className="h-4 w-4 mr-1" />
                                  تعديل
@@ -316,7 +324,7 @@ export function WorkerRequestsModal({ open }: BaseModalProps) {
                                  size="sm"
                                  variant="outline"
                                  onClick={() => handleDelete(worker)}
-                                 className="border-red-300 text-red-600 hover:bg-red-100 hover:text-red-600"
+                                 className="admin-btn-danger"
                               >
                                  <Trash2 className="h-4 w-4 mr-1" />
                                  حذف
@@ -337,7 +345,7 @@ export function WorkerRequestsModal({ open }: BaseModalProps) {
                            variant="outline"
                            onClick={prevPage}
                            disabled={!hasPrevPage}
-                           className="gap-2"
+                           className="gap-2 admin-btn-secondary"
                         >
                            <ChevronRight className="h-4 w-4" />
                            السابق
@@ -349,31 +357,25 @@ export function WorkerRequestsModal({ open }: BaseModalProps) {
                            variant="outline"
                            onClick={nextPage}
                            disabled={!hasNextPage}
-                           className="gap-2"
+                           className="gap-2 admin-btn-secondary"
                         >
                            التالي
                            <ChevronLeft className="h-4 w-4" />
                         </Button>
                      </div>
                   )}
-
-               <ModalActions>
-                  <CloseButton />
-               </ModalActions>
             </div>
-         </AdminModal>
+         </AppModal>
 
          {/* Edit Dialog */}
          <Dialog
             open={!!editingWorker}
             onOpenChange={() => setEditingWorker(null)}
          >
-            <DialogContent className="bg-white border-gray-200 text-gray-900 max-w-lg">
+            <DialogContent className="max-w-lg">
                <DialogHeader>
-                  <DialogTitle className="text-gray-900">
-                     تعديل بيانات العامل
-                  </DialogTitle>
-                  <DialogDescription className="text-gray-500">
+                  <DialogTitle>تعديل بيانات العامل</DialogTitle>
+                  <DialogDescription>
                      تعديل معلومات العامل المقدم
                   </DialogDescription>
                </DialogHeader>
@@ -395,7 +397,7 @@ export function WorkerRequestsModal({ open }: BaseModalProps) {
                                           : null
                                  )
                               }
-                              className="bg-white border-gray-300 text-gray-900"
+                              className="admin-input"
                            />
                         </div>
                         <div className="space-y-2">
@@ -413,7 +415,7 @@ export function WorkerRequestsModal({ open }: BaseModalProps) {
                                           : null
                                  )
                               }
-                              className="bg-white border-gray-300 text-gray-900"
+                              className="admin-input"
                            />
                         </div>
                      </div>
@@ -431,7 +433,7 @@ export function WorkerRequestsModal({ open }: BaseModalProps) {
                                     : null
                               )
                            }
-                           className="bg-white border-gray-300 text-gray-900"
+                           className="admin-input"
                         />
                      </div>
                      <div className="space-y-2">
@@ -445,7 +447,7 @@ export function WorkerRequestsModal({ open }: BaseModalProps) {
                                     : null
                               )
                            }
-                           className="bg-white border-gray-300 text-gray-900"
+                           className="admin-input"
                         />
                      </div>
                      <div className="space-y-2">
@@ -458,10 +460,10 @@ export function WorkerRequestsModal({ open }: BaseModalProps) {
                               )
                            }
                         >
-                           <SelectTrigger className="bg-white border-gray-300 text-gray-900">
+                           <SelectTrigger className="admin-input">
                               <SelectValue />
                            </SelectTrigger>
-                           <SelectContent className="bg-white border-gray-300">
+                           <SelectContent>
                               {WORKER_SERVICES.map((service) => (
                                  <SelectItem key={service} value={service}>
                                     {service}
@@ -474,14 +476,14 @@ export function WorkerRequestsModal({ open }: BaseModalProps) {
                         <Button
                            variant="outline"
                            onClick={() => setEditingWorker(null)}
-                           className="border-gray-300 text-gray-700 hover:bg-gray-100"
+                           className="admin-btn-secondary"
                         >
                            إلغاء
                         </Button>
                         <Button
                            onClick={saveEdit}
                            disabled={isUpdating}
-                           className="bg-gray-900 text-white hover:bg-gray-800"
+                           className="admin-btn-primary"
                         >
                            {isUpdating ? (
                               <Loader2 className="h-4 w-4 animate-spin" />
@@ -495,51 +497,25 @@ export function WorkerRequestsModal({ open }: BaseModalProps) {
             </DialogContent>
          </Dialog>
 
-         {/* Delete Confirmation Dialog */}
-         <Dialog
+         <DeleteConfirmDialog
             open={!!deletingWorker}
-            onOpenChange={() => setDeletingWorker(null)}
-         >
-            <DialogContent className="bg-white border-gray-200 text-gray-900 max-w-md">
-               <DialogHeader>
-                  <DialogTitle className="text-gray-900 flex items-center gap-2">
-                     <AlertCircle className="h-5 w-5 text-red-400" />
-                     تأكيد الحذف
-                  </DialogTitle>
-                  <DialogDescription className="text-gray-500">
-                     هل أنت متأكد من حذف حساب العامل{' '}
-                     <span className="text-gray-900 font-medium">
-                        {deletingWorker?.firstName} {deletingWorker?.lastName}
-                     </span>
-                     ؟ لا يمكن التراجع عن هذا الإجراء.
-                  </DialogDescription>
-               </DialogHeader>
-               <div className="flex justify-end gap-2 pt-4">
-                  <Button
-                     variant="outline"
-                     onClick={() => setDeletingWorker(null)}
-                     className="border-gray-300 text-gray-700 hover:bg-gray-100"
-                  >
-                     <X className="h-4 w-4 mr-1" />
-                     إلغاء
-                  </Button>
-                  <Button
-                     onClick={confirmDelete}
-                     disabled={isDeleting}
-                     className="bg-red-100 text-red-600 hover:bg-red-200 border border-red-300"
-                  >
-                     {isDeleting ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                     ) : (
-                        <>
-                           <Trash2 className="h-4 w-4 mr-1" />
-                           حذف الحساب
-                        </>
-                     )}
-                  </Button>
-               </div>
-            </DialogContent>
-         </Dialog>
+            onOpenChange={(open) => !open && setDeletingWorker(null)}
+            onConfirm={confirmDelete}
+            isLoading={isDeleting}
+            title="تأكيد الحذف"
+            confirmLabel="حذف"
+            variant="destructive"
+            isAdmin
+            description={
+               <>
+                  هل أنت متأكد من حذف حساب العامل{' '}
+                  <span className="text-foreground font-medium">
+                     {deletingWorker?.firstName} {deletingWorker?.lastName}
+                  </span>
+                  ؟ لا يمكن التراجع عن هذا الإجراء.
+               </>
+            }
+         />
       </>
    );
 }

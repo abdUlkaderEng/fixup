@@ -15,8 +15,10 @@ export default function AdminDashboardPage() {
       <div className="p-4 lg:p-6 space-y-6">
          {/* Header */}
          <div className="flex flex-col gap-1">
-            <h1 className="text-2xl font-bold text-gray-900">لوحة التحكم</h1>
-            <p className="text-gray-500">مرحباً بعودتك! إليك ما يحدث اليوم.</p>
+            <h1 className="text-2xl font-bold admin-text">لوحة التحكم</h1>
+            <p className="admin-text-muted">
+               مرحباً بعودتك! إليك ما يحدث اليوم.
+            </p>
          </div>
 
          {/* Statistics Grid */}
@@ -28,9 +30,7 @@ export default function AdminDashboardPage() {
 
          {/* Quick Actions */}
          <div className="space-y-3">
-            <h2 className="text-lg font-semibold text-gray-900">
-               إجراءات سريعة
-            </h2>
+            <h2 className="text-lg font-semibold admin-text">إجراءات سريعة</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                {QUICK_ACTIONS.map((action) => (
                   <QuickActionCard key={action.modal} {...action} />

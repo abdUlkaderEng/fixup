@@ -1,14 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Search, Plus, Edit2, Trash2, MessageSquare, Send } from 'lucide-react';
-import {
-   AdminModal,
-   ModalActions,
-   CloseButton,
-   PrimaryButton,
-   type BaseModalProps,
-} from './base-modal';
+import { AppModal } from '@/components/ui/app-modal';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -23,16 +17,17 @@ import {
 } from '@/components/ui/table';
 import { MOCK_MESSAGES, MESSAGE_CATEGORY_LABELS } from '@/lib/admin/mock-data';
 import type { MessageCategory, StaticMessage } from '@/types/admin';
+import type { BaseModalProps } from './base-modal';
 
 /**
  * Category badge component - Arabic labels
  */
 function CategoryBadge({ category }: { category: MessageCategory }) {
    const styles = {
-      greeting: 'bg-blue-100 text-blue-700',
-      status: 'bg-yellow-100 text-yellow-700',
-      notification: 'bg-purple-100 text-purple-700',
-      system: 'bg-gray-200 text-gray-700',
+      greeting: 'admin-badge-info',
+      status: 'admin-badge-warning',
+      notification: 'admin-badge-neutral',
+      system: 'admin-badge-neutral',
    };
 
    const labels = MESSAGE_CATEGORY_LABELS;
@@ -63,10 +58,12 @@ export function MessagesModal({ open }: BaseModalProps) {
    };
 
    return (
-      <AdminModal
+      <AppModal
          open={open}
          title="رسائل الدردشة الثابتة"
          description="إدارة قوالب الرسائل للردود الآلية"
+         closeHref="/admin/dashboard"
+         closeButtonText="إغلاق"
       >
          <div className="space-y-4">
             {/* Search and Add */}
@@ -77,10 +74,10 @@ export function MessagesModal({ open }: BaseModalProps) {
                      placeholder="البحث بالمفتاح أو المحتوى..."
                      value={searchQuery}
                      onChange={(e) => setSearchQuery(e.target.value)}
-                     className="pl-10 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
+                     className="pl-10 admin-input"
                   />
                </div>
-               <Button className="bg-gray-900 text-white hover:bg-gray-800 gap-2">
+               <Button className="admin-btn-primary gap-2">
                   <Plus className="h-4 w-4" />
                   إضافة رسالة
                </Button>
@@ -90,7 +87,7 @@ export function MessagesModal({ open }: BaseModalProps) {
             <div className="border border-gray-200 rounded-md overflow-hidden">
                <Table>
                   <TableHeader>
-                     <TableRow className="border-gray-200 hover:bg-transparent">
+                     <TableRow className="border-gray-200 hover:bg-transparent bg-gray-50">
                         <TableHead className="text-gray-500">المفتاح</TableHead>
                         <TableHead className="text-gray-500">الرسالة</TableHead>
                         <TableHead className="text-gray-500">الفئة</TableHead>
@@ -120,7 +117,7 @@ export function MessagesModal({ open }: BaseModalProps) {
                               </p>
                            </TableCell>
                            <TableCell>
-                              <p className="text-gray-700 max-w-xs truncate">
+                              <p className="text-gray-900 max-w-xs truncate">
                                  {message.content}
                               </p>
                            </TableCell>
@@ -143,14 +140,14 @@ export function MessagesModal({ open }: BaseModalProps) {
                                  <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="h-8 w-8 text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                                    className="h-8 w-8 admin-btn-ghost"
                                  >
                                     <Edit2 className="h-4 w-4" />
                                  </Button>
                                  <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="h-8 w-8 text-gray-500 hover:text-red-600 hover:bg-red-100"
+                                    className="h-8 w-8 admin-btn-danger"
                                     onClick={() =>
                                        handleDeleteMessage(message.id)
                                     }
@@ -166,22 +163,17 @@ export function MessagesModal({ open }: BaseModalProps) {
             </div>
 
             {/* Preview Section */}
-            <div className="border border-gray-200 rounded-md p-4 bg-gray-50">
+            <div className="admin-panel p-4">
                <h4 className="text-sm font-medium text-gray-900 mb-2">
                   معاينة
                </h4>
                <Textarea
                   readOnly
                   value="اختر رسالة للمعاينة..."
-                  className="bg-white border-gray-300 text-gray-700 min-h-20 resize-none"
+                  className="min-h-20 resize-none admin-input"
                />
             </div>
-
-            <ModalActions>
-               <CloseButton />
-               <PrimaryButton>حفظ التغييرات</PrimaryButton>
-            </ModalActions>
          </div>
-      </AdminModal>
+      </AppModal>
    );
 }

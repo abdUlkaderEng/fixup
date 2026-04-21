@@ -16,12 +16,12 @@ export function QuickActionCard({
    return (
       <a
          href={href}
-         className="block p-4 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors group shadow-sm"
+         className="block p-4 admin-panel hover:border-[#13377b]/30 hover:bg-[#13377b]/5 transition-colors group"
       >
-         <h3 className="font-semibold text-gray-900 group-hover:text-gray-700">
+         <h3 className="font-semibold admin-text group-hover:text-[#13377b] transition-colors">
             {label}
          </h3>
-         <p className="text-sm text-gray-500 mt-1">{description}</p>
+         <p className="text-sm admin-text-muted mt-1">{description}</p>
       </a>
    );
 }

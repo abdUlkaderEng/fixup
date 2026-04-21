@@ -1,49 +1,28 @@
 'use client';
 
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
-import {
-   Plus,
-   Search,
-   Edit2,
-   Trash2,
-   Wrench,
-   Briefcase,
-   AlertCircle,
-   Loader2,
-} from 'lucide-react';
-import {
-   AdminModal,
-   ModalActions,
-   CloseButton,
-   type BaseModalProps,
-} from './base-modal';
+import { useState, useMemo, useCallback, useEffect } from 'react';
+import { Edit2, Trash2, Wrench, Briefcase, Loader2 } from 'lucide-react';
+import { AppModal } from '@/components/ui/app-modal';
+import { LoadingState } from '@/components/ui/loading-state';
+import { EmptyState } from '@/components/ui/empty-state';
+import { ItemCount } from '@/components/ui/item-count';
+import { ListItemRow } from '@/components/admin/ui/list-item-row';
+import { InlineAddRow } from '@/components/admin/ui/inline-add-row';
+import { SearchInput } from '@/components/ui/search-input';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
 import {
    Select,
    SelectContent,
    SelectItem,
    SelectTrigger,
 } from '@/components/ui/select';
-import {
-   Dialog,
-   DialogContent,
-   DialogDescription,
-   DialogHeader,
-   DialogTitle,
-} from '@/components/ui/dialog';
+import { DeleteConfirmDialog } from '@/components/ui/confirm-dialog';
 import { useServices } from '@/hooks/use-services';
 import { useServiceManagement } from '@/hooks/use-service-management';
 import { adminApi } from '@/api/admin';
 import type { Service, Career } from '@/types/service';
-
-// ============================================
-// Types
-// ============================================
-interface ServiceFormData {
-   name: string;
-}
+import type { BaseModalProps } from './base-modal';
 
 // ============================================
 // Components
@@ -74,12 +53,12 @@ function ServiceCard({
 }: ServiceCardProps) {
    if (isEditing) {
       return (
-         <div className="bg-gray-50 border border-gray-300 rounded-lg p-3">
+         <div className="admin-panel-subtle p-3">
             <div className="flex items-center gap-2">
                <Input
                   value={editValue}
                   onChange={(e) => onEditChange(e.target.value)}
-                  className="flex-1 bg-white border-gray-300 h-9"
+                  className="flex-1 admin-input h-9"
                   autoFocus
                   disabled={isUpdating}
                   onKeyDown={(e) => {
@@ -89,9 +68,9 @@ function ServiceCard({
                />
                <Button
                   size="sm"
-                  className="h-9 bg-gray-900 text-white hover:bg-gray-800"
                   onClick={onEditSave}
                   disabled={!editValue.trim() || isUpdating}
+                  className="admin-btn-primary"
                >
                   {isUpdating ? (
                      <Loader2 className="h-4 w-4 animate-spin" />
@@ -102,9 +81,9 @@ function ServiceCard({
                <Button
                   size="sm"
                   variant="outline"
-                  className="h-9 border-gray-300 text-gray-700 hover:bg-gray-100"
                   onClick={onEditCancel}
                   disabled={isUpdating}
+                  className="admin-btn-secondary h-9"
                >
                   إلغاء
                </Button>
@@ -114,14 +93,16 @@ function ServiceCard({
    }
 
    return (
-      <div className="group bg-white border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors">
-         <div className="flex items-center justify-between gap-4">
-            <h4 className="font-medium text-gray-900 flex-1">{service.name}</h4>
-            <div className="flex items-center gap-1">
+      <ListItemRow
+         id={service.id}
+         title={service.name}
+         icon={<Wrench className="h-5 w-5 text-gray-500" />}
+         actions={
+            <>
                <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                  className="h-8 w-8 admin-btn-ghost"
                   onClick={() => onEditStart(service)}
                >
                   <Edit2 className="h-4 w-4" />
@@ -129,87 +110,14 @@ function ServiceCard({
                <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 text-gray-500 hover:text-red-600 hover:bg-red-100"
+                  className="h-8 w-8 admin-btn-danger"
                   onClick={() => onDelete(service)}
                >
                   <Trash2 className="h-4 w-4" />
                </Button>
-            </div>
-         </div>
-      </div>
-   );
-}
-
-interface ServiceFormProps {
-   careerName: string;
-   onSubmit: (data: ServiceFormData) => void;
-   onCancel: () => void;
-   isSubmitting?: boolean;
-}
-
-function ServiceForm({
-   careerName,
-   onSubmit,
-   onCancel,
-   isSubmitting,
-}: ServiceFormProps) {
-   const [formData, setFormData] = useState<ServiceFormData>({
-      name: '',
-   });
-
-   const isValid = formData.name.trim().length > 0;
-
-   const handleSubmit = (e: React.FormEvent) => {
-      e.preventDefault();
-      if (isValid) {
-         onSubmit(formData);
-      }
-   };
-
-   return (
-      <form onSubmit={handleSubmit} className="space-y-4">
-         <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
-            <Briefcase className="h-4 w-4" />
-            <span>المهنة:</span>
-            <span className="font-medium text-gray-700">{careerName}</span>
-         </div>
-
-         <div className="space-y-2">
-            <Label htmlFor="name">اسم الخدمة</Label>
-            <Input
-               id="name"
-               value={formData.name}
-               onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, name: e.target.value }))
-               }
-               placeholder="مثال: إصلاح تسرب المياه"
-               className="bg-white border-gray-300"
-               disabled={isSubmitting}
-            />
-         </div>
-
-         <div className="flex justify-end gap-2 pt-4">
-            <Button
-               type="button"
-               variant="outline"
-               onClick={onCancel}
-               className="border-gray-300 text-gray-700 hover:bg-gray-100"
-               disabled={isSubmitting}
-            >
-               إلغاء
-            </Button>
-            <Button
-               type="submit"
-               disabled={!isValid || isSubmitting}
-               className="bg-gray-900 text-white hover:bg-gray-800 disabled:opacity-50"
-            >
-               {isSubmitting ? (
-                  <Loader2 className="h-4 w-4 animate-spin mr-1" />
-               ) : null}
-               إضافة الخدمة
-            </Button>
-         </div>
-      </form>
+            </>
+         }
+      />
    );
 }
 
@@ -238,9 +146,6 @@ export function ServicesModal({ open }: BaseModalProps) {
 
    // Delete state
    const [deletingService, setDeletingService] = useState<Service | null>(null);
-
-   // Add dialog state
-   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
    // Fetch careers on mount
    useEffect(() => {
@@ -310,17 +215,12 @@ export function ServicesModal({ open }: BaseModalProps) {
    }, [services, searchQuery]);
 
    const handleAddService = useCallback(
-      async (formData: ServiceFormData) => {
+      async (name: string) => {
          if (!selectedCareerId) return;
-
-         const result = await createService({
-            name: formData.name.trim(),
+         await createService({
+            name: name.trim(),
             career_id: selectedCareerId,
          });
-
-         if (result.success) {
-            setIsAddDialogOpen(false);
-         }
       },
       [createService, selectedCareerId]
    );
@@ -363,15 +263,17 @@ export function ServicesModal({ open }: BaseModalProps) {
 
    return (
       <>
-         <AdminModal
+         <AppModal
             open={open}
             title="إدارة الخدمات"
             description="إدارة خدمات المهن وتحديد الأسعار والمدد"
+            closeHref="/admin/dashboard"
+            closeButtonText="إغلاق"
          >
             <div className="space-y-5">
                {/* Career Selector */}
-               <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+               <div className="admin-panel p-4">
+                  <label className="block text-sm font-medium text-gray-900 mb-2">
                      اختيار المهنة
                   </label>
                   <Select
@@ -381,7 +283,7 @@ export function ServicesModal({ open }: BaseModalProps) {
                      }
                      disabled={isLoadingCareers || careers.length === 0}
                   >
-                     <SelectTrigger className="w-full bg-white border-gray-300 h-11">
+                     <SelectTrigger className="w-full admin-input h-11">
                         <div className="flex items-center justify-center gap-2 w-full">
                            {isLoadingCareers ? (
                               <Loader2 className="h-4 w-4 animate-spin text-gray-500" />
@@ -395,11 +297,7 @@ export function ServicesModal({ open }: BaseModalProps) {
                            </span>
                         </div>
                      </SelectTrigger>
-                     <SelectContent
-                        className="bg-white border-gray-200"
-                        position="popper"
-                        sideOffset={4}
-                     >
+                     <SelectContent position="popper" sideOffset={4}>
                         {careers.map((career) => (
                            <SelectItem
                               key={career.id}
@@ -416,53 +314,40 @@ export function ServicesModal({ open }: BaseModalProps) {
                   </Select>
                </div>
 
-               {/* Stats & Add Button */}
-               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                  <div className="text-sm text-gray-500">
-                     <span className="font-medium text-gray-900">
-                        {isLoading ? '...' : filteredServices.length}
-                     </span>{' '}
-                     خدمة
-                  </div>
-                  <Button
-                     onClick={() => setIsAddDialogOpen(true)}
-                     className="bg-gray-900 text-white hover:bg-gray-800 gap-2"
-                     disabled={isLoading || !selectedCareerId}
-                  >
-                     <Plus className="h-4 w-4" />
-                     إضافة خدمة
-                  </Button>
-               </div>
+               <ItemCount
+                  count={filteredServices.length}
+                  label="خدمة"
+                  isLoading={isLoading}
+               />
 
                {/* Search */}
-               <div className="relative">
-                  <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <Input
-                     placeholder="البحث في الخدمات..."
-                     value={searchQuery}
-                     onChange={(e) => setSearchQuery(e.target.value)}
-                     className="pr-10 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
-                     disabled={isLoading}
-                  />
-               </div>
+               <SearchInput
+                  value={searchQuery}
+                  onChange={setSearchQuery}
+                  placeholder="البحث في الخدمات..."
+                  disabled={isLoading}
+                  className="w-full"
+               />
 
                {/* Services List */}
                <div className="space-y-3">
+                  {/* Inline Add Row with integrated button */}
+                  <InlineAddRow
+                     triggerLabel="إضافة خدمة جديدة"
+                     placeholder="اسم الخدمة الجديدة..."
+                     icon={<Wrench className="h-5 w-5 text-gray-500" />}
+                     onSave={handleAddService}
+                     isSaving={isCreating}
+                     disabled={!selectedCareerId}
+                  />
+
                   {isLoading ? (
-                     <div className="text-center py-12 bg-gray-50 rounded-lg border border-dashed border-gray-300">
-                        <Loader2 className="h-12 w-12 mx-auto mb-3 text-gray-300 animate-spin" />
-                        <p className="text-gray-500">جاري تحميل الخدمات...</p>
-                     </div>
+                     <LoadingState message="جاري تحميل الخدمات..." size="lg" />
                   ) : filteredServices.length === 0 ? (
-                     <div className="text-center py-12 bg-gray-50 rounded-lg border border-dashed border-gray-300">
-                        <Wrench className="h-12 w-12 mx-auto mb-3 text-gray-300" />
-                        <p className="text-gray-500 mb-1">
-                           لا توجد خدمات مسجلة
-                        </p>
-                        <p className="text-sm text-gray-400">
-                           أضف خدمة جديدة لهذه المهنة
-                        </p>
-                     </div>
+                     <EmptyState
+                        icon={<Wrench className="h-10 w-10" />}
+                        title="لا توجد خدمات"
+                     />
                   ) : (
                      filteredServices.map((service) => (
                         <ServiceCard
@@ -480,75 +365,28 @@ export function ServicesModal({ open }: BaseModalProps) {
                      ))
                   )}
                </div>
-
-               <ModalActions>
-                  <CloseButton />
-               </ModalActions>
             </div>
-         </AdminModal>
+         </AppModal>
 
-         {/* Add Service Dialog */}
-         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-            <DialogContent className="bg-white border-gray-200 text-gray-900 max-w-lg">
-               <DialogHeader>
-                  <DialogTitle className="text-gray-900">
-                     إضافة خدمة جديدة
-                  </DialogTitle>
-                  <DialogDescription className="text-gray-500">
-                     أدخل تفاصيل الخدمة الجديدة للمهنة المحددة
-                  </DialogDescription>
-               </DialogHeader>
-               <ServiceForm
-                  careerName={selectedCareer?.name ?? ''}
-                  onSubmit={handleAddService}
-                  onCancel={() => setIsAddDialogOpen(false)}
-                  isSubmitting={isCreating}
-               />
-            </DialogContent>
-         </Dialog>
-
-         {/* Delete Confirmation Dialog */}
-         <Dialog
+         <DeleteConfirmDialog
             open={!!deletingService}
-            onOpenChange={() => setDeletingService(null)}
-         >
-            <DialogContent className="bg-white border-gray-200 text-gray-900 max-w-md">
-               <DialogHeader>
-                  <DialogTitle className="text-gray-900 flex items-center gap-2">
-                     <AlertCircle className="h-5 w-5 text-red-500" />
-                     تأكيد الحذف
-                  </DialogTitle>
-                  <DialogDescription className="text-gray-500">
-                     هل أنت متأكد من حذف الخدمة{' '}
-                     <span className="font-medium text-gray-900">
-                        {deletingService?.name}
-                     </span>
-                     ؟ لا يمكن التراجع عن هذا الإجراء.
-                  </DialogDescription>
-               </DialogHeader>
-               <div className="flex justify-end gap-2 pt-4">
-                  <Button
-                     variant="outline"
-                     onClick={() => setDeletingService(null)}
-                     className="border-gray-300 text-gray-700 hover:bg-gray-100"
-                  >
-                     إلغاء
-                  </Button>
-                  <Button
-                     onClick={handleDeleteService}
-                     disabled={isDeleting}
-                     className="bg-red-100 text-red-600 hover:bg-red-200 border border-red-300"
-                  >
-                     {isDeleting ? (
-                        <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                     ) : (
-                        <Trash2 className="h-4 w-4 mr-1" />
-                     )}
-                     حذف
-                  </Button>
-               </div>
-            </DialogContent>
-         </Dialog>
+            onOpenChange={(open) => !open && setDeletingService(null)}
+            onConfirm={handleDeleteService}
+            isLoading={isDeleting}
+            title="تأكيد الحذف"
+            confirmLabel="حذف"
+            variant="destructive"
+            isAdmin
+            description={
+               <>
+                  هل أنت متأكد من حذف الخدمة{' '}
+                  <span className="font-medium text-foreground">
+                     {deletingService?.name}
+                  </span>
+                  ؟ لا يمكن التراجع عن هذا الإجراء.
+               </>
+            }
+         />
       </>
    );
 }

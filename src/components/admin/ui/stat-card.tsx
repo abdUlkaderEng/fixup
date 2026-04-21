@@ -26,16 +26,16 @@ export function StatCard({
            : 'text-gray-500';
 
    return (
-      <Card className="bg-white border-gray-200 text-gray-900 shadow-sm">
+      <Card className="admin-panel text-gray-900 shadow-none">
          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">
+            <CardTitle className="text-sm font-medium admin-text-muted">
                {title}
             </CardTitle>
-            <Icon className="h-4 w-4 text-gray-400" />
+            <Icon className="h-4 w-4 admin-text-subtle" />
          </CardHeader>
          <CardContent>
-            <div className="text-2xl font-bold">{value}</div>
-            <p className="text-xs text-gray-500 mt-1">{description}</p>
+            <div className="text-2xl font-bold admin-text">{value}</div>
+            <p className="text-xs admin-text-muted mt-1">{description}</p>
             <div
                className={cn(
                   'flex items-center gap-1 mt-2 text-xs',
