@@ -5,6 +5,9 @@
 
 // Form & Input Components
 export { SearchInput } from './search-input';
+export { RadioCardGroup } from './radio-card-group';
+export type { RadioCardOption } from './radio-card-group';
+export { SectionPanel } from './section-panel';
 
 // Status & Feedback Components
 export { StatusBadge, useStatusBadge } from './status-badge';

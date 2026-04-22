@@ -311,3 +311,39 @@
 .admin-badge-neutral {
    @apply bg-gray-100 text-gray-600 border border-gray-200;
 }
+
+/* ============================================
+   APP SURFACES - shared sections/cards
+   ============================================ */
+
+.app-page-gradient {
+   @apply min-h-[calc(100vh-4rem)] bg-gradient-to-b from-background via-muted/20 to-background;
+}
+
+.app-page-spacing {
+   @apply pb-12 pt-24;
+}
+
+.app-section-panel {
+   @apply rounded-2xl border border-border/70 bg-card p-5 shadow-sm sm:p-6;
+}
+
+.app-section-header {
+   @apply mb-4 flex items-center gap-2;
+}
+
+.app-section-title {
+   @apply text-lg font-semibold;
+}
+
+.app-choice-card {
+   @apply rounded-xl border p-3 transition-colors duration-200;
+}
+
+.app-choice-card-active {
+   @apply border-primary bg-primary/8 shadow-sm;
+}
+
+.app-choice-card-idle {
+   @apply border-border/70 bg-card hover:border-primary/30 hover:bg-primary/3;
+}
