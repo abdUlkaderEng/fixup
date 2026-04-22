@@ -45,6 +45,7 @@ import { clearWorkerSignupDraft, saveWorkerSignupDraft } from '../signup-flow';
 import { toast } from 'sonner';
 import { authApi } from '@/api/auth';
 import { MapPicker } from '@/components/map-picker';
+import { usePublicAreas } from '@/hooks/public/use-public-areas';
 
 type SignupFormValues = z.input<typeof signupSchema>;
 
@@ -52,6 +53,10 @@ export default function SignupPage() {
    const [showPassword, setShowPassword] = useState(false);
    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
    const [isLoading, setIsLoading] = useState(false);
+
+   const { areas, isLoading: isLoadingAreas } = usePublicAreas({
+      perPage: 100,
+   });
 
    const form = useForm<SignupFormValues, unknown, SignupInput>({
       resolver: zodResolver(signupSchema),
@@ -276,40 +281,43 @@ export default function SignupPage() {
                               <FormItem className="space-y-0">
                                  <Select
                                     value={
-                                       field.value ? String(field.value) : ''
+                                       field.value
+                                          ? String(field.value)
+                                          : 'none'
                                     }
                                     onValueChange={(value) =>
                                        field.onChange(Number(value))
                                     }
-                                    disabled={isLoading}
+                                    disabled={isLoading || isLoadingAreas}
                                  >
                                     <SelectTrigger className="w-full" dir="rtl">
-                                       <SelectValue placeholder="اختر المنطقة" />
+                                       <SelectValue
+                                          placeholder={
+                                             isLoadingAreas
+                                                ? 'جاري تحميل المناطق...'
+                                                : 'اختر المنطقة'
+                                          }
+                                       />
                                     </SelectTrigger>
                                     <SelectContent>
-                                       <SelectItem value="1">دمشق</SelectItem>
-                                       <SelectItem value="2">حلب</SelectItem>
-                                       <SelectItem value="3">حمص</SelectItem>
-                                       <SelectItem value="4">
-                                          اللاذقية
-                                       </SelectItem>
-                                       <SelectItem value="5">طرطوس</SelectItem>
-                                       <SelectItem value="6">
-                                          السويداء
-                                       </SelectItem>
-                                       <SelectItem value="7">درعا</SelectItem>
-                                       <SelectItem value="8">إدلب</SelectItem>
-                                       <SelectItem value="9">حماة</SelectItem>
-                                       <SelectItem value="10">الرقة</SelectItem>
-                                       <SelectItem value="11">
-                                          الحسكة
-                                       </SelectItem>
-                                       <SelectItem value="12">
-                                          دير الزور
-                                       </SelectItem>
-                                       <SelectItem value="13">
-                                          القنيطرة
-                                       </SelectItem>
+                                       {isLoadingAreas ? (
+                                          <SelectItem value="" disabled>
+                                             جاري تحميل المناطق...
+                                          </SelectItem>
+                                       ) : areas.length === 0 ? (
+                                          <SelectItem value="none" disabled>
+                                             لا توجد مناطق متاحة
+                                          </SelectItem>
+                                       ) : (
+                                          areas.map((area) => (
+                                             <SelectItem
+                                                key={area.id}
+                                                value={String(area.id)}
+                                             >
+                                                {area.area_name}
+                                             </SelectItem>
+                                          ))
+                                       )}
                                     </SelectContent>
                                  </Select>
                                  <FormMessage />

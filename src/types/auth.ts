@@ -60,6 +60,7 @@ export interface ApiError {
 }
 
 export interface RegisterWorkerRequest {
+   user_id: number;
    career_id: number;
    about: string;
    years_experience: number;

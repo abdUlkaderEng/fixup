@@ -125,7 +125,6 @@ export async function del<T>(url: string): Promise<T> {
 
 export const ENDPOINTS = {
    WORKERS: {
-      FILTERS: '/admin/workers/filters',
       BASE: '/admin/worker',
    },
    SERVICES: {

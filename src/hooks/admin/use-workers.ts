@@ -9,6 +9,7 @@ import type {
    WorkerFilters,
    PaginatedWorkersResponse,
 } from '@/types/admin/index';
+import { Cagliostro } from 'next/font/google';
 
 export interface UseWorkersReturn {
    workers: Worker[];
@@ -44,27 +45,31 @@ export function useWorkers(options: UseWorkersOptions = {}): UseWorkersReturn {
    const [statusFilter, setStatusFilterState] = useState<
       WorkerStatus | undefined
    >(status);
+   const [workersState, setWorkersState] = useState<Worker[]>([]);
 
    const handlePageChange = useCallback(
       (page: number) => {
-         fetchWorkers(page);
+         void fetchWorkers(page);
       },
       // eslint-disable-next-line react-hooks/exhaustive-deps
-      [statusFilter]
+      [statusFilter, perPage]
    );
 
    const pagination = usePagination(handlePageChange, { initialPage, perPage });
 
    const fetchWorkers = useCallback(
-      async (page: number = pagination.currentPage) => {
+      async (
+         page: number = pagination.currentPage,
+         filterStatus: WorkerStatus | undefined = statusFilter
+      ) => {
          const filters: WorkerFilters = {
-            status: statusFilter,
+            status: filterStatus,
             page,
             perPage,
          };
 
          const response = await workersApi.getAll(filters);
-
+         console.log(response.data);
          setWorkersState(response.data);
          pagination.updatePagination({
             currentPage: response.current_page,
@@ -78,8 +83,6 @@ export function useWorkers(options: UseWorkersOptions = {}): UseWorkersReturn {
       },
       [statusFilter, perPage, pagination]
    );
-
-   const [workersState, setWorkersState] = useState<Worker[]>([]);
 
    const { isLoading, error, refetch } = useFetch<PaginatedWorkersResponse>(
       () => fetchWorkers(initialPage),
@@ -99,9 +102,13 @@ export function useWorkers(options: UseWorkersOptions = {}): UseWorkersReturn {
       (newStatus: WorkerStatus | undefined) => {
          if (newStatus === statusFilter) return;
          setStatusFilterState(newStatus);
-         pagination.firstPage();
+         if (pagination.currentPage === 1) {
+            void fetchWorkers(1, newStatus);
+         } else {
+            pagination.firstPage();
+         }
       },
-      [statusFilter, pagination]
+      [statusFilter, pagination, fetchWorkers]
    );
 
    const goToPage = useCallback(
@@ -114,14 +121,13 @@ export function useWorkers(options: UseWorkersOptions = {}): UseWorkersReturn {
             return;
          }
          pagination.setPage(page);
-         fetchWorkers(page);
       },
-      [pagination, fetchWorkers]
+      [pagination]
    );
 
    const fetch = useCallback(
       (page?: number) => {
-         fetchWorkers(page ?? initialPage);
+         void fetchWorkers(page ?? initialPage);
       },
       [fetchWorkers, initialPage]
    );

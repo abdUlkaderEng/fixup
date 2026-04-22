@@ -28,6 +28,7 @@ import { useSession, signIn, getSession } from 'next-auth/react';
  */
 const ROUTES = {
    ADMIN_DASHBOARD: '/admin/dashboard',
+   WORKER_DASHBOARD: '/worker/dashboard',
    HOME: '/',
    SERVER_ERROR: '/server-error',
 } as const;
@@ -37,6 +38,7 @@ const ROUTES = {
  */
 const USER_ROLES = {
    ADMIN: 'admin',
+   WORKER: 'worker',
 } as const;
 
 /**
@@ -45,7 +47,9 @@ const USER_ROLES = {
  * @returns The appropriate route path for the user
  */
 function getRedirectPath(role?: string): string {
-   return role === USER_ROLES.ADMIN ? ROUTES.ADMIN_DASHBOARD : ROUTES.HOME;
+   if (role === USER_ROLES.ADMIN) return ROUTES.ADMIN_DASHBOARD;
+   if (role === USER_ROLES.WORKER) return ROUTES.WORKER_DASHBOARD;
+   return ROUTES.HOME;
 }
 
 /**

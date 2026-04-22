@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect, useRef } from 'react';
 import { servicesApi } from '@/api/admin';
 import { useFetch, usePagination, generateRequestKey } from './shared';
 import type { Service, PaginatedServicesResponse } from '@/types/service';
@@ -80,6 +80,7 @@ export function useServices(
    );
 
    const [servicesState, setServicesState] = useState<Service[]>([]);
+   const [isFilterLoading, setIsFilterLoading] = useState(false);
 
    const { isLoading, error, refetch } = useFetch<PaginatedServicesResponse>(
       () => fetchServices(initialPage),
@@ -94,6 +95,16 @@ export function useServices(
          errorMessage: 'حدث خطأ أثناء جلب الخدمات',
       }
    );
+
+   // Fetch when career filter changes (handles stale closure issue)
+   const previousCareerFilterRef = useRef(careerFilter);
+   useEffect(() => {
+      if (previousCareerFilterRef.current !== careerFilter) {
+         previousCareerFilterRef.current = careerFilter;
+         setIsFilterLoading(true);
+         fetchServices(1).finally(() => setIsFilterLoading(false));
+      }
+   }, [careerFilter, fetchServices]);
 
    const setCareerFilter = useCallback(
       (careerId: number | undefined) => {
@@ -129,7 +140,7 @@ export function useServices(
 
    return {
       services: servicesState,
-      isLoading,
+      isLoading: isLoading || isFilterLoading,
       error,
       currentPage: pagination.currentPage,
       totalPages: pagination.totalPages,

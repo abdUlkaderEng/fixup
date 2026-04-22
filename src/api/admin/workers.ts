@@ -36,7 +36,7 @@ export const workersApi = {
       filters: WorkerFilters = {}
    ): Promise<PaginatedWorkersResponse> {
       const queryString = buildWorkerQuery(filters);
-      const url = `${ENDPOINTS.WORKERS.FILTERS}${queryString}`;
+      const url = `${ENDPOINTS.WORKERS.BASE}${queryString}`;
       return await get<PaginatedWorkersResponse>(url);
    },
 

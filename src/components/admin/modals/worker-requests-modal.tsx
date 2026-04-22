@@ -36,10 +36,10 @@ import {
    DialogTitle,
 } from '@/components/ui/dialog';
 import { DeleteConfirmDialog } from '@/components/ui/confirm-dialog';
-import { useWorkers, useWorkerMutations } from '@/hooks/admin';
 import type { Worker, WorkerStatus } from '@/types/worker';
 import { WORKER_SERVICES } from '@/lib/admin/mock-data';
 import type { BaseModalProps } from './base-modal';
+import { useWorkerMutations, useWorkers } from '@/hooks';
 
 const STATUS_OPTIONS: { value: WorkerStatus; label: string }[] = [
    { value: 'waiting', label: 'قيد الانتظار' },

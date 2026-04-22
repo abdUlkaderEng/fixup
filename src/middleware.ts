@@ -9,6 +9,7 @@ const ROUTES = {
    HOME: '/',
    LOGIN: '/auth/login',
    ADMIN_DASHBOARD: '/admin/dashboard',
+   WORKER_DASHBOARD: '/worker/dashboard',
 } as const;
 
 /**
@@ -16,6 +17,7 @@ const ROUTES = {
  */
 const USER_ROLES = {
    ADMIN: 'admin',
+   WORKER: 'worker',
 } as const;
 
 /**
@@ -23,6 +25,7 @@ const USER_ROLES = {
  */
 const PROTECTED_PATHS = {
    ADMIN: '/admin',
+   WORKER: '/worker',
    AUTH: {
       LOGIN: '/auth/login',
       SIGNUP: '/auth/signup',
@@ -44,6 +47,15 @@ interface AuthToken {
  */
 function isAdminRoute(pathname: string): boolean {
    return pathname.startsWith(PROTECTED_PATHS.ADMIN);
+}
+
+/**
+ * Checks if pathname is a worker route
+ * @param pathname - The request pathname
+ * @returns True if worker route, false otherwise
+ */
+function isWorkerRoute(pathname: string): boolean {
+   return pathname.startsWith(PROTECTED_PATHS.WORKER);
 }
 
 /**
@@ -77,6 +89,15 @@ function isAdmin(token: AuthToken | null): boolean {
 }
 
 /**
+ * Checks if user has worker role
+ * @param token - The JWT token from next-auth
+ * @returns True if worker, false otherwise
+ */
+function isWorker(token: AuthToken | null): boolean {
+   return token?.role === USER_ROLES.WORKER;
+}
+
+/**
  * Checks if user is authenticated
  * @param token - The JWT token from next-auth
  * @returns True if authenticated, false otherwise
@@ -96,11 +117,23 @@ function redirectTo(req: NextRequest, path: string): NextResponse {
 }
 
 /**
+ * Gets the appropriate redirect path for an authenticated user based on role
+ * @param token - The JWT token from next-auth
+ * @returns The appropriate route path for the user
+ */
+function getRoleBasedRedirectPath(token: AuthToken | null): string {
+   if (isAdmin(token)) return ROUTES.ADMIN_DASHBOARD;
+   if (isWorker(token)) return ROUTES.WORKER_DASHBOARD;
+   return ROUTES.HOME;
+}
+
+/**
  * Middleware handler for route protection and authentication
- * Handles three scenarios:
+ * Handles four scenarios:
  * 1. Admin routes: Requires authentication + admin role
- * 2. Auth routes (login/signup): Redirect authenticated users away
- * 3. Profile routes: Requires authentication
+ * 2. Worker routes: Requires authentication + worker role
+ * 3. Auth routes (login/signup): Redirect authenticated users away
+ * 4. Profile routes: Requires authentication
  *
  * @param req - The incoming NextRequest
  * @returns NextResponse (redirect or continue)
@@ -129,16 +162,29 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
       return NextResponse.next();
    }
 
-   // Scenario 2: Redirect authenticated users away from auth pages
+   // Scenario 2: Protect worker routes - requires worker role
+   if (isWorkerRoute(pathname)) {
+      if (!isAuthenticated(token)) {
+         // Not logged in, send to login
+         return redirectTo(req, ROUTES.LOGIN);
+      }
+
+      if (!isWorker(token)) {
+         // Logged in but not worker, send to home
+         return redirectTo(req, ROUTES.HOME);
+      }
+
+      // Worker user accessing worker route - allow
+      return NextResponse.next();
+   }
+
+   // Scenario 3: Redirect authenticated users away from auth pages
    if (isAuthRoute(pathname) && isAuthenticated(token)) {
-      // If admin, redirect to admin dashboard instead of home
-      const redirectPath = isAdmin(token)
-         ? ROUTES.ADMIN_DASHBOARD
-         : ROUTES.HOME;
+      const redirectPath = getRoleBasedRedirectPath(token);
       return redirectTo(req, redirectPath);
    }
 
-   // Scenario 3: Protect profile routes - requires authentication
+   // Scenario 4: Protect profile routes - requires authentication
    if (isProfileRoute(pathname) && !isAuthenticated(token)) {
       return redirectTo(req, ROUTES.LOGIN);
    }
@@ -155,6 +201,8 @@ export const config = {
    matcher: [
       // Admin routes
       '/admin/:path*',
+      // Worker routes
+      '/worker/:path*',
       // Auth routes
       '/auth/login',
       '/auth/signup',

@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { toast } from 'sonner';
 import { authApi } from '@/api/auth';
 import { setAuthToken } from '@/lib/axios';
@@ -27,7 +27,8 @@ export function useWorkerRegister(
 ): UseWorkerRegisterReturn {
    const [isSubmitting, setIsSubmitting] = useState(false);
    const router = useRouter();
-
+   const session = useSession();
+   const user = session.data?.user;
    const onSubmit = useCallback(
       async (workerData: WorkerInfoInput) => {
          if (!signupDraft) {
@@ -50,6 +51,7 @@ export function useWorkerRegister(
 
             // Step 3: Prepare worker registration data
             const workerRequestData: RegisterWorkerRequest = {
+               user_id: Number(user?.id),
                career_id: workerData.career_id,
                about: workerData.about,
                years_experience: workerData.years_experience,

@@ -40,24 +40,8 @@ import { cn } from '@/lib/utils';
 import { getWorkerSignupDraft, type WorkerSignupDraft } from '../signup-flow';
 import { workerInfoSchema, type WorkerInfoInput } from '../schemas';
 import { useWorkerRegister } from '@/hooks/use-worker-register';
-
-const CAREER_OPTIONS = [
-   { value: 1, label: 'السباكة' },
-   { value: 2, label: 'الكهرباء' },
-   { value: 3, label: 'التنظيف' },
-   { value: 4, label: 'الدهان' },
-   { value: 5, label: 'النجارة' },
-   { value: 6, label: 'التكييف والتبريد' },
-] as const;
-
-const SERVICE_OPTIONS = [
-   { value: 1, label: 'صيانة سباكة' },
-   { value: 2, label: 'صيانة كهرباء' },
-   { value: 3, label: 'خدمة تنظيف' },
-   { value: 4, label: 'خدمة دهان' },
-   { value: 5, label: 'صيانة خشبيات' },
-   { value: 6, label: 'صيانة مكيف' },
-] as const;
+import { usePublicCareers } from '@/hooks/public/use-public-careers';
+import { usePublicServices } from '@/hooks/public/use-public-services';
 
 export default function WorkerInfoPage() {
    const router = useRouter();
@@ -90,6 +74,21 @@ export default function WorkerInfoPage() {
 
    const { isSubmitting, onSubmit } = useWorkerRegister(signupDraft);
 
+   // Fetch careers and services
+   const { careers, isLoading: isLoadingCareers } = usePublicCareers();
+   const selectedCareerId = form.watch('career_id');
+   const { services, isLoading: isLoadingServices } = usePublicServices({
+      careerId: selectedCareerId || undefined,
+      perPage: 100,
+   });
+
+   // Clear services when career changes
+   useEffect(() => {
+      if (selectedCareerId) {
+         form.setValue('services', []);
+      }
+   }, [selectedCareerId, form]);
+
    if (!isPageReady || !signupDraft) {
       return (
          <div className="min-h-[calc(100vh-4rem)] mt-16 flex items-center justify-center bg-linear-to-br from-background via-muted/50 to-background p-4 sm:p-6 lg:p-8">
@@ -121,8 +120,8 @@ export default function WorkerInfoPage() {
                      استكمال بيانات العامل
                   </h1>
                   <p className="text-sm text-muted-foreground">
-                     أضف معلوماتك المهنية والخدمات التي تقدمها قبل ربط الواجهة
-                     مع الـ API.
+                     أضف معلوماتك المهنية والخدمات التي تقدمها ليتم قبولها من
+                     قبل المسؤوولين.
                   </p>
                </div>
 
@@ -162,21 +161,38 @@ export default function WorkerInfoPage() {
                                     onValueChange={(value) =>
                                        field.onChange(value ? Number(value) : 0)
                                     }
+                                    disabled={isLoadingCareers || isSubmitting}
                                  >
                                     <FormControl>
                                        <SelectTrigger className="h-11 w-full text-right">
-                                          <SelectValue placeholder="اختر المجال المناسب" />
+                                          <SelectValue
+                                             placeholder={
+                                                isLoadingCareers
+                                                   ? 'جاري تحميل المجالات...'
+                                                   : 'اختر المجال المناسب'
+                                             }
+                                          />
                                        </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                       {CAREER_OPTIONS.map((career) => (
-                                          <SelectItem
-                                             key={career.value}
-                                             value={String(career.value)}
-                                          >
-                                             {career.label}
+                                       {isLoadingCareers ? (
+                                          <SelectItem value="none" disabled>
+                                             جاري تحميل المجالات...
                                           </SelectItem>
-                                       ))}
+                                       ) : careers.length === 0 ? (
+                                          <SelectItem value="none" disabled>
+                                             لا توجد مجالات متاحة
+                                          </SelectItem>
+                                       ) : (
+                                          careers.map((career) => (
+                                             <SelectItem
+                                                key={career.id}
+                                                value={String(career.id)}
+                                             >
+                                                {career.name}
+                                             </SelectItem>
+                                          ))
+                                       )}
                                     </SelectContent>
                                  </Select>
                                  <FormMessage />
@@ -284,55 +300,77 @@ export default function WorkerInfoPage() {
                                  <Wrench className="h-4 w-4 text-primary" />
                                  <span>الخدمات المتاحة</span>
                               </FormLabel>
-                              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                                 {SERVICE_OPTIONS.map((service) => {
-                                    const isSelected = field.value.includes(
-                                       service.value
-                                    );
+                              {!selectedCareerId ? (
+                                 <div className="rounded-xl border border-dashed border-muted-foreground/30 p-6 text-center">
+                                    <Wrench className="mx-auto mb-2 h-8 w-8 text-muted-foreground/50" />
+                                    <p className="text-sm text-muted-foreground">
+                                       اختر المجال المهني أولاً لعرض الخدمات
+                                       المتاحة
+                                    </p>
+                                 </div>
+                              ) : isLoadingServices ? (
+                                 <div className="flex items-center justify-center gap-2 py-8 text-sm text-muted-foreground">
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                    جاري تحميل الخدمات...
+                                 </div>
+                              ) : services.length === 0 ? (
+                                 <div className="rounded-xl border border-dashed border-muted-foreground/30 p-6 text-center">
+                                    <Wrench className="mx-auto mb-2 h-8 w-8 text-muted-foreground/50" />
+                                    <p className="text-sm text-muted-foreground">
+                                       لا توجد خدمات متاحة لهذا المجال
+                                    </p>
+                                 </div>
+                              ) : (
+                                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                    {services.map((service) => {
+                                       const isSelected = field.value.includes(
+                                          service.id
+                                       );
 
-                                    return (
-                                       <label
-                                          key={service.value}
-                                          className={cn(
-                                             'flex cursor-pointer items-start gap-3 rounded-xl border p-4 transition-colors',
-                                             isSelected
-                                                ? 'border-primary bg-primary/5'
-                                                : 'border-border hover:border-primary/40 hover:bg-muted/40'
-                                          )}
-                                       >
-                                          <Checkbox
-                                             checked={isSelected}
-                                             onCheckedChange={(checked) => {
-                                                if (checked) {
-                                                   field.onChange([
-                                                      ...field.value,
-                                                      service.value,
-                                                   ]);
-                                                   return;
-                                                }
+                                       return (
+                                          <label
+                                             key={service.id}
+                                             className={cn(
+                                                'flex cursor-pointer items-start gap-3 rounded-xl border p-4 transition-colors',
+                                                isSelected
+                                                   ? 'border-primary bg-primary/5'
+                                                   : 'border-border hover:border-primary/40 hover:bg-muted/40'
+                                             )}
+                                          >
+                                             <Checkbox
+                                                checked={isSelected}
+                                                onCheckedChange={(checked) => {
+                                                   if (checked) {
+                                                      field.onChange([
+                                                         ...field.value,
+                                                         service.id,
+                                                      ]);
+                                                      return;
+                                                   }
 
-                                                field.onChange(
-                                                   field.value.filter(
-                                                      (value) =>
-                                                         value !== service.value
-                                                   )
-                                                );
-                                             }}
-                                             disabled={isSubmitting}
-                                          />
-                                          <div className="space-y-1">
-                                             <p className="text-sm font-medium">
-                                                {service.label}
-                                             </p>
-                                             <p className="text-xs text-muted-foreground">
-                                                يمكنك اختيار أكثر من خدمة ضمن
-                                                نفس التخصص.
-                                             </p>
-                                          </div>
-                                       </label>
-                                    );
-                                 })}
-                              </div>
+                                                   field.onChange(
+                                                      field.value.filter(
+                                                         (value) =>
+                                                            value !== service.id
+                                                      )
+                                                   );
+                                                }}
+                                                disabled={isSubmitting}
+                                             />
+                                             <div className="space-y-1">
+                                                <p className="text-sm font-medium">
+                                                   {service.name}
+                                                </p>
+                                                <p className="text-xs text-muted-foreground">
+                                                   يمكنك اختيار أكثر من خدمة ضمن
+                                                   نفس التخصص.
+                                                </p>
+                                             </div>
+                                          </label>
+                                       );
+                                    })}
+                                 </div>
+                              )}
                               <FormMessage />
                            </FormItem>
                         )}

@@ -215,8 +215,10 @@ export function ServicesModal({ open }: BaseModalProps) {
 
    const handleAddService = useCallback(
       async (name: string) => {
-         if (!selectedCareerId) return;
-         await createService({
+         if (!selectedCareerId) {
+            throw new Error('No career selected');
+         }
+         return await createService({
             name: name.trim(),
             career_id: selectedCareerId,
          });
@@ -265,7 +267,7 @@ export function ServicesModal({ open }: BaseModalProps) {
          <AppModal
             open={open}
             title="إدارة الخدمات"
-            description="إدارة خدمات المهن وتحديد الأسعار والمدد"
+            description="إدارة خدمات المهن "
             closeHref="/admin/dashboard"
             closeButtonText="إغلاق"
          >

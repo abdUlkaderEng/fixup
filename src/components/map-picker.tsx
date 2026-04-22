@@ -14,6 +14,9 @@ import { SearchResult } from '@/types/map';
 const DEFAULT_CENTER = { lng: 0, lat: 20 };
 const DEFAULT_ZOOM = 2;
 
+// Global flag to ensure RTL plugin is only loaded once
+let rtlPluginLoaded = false;
+
 export function MapPicker({
    initialLng = DEFAULT_CENTER.lng,
    initialLat = DEFAULT_CENTER.lat,
@@ -56,10 +59,14 @@ export function MapPicker({
 
    useEffect(() => {
       if (!mapContainer.current || map.current) return;
-      maplibregl.setRTLTextPlugin(
-         'https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js',
-         true
-      );
+
+      if (!rtlPluginLoaded) {
+         maplibregl.setRTLTextPlugin(
+            'https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js',
+            true
+         );
+         rtlPluginLoaded = true;
+      }
       const newMap = new maplibregl.Map({
          container: mapContainer.current,
          style: `https://api.maptiler.com/maps/streets/style.json?key=${mapTilerKey}`,
