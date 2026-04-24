@@ -4,26 +4,15 @@
  */
 
 import type { Service } from '@/types/admin/services';
+import type {
+   PaginationLinks,
+   PaginationMeta,
+   PaginationParams,
+} from '@/types/admin/shared';
 
 // ============================================
 // Public API Response Shape
 // ============================================
-
-export interface PublicPaginationLinks {
-   first: string | null;
-   last: string | null;
-   prev: string | null;
-   next: string | null;
-}
-
-export interface PublicPaginationMeta {
-   current_page: number;
-   from: number;
-   last_page: number;
-   per_page: number;
-   to: number;
-   total: number;
-}
 
 /**
  * Paginated response for public services endpoint
@@ -31,16 +20,28 @@ export interface PublicPaginationMeta {
  */
 export interface PublicServicesResponse {
    data: Service[];
-   links: PublicPaginationLinks;
-   meta: PublicPaginationMeta;
+   links: PaginationLinks;
+   meta: PaginationMeta;
 }
 
 // ============================================
 // Filters
 // ============================================
 
-export interface PublicServiceFilters {
+export interface PublicServiceFilters extends PaginationParams {
    career_id?: number;
-   page?: number;
-   perPage?: number;
 }
+
+// ============================================
+// Backward Compatibility Aliases
+// ============================================
+
+/**
+ * @deprecated Use PaginationLinks from '@/types/admin/shared' instead
+ */
+export type PublicPaginationLinks = PaginationLinks;
+
+/**
+ * @deprecated Use PaginationMeta from '@/types/admin/shared' instead
+ */
+export type PublicPaginationMeta = PaginationMeta;

@@ -7,23 +7,13 @@ import type {
    PaginationParams,
    MessageResponse,
 } from './shared';
+import type { Worker, WorkerStatus } from '@/types/entities/worker';
 
 // ============================================
-// Worker Entity
+// Worker Entity (Re-export from entities)
 // ============================================
 
-export type WorkerStatus = 'waiting' | 'active' | 'blocked';
-
-export interface Worker {
-   id: number;
-   user_id: number;
-   career_id: number;
-   about: string;
-   status: WorkerStatus;
-   years_experience: number;
-   created_at: string;
-   updated_at: string;
-}
+export type { Worker, WorkerStatus };
 
 // ============================================
 // Filters

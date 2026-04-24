@@ -6,7 +6,7 @@ import { useMutation } from './shared';
 import type {
    CreateServiceRequest,
    UpdateServiceRequest,
-} from '@/types/service';
+} from '@/types/admin/services';
 
 export interface CreateServiceResult {
    success: boolean;

@@ -3,7 +3,7 @@
 import { useCallback } from 'react';
 import { addressesApi } from '@/api/admin';
 import { useFetch, useMutation, generateRequestKey } from './shared';
-import type { Address } from '@/types/address';
+import type { Address } from '@/types/admin/addresses';
 
 export interface UseAddressesReturn {
    addresses: Address[];

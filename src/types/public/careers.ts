@@ -3,15 +3,13 @@
  * Response shapes for public (unauthenticated) career endpoints
  */
 
+import type { CareerWithTimestamp } from '@/types/entities/career';
+
 // ============================================
-// Career Entity
+// Career Entity (Re-export from entities)
 // ============================================
 
-export interface PublicCareer {
-   id: number;
-   name: string;
-   created_at: string;
-}
+export type { CareerWithTimestamp as PublicCareer };
 
 // ============================================
 // API Response
@@ -22,5 +20,5 @@ export interface PublicCareer {
  * Simple list response without pagination
  */
 export interface PublicCareersResponse {
-   data: PublicCareer[];
+   data: CareerWithTimestamp[];
 }

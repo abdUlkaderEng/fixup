@@ -29,6 +29,8 @@ export const mapBackendUserToAuthUser = (
    updated_at: backendUser.updated_at,
    is_active: backendUser.is_active,
    profile_picture: backendUser.profile_picture,
+   address: backendUser.address ?? null,
+   worker: backendUser.worker ?? null,
 });
 
 export const mapGoogleProfileToAuthUser = (
@@ -53,6 +55,8 @@ export const mapGoogleProfileToAuthUser = (
    updated_at: backendUser.updated_at,
    is_active: backendUser.is_active,
    profile_picture: backendUser.profile_picture,
+   address: backendUser.address ?? null,
+   worker: backendUser.worker ?? null,
 });
 
 export const syncUserToToken = (
@@ -77,6 +81,8 @@ export const syncUserToToken = (
       updated_at: user.updated_at,
       is_active: user.is_active,
       profile_picture: user.profile_picture,
+      address: user.address,
+      worker: user.worker,
    });
 };
 
@@ -103,6 +109,8 @@ export const syncTokenToSession = (
       updated_at: token.updated_at,
       is_active: token.is_active,
       profile_picture: token.profile_picture,
+      address: token.address,
+      worker: token.worker,
    });
 };
 
@@ -123,6 +131,8 @@ export const updateTokenFromSession = (
       'profile_picture',
       'email_verified_at',
       'updated_at',
+      'address',
+      'worker',
    ];
 
    updatableFields.forEach((field) => {

@@ -123,7 +123,7 @@ export default function LoginPage() {
       toast.success(`أهلاً بك ! ${freshSession?.user?.name || ''}`, {
          description: 'تم تسجيل الدخول بنجاح',
       });
-
+      console.log(freshSession);
       router.push(redirectPath);
       router.refresh();
    };

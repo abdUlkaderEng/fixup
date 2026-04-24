@@ -7,17 +7,13 @@ import type {
    PaginationParams,
    MessageResponse,
 } from './shared';
+import type { Service } from '@/types/entities/service';
 
 // ============================================
-// Service Entity
+// Service Entity (Re-export from entities)
 // ============================================
 
-export interface Service {
-   id: number;
-   name: string;
-   career_id: number;
-   created_at: string;
-}
+export type { Service };
 
 // ============================================
 // Filters

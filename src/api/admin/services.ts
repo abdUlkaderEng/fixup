@@ -6,7 +6,7 @@ import type {
    UpdateServiceRequest,
    ServiceResponse,
    DeleteServiceResponse,
-} from '@/types/service';
+} from '@/types/admin/services';
 
 /**
  * Service API Module

@@ -3,6 +3,13 @@
  * Re-export all public API types for clean imports
  */
 
+// Shared pagination types (preferred)
+export type {
+   PaginationLinks,
+   PaginationMeta,
+   PaginationParams,
+} from '@/types/admin/shared';
+
 // Careers
 export type { PublicCareer, PublicCareersResponse } from './careers';
 
@@ -10,7 +17,8 @@ export type { PublicCareer, PublicCareersResponse } from './careers';
 export type {
    PublicArea,
    PublicAreaFilters,
+   PublicAreasResponse,
+   // Backward compatibility - prefer PaginationLinks/Meta from shared
    PublicAreaPaginationLinks,
    PublicAreaPaginationMeta,
-   PublicAreasResponse,
 } from './areas';

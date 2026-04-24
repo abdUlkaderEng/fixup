@@ -4,7 +4,7 @@ import type {
    WorkerFilters,
    WorkerStatus,
    Worker,
-} from '@/types/worker';
+} from '@/types/admin/index';
 
 /**
  * Worker API Module

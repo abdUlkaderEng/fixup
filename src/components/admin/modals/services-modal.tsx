@@ -218,7 +218,7 @@ export function ServicesModal({ open }: BaseModalProps) {
          if (!selectedCareerId) {
             throw new Error('No career selected');
          }
-         return await createService({
+         await createService({
             name: name.trim(),
             career_id: selectedCareerId,
          });

@@ -5,7 +5,7 @@ import type {
    CreateAddressResponse,
    DeleteAddressResponse,
    GetAddressesResponse,
-} from '@/types/address';
+} from '@/types/admin/addresses';
 
 /**
  * Address API Module

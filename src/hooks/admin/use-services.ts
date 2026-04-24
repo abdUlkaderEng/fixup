@@ -3,7 +3,10 @@
 import { useCallback, useState, useEffect, useRef } from 'react';
 import { servicesApi } from '@/api/admin';
 import { useFetch, usePagination, generateRequestKey } from './shared';
-import type { Service, PaginatedServicesResponse } from '@/types/service';
+import type {
+   Service,
+   PaginatedServicesResponse,
+} from '@/types/admin/services';
 
 export interface UseServicesReturn {
    services: Service[];

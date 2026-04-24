@@ -3,7 +3,7 @@
 import { useCallback } from 'react';
 import { careersApi } from '@/api/admin';
 import { useFetch, generateRequestKey } from './shared';
-import type { CareerWithTimestamp } from '@/types/service';
+import type { CareerWithTimestamp } from '@/types/admin/careers';
 
 export interface UseCareersReturn {
    careers: CareerWithTimestamp[];

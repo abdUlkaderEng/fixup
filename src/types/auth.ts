@@ -1,3 +1,6 @@
+import type { Worker } from '@/types/entities/worker';
+import type { Address } from '@/types/entities/address';
+
 export interface LoginRequest {
    email: string;
    password: string;
@@ -15,7 +18,12 @@ export interface RegisterRequest {
    password: string;
    password_confirmation: string;
 }
-
+// export interface Address {
+//    id: number;
+//    area_name: string;
+//    created_at?: string;
+//    updated_at?: string;
+// }
 export interface User {
    id: number;
    name: string;
@@ -32,6 +40,8 @@ export interface User {
    email_verified_at: string | null;
    created_at: string;
    updated_at: string;
+   address?: Address | null;
+   worker?: Worker | null;
 }
 
 export interface AuthResponse {

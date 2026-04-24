@@ -7,16 +7,13 @@ import type {
    PaginationLinks,
    MessageResponse,
 } from './shared';
+import type { Address } from '@/types/entities/address';
 
 // ============================================
-// Address Entity
+// Address Entity (Re-export from entities)
 // ============================================
 
-export interface Address {
-   id: number;
-   area_name: string;
-   created_at: string;
-}
+export type { Address };
 
 // ============================================
 // API Requests

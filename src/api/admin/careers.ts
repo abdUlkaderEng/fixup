@@ -5,7 +5,7 @@ import type {
    CareerResponse,
    DeleteCareerResponse,
    GetCareersResponse,
-} from '@/types/service';
+} from '@/types/admin/careers';
 
 /**
  * Career API Module

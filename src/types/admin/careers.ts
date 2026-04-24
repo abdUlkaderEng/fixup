@@ -3,19 +3,13 @@
  */
 
 import type { MessageResponse } from './shared';
+import type { Career, CareerWithTimestamp } from '@/types/entities/career';
 
 // ============================================
-// Career Entity
+// Career Entity (Re-export from entities)
 // ============================================
 
-export interface Career {
-   id: number;
-   name: string;
-}
-
-export interface CareerWithTimestamp extends Career {
-   created_at: string;
-}
+export type { Career, CareerWithTimestamp };
 
 // ============================================
 // API Requests

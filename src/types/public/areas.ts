@@ -3,35 +3,18 @@
  * Response shapes for public (unauthenticated) area endpoints
  */
 
-// ============================================
-// Area Entity
-// ============================================
-
-export interface PublicArea {
-   id: number;
-   area_name: string;
-   created_at: string;
-}
+import type {
+   PaginationLinks,
+   PaginationMeta,
+   PaginationParams,
+} from '@/types/admin/shared';
+import type { Area } from '@/types/entities/address';
 
 // ============================================
-// Pagination
+// Area Entity (Re-export from entities)
 // ============================================
 
-export interface PublicAreaPaginationLinks {
-   first: string | null;
-   last: string | null;
-   prev: string | null;
-   next: string | null;
-}
-
-export interface PublicAreaPaginationMeta {
-   current_page: number;
-   from: number;
-   last_page: number;
-   per_page: number;
-   to: number;
-   total: number;
-}
+export type { Area as PublicArea };
 
 // ============================================
 // API Response
@@ -42,16 +25,27 @@ export interface PublicAreaPaginationMeta {
  * Full paginated response
  */
 export interface PublicAreasResponse {
-   data: PublicArea[];
-   links: PublicAreaPaginationLinks;
-   meta: PublicAreaPaginationMeta;
+   data: Area[];
+   links: PaginationLinks;
+   meta: PaginationMeta;
 }
 
 // ============================================
 // Filters
 // ============================================
 
-export interface PublicAreaFilters {
-   page?: number;
-   perPage?: number;
-}
+export interface PublicAreaFilters extends PaginationParams {}
+
+// ============================================
+// Backward Compatibility Aliases
+// ============================================
+
+/**
+ * @deprecated Use PaginationLinks from '@/types/admin/shared' instead
+ */
+export type PublicAreaPaginationLinks = PaginationLinks;
+
+/**
+ * @deprecated Use PaginationMeta from '@/types/admin/shared' instead
+ */
+export type PublicAreaPaginationMeta = PaginationMeta;

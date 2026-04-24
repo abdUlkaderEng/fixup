@@ -3,7 +3,10 @@
 import { useCallback } from 'react';
 import { careersApi } from '@/api/admin';
 import { useMutation } from './shared';
-import type { CreateCareerRequest, CareerWithTimestamp } from '@/types/service';
+import type {
+   CreateCareerRequest,
+   CareerWithTimestamp,
+} from '@/types/admin/careers';
 
 export interface CreateCareerResult {
    success: boolean;
