@@ -13,5 +13,7 @@ export {
    NearlyDateField,
    YearsExperienceField,
    AccountStatusField,
+   CareerField,
+   ServicesField,
 } from './WorkerFields';
 export { ActionButtons } from './ActionButtons';

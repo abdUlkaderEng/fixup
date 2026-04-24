@@ -11,10 +11,12 @@ import {
 import { InfoField } from '@/components/sections/info-field';
 import type { UseFormReturn } from 'react-hook-form';
 import type { UnifiedProfileFormData } from '@/components/profile/schemas';
+import type { User } from 'next-auth';
 
 interface FieldProps {
    form: UseFormReturn<UnifiedProfileFormData>;
    isEditing: boolean;
+   user: User;
 }
 
 export function EmailField({
@@ -39,7 +41,7 @@ export function EmailField({
    );
 }
 
-export function PhoneField({ form, isEditing }: FieldProps) {
+export function PhoneField({ form, isEditing, user }: FieldProps) {
    return (
       <InfoField
          icon={<Phone className="h-5 w-5 text-primary" />}
@@ -64,18 +66,18 @@ export function PhoneField({ form, isEditing }: FieldProps) {
             />
          ) : (
             <p className="text-muted-foreground">
-               {(form.getValues('phone_number') as string) || 'غير متوفر'}
+               {user.phone_number || 'غير متوفر'}
             </p>
          )}
       </InfoField>
    );
 }
 
-export function AddressField({ form, isEditing }: FieldProps) {
-   const detailedAddress = form.getValues('detailed_address');
-   const areaId = form.getValues('area_address_id');
-   const lat = form.getValues('latitude');
-   const lng = form.getValues('longitude');
+export function AddressField({ form, isEditing, user }: FieldProps) {
+   const areaName = user.address?.area_address?.area_name ?? null;
+   const areaId = user.area_address_id;
+   const lat = user.latitude ? parseFloat(user.latitude) : null;
+   const lng = user.longitude ? parseFloat(user.longitude) : null;
 
    return (
       <InfoField
@@ -165,16 +167,16 @@ export function AddressField({ form, isEditing }: FieldProps) {
          ) : (
             <div className="space-y-1">
                <p className="text-muted-foreground">
-                  {detailedAddress || 'غير متوفر'}
+                  {user.detailed_address || 'غير متوفر'}
                </p>
-               {areaId && (
+               {(areaName || areaId) && (
                   <p className="text-xs text-muted-foreground">
-                     منطقة: {areaId}
+                     منطقة: {areaName ?? areaId}
                   </p>
                )}
                {lat && lng && (
                   <p className="text-xs text-muted-foreground">
-                     الإحداثيات: {lat.toFixed(6)}, {lng.toFixed(6)}
+                     الإحداثيات: {lat}, {lng}
                   </p>
                )}
             </div>
@@ -183,9 +185,7 @@ export function AddressField({ form, isEditing }: FieldProps) {
    );
 }
 
-export function BirthDateField({ form, isEditing }: FieldProps) {
-   const value = form.getValues('birth_date') as string;
-
+export function BirthDateField({ form, isEditing, user }: FieldProps) {
    return (
       <InfoField
          icon={<Cake className="h-5 w-5 text-primary" />}
@@ -212,7 +212,9 @@ export function BirthDateField({ form, isEditing }: FieldProps) {
             />
          ) : (
             <p className="text-muted-foreground">
-               {value ? new Date(value).toLocaleDateString() : 'غير متوفر'}
+               {user.birth_date
+                  ? new Date(user.birth_date).toLocaleDateString()
+                  : 'غير متوفر'}
             </p>
          )}
       </InfoField>

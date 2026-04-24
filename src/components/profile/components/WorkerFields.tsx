@@ -1,6 +1,6 @@
 'use client';
 
-import { Briefcase, Clock, Award, FileText } from 'lucide-react';
+import { Briefcase, Clock, Award, FileText, Wrench } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import {
@@ -19,27 +19,66 @@ import {
 import { InfoField } from '@/components/sections/info-field';
 import type { UseFormReturn } from 'react-hook-form';
 import type { UnifiedProfileFormData } from '@/components/profile/schemas';
+import type { Worker } from '@/types/entities/worker';
 
 interface FieldProps {
    form: UseFormReturn<UnifiedProfileFormData>;
    isEditing: boolean;
+   worker?: Worker | null;
 }
 
-const ACCOUNT_STATUS_LABELS: Record<string, string> = {
+const STATUS_LABELS: Record<string, string> = {
    active: 'نشط',
-   pending: 'قيد المراجعة',
-   suspended: 'موقوف',
+   waiting: 'قيد المراجعة',
+   blocked: 'موقوف',
 };
 
-const ACCOUNT_STATUS_COLORS: Record<string, string> = {
+const STATUS_COLORS: Record<string, string> = {
    active: 'text-green-600',
-   pending: 'text-yellow-600',
-   suspended: 'text-red-600',
+   waiting: 'text-yellow-600',
+   blocked: 'text-red-600',
 };
 
-export function AboutField({ form, isEditing }: FieldProps) {
-   const value = form.getValues('about') as string;
+export function CareerField({ worker }: { worker?: Worker | null }) {
+   return (
+      <InfoField
+         icon={<Briefcase className="h-5 w-5 text-primary" />}
+         title="التخصص"
+      >
+         <p className="text-muted-foreground">
+            {worker?.career?.name || 'غير محدد'}
+         </p>
+      </InfoField>
+   );
+}
 
+export function ServicesField({ worker }: { worker?: Worker | null }) {
+   const services = worker?.services ?? [];
+   return (
+      <InfoField
+         icon={<Wrench className="h-5 w-5 text-primary" />}
+         title="الخدمات"
+         className="md:col-span-2"
+      >
+         {services.length === 0 ? (
+            <p className="text-muted-foreground">لا توجد خدمات</p>
+         ) : (
+            <div className="flex flex-wrap gap-2">
+               {services.map((s) => (
+                  <span
+                     key={s.id}
+                     className="px-2 py-1 text-xs rounded-md bg-primary/10 text-primary"
+                  >
+                     {s.name}
+                  </span>
+               ))}
+            </div>
+         )}
+      </InfoField>
+   );
+}
+
+export function AboutField({ form, isEditing, worker }: FieldProps) {
    return (
       <InfoField
          icon={<FileText className="h-5 w-5 text-primary" />}
@@ -65,49 +104,15 @@ export function AboutField({ form, isEditing }: FieldProps) {
                )}
             />
          ) : (
-            <p className="text-muted-foreground">{value || 'غير متوفر'}</p>
-         )}
-      </InfoField>
-   );
-}
-
-export function NearlyDateField({ form, isEditing }: FieldProps) {
-   const value = form.getValues('nearly_date') as string;
-
-   return (
-      <InfoField
-         icon={<Clock className="h-5 w-5 text-primary" />}
-         title="أقرب موعد متاح"
-      >
-         {isEditing ? (
-            <FormField
-               control={form.control}
-               name="nearly_date"
-               render={({ field }) => (
-                  <FormItem>
-                     <FormControl>
-                        <Input
-                           {...field}
-                           value={field.value || ''}
-                           type="date"
-                           placeholder="اختر أقرب موعد متاح"
-                           className="text-right"
-                        />
-                     </FormControl>
-                     <FormMessage />
-                  </FormItem>
-               )}
-            />
-         ) : (
             <p className="text-muted-foreground">
-               {value ? new Date(value).toLocaleDateString() : 'غير متوفر'}
+               {worker?.about || 'غير متوفر'}
             </p>
          )}
       </InfoField>
    );
 }
 
-export function YearsExperienceField({ form, isEditing }: FieldProps) {
+export function YearsExperienceField({ form, isEditing, worker }: FieldProps) {
    return (
       <InfoField
          icon={<Award className="h-5 w-5 text-primary" />}
@@ -133,17 +138,17 @@ export function YearsExperienceField({ form, isEditing }: FieldProps) {
             />
          ) : (
             <p className="text-muted-foreground">
-               {(form.getValues('years_experience') as string) || 'غير متوفر'}{' '}
-               سنة
+               {worker?.years_experience != null
+                  ? `${worker.years_experience} سنة`
+                  : 'غير متوفر'}
             </p>
          )}
       </InfoField>
    );
 }
 
-export function AccountStatusField({ form, isEditing }: FieldProps) {
-   const value = (form.getValues('account_status') as string) || 'pending';
-
+export function AccountStatusField({ form, isEditing, worker }: FieldProps) {
+   const status = worker?.status ?? 'waiting';
    return (
       <InfoField
          icon={<Briefcase className="h-5 w-5 text-primary" />}
@@ -166,8 +171,8 @@ export function AccountStatusField({ form, isEditing }: FieldProps) {
                         </FormControl>
                         <SelectContent>
                            <SelectItem value="active">نشط</SelectItem>
-                           <SelectItem value="pending">قيد المراجعة</SelectItem>
-                           <SelectItem value="suspended">موقوف</SelectItem>
+                           <SelectItem value="waiting">قيد المراجعة</SelectItem>
+                           <SelectItem value="blocked">موقوف</SelectItem>
                         </SelectContent>
                      </Select>
                      <FormMessage />
@@ -175,9 +180,44 @@ export function AccountStatusField({ form, isEditing }: FieldProps) {
                )}
             />
          ) : (
-            <p className={`font-medium ${ACCOUNT_STATUS_COLORS[value]}`}>
-               {ACCOUNT_STATUS_LABELS[value]}
+            <p className={`font-medium ${STATUS_COLORS[status]}`}>
+               {STATUS_LABELS[status]}
             </p>
+         )}
+      </InfoField>
+   );
+}
+
+export function NearlyDateField({
+   form,
+   isEditing,
+}: Omit<FieldProps, 'worker'>) {
+   return (
+      <InfoField
+         icon={<Clock className="h-5 w-5 text-primary" />}
+         title="أقرب موعد متاح"
+      >
+         {isEditing ? (
+            <FormField
+               control={form.control}
+               name="nearly_date"
+               render={({ field }) => (
+                  <FormItem>
+                     <FormControl>
+                        <Input
+                           {...field}
+                           value={field.value || ''}
+                           type="date"
+                           placeholder="اختر أقرب موعد متاح"
+                           className="text-right"
+                        />
+                     </FormControl>
+                     <FormMessage />
+                  </FormItem>
+               )}
+            />
+         ) : (
+            <p className="text-muted-foreground">غير متوفر</p>
          )}
       </InfoField>
    );

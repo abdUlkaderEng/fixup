@@ -1,5 +1,6 @@
 /**
  * Admin Types - Address/Area Management
+ * The admin manages Area records (area_name list), not user addresses
  */
 
 import type {
@@ -7,32 +8,20 @@ import type {
    PaginationLinks,
    MessageResponse,
 } from './shared';
-import type { Address } from '@/types/entities/address';
+import type { Area } from '@/types/entities/address';
 
-// ============================================
-// Address Entity (Re-export from entities)
-// ============================================
-
-export type { Address };
-
-// ============================================
-// API Requests
-// ============================================
+export type { Area as Address };
 
 export interface CreateAddressRequest {
    area_name: string;
 }
 
-// ============================================
-// API Responses
-// ============================================
-
 export interface GetAddressesResponse {
-   data: Address[];
+   data: Area[];
    links: PaginationLinks;
    meta: PaginationMeta;
 }
 
-export type CreateAddressResponse = Address;
+export type CreateAddressResponse = Area;
 
 export type DeleteAddressResponse = MessageResponse;

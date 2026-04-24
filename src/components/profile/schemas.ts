@@ -43,7 +43,7 @@ export const profileSchema = z.object({
       .regex(/^\d*$/, 'سنوات الخبرة يجب أن تكون أرقام فقط')
       .optional()
       .or(z.literal('')),
-   account_status: z.enum(['active', 'pending', 'suspended']).optional(),
+   account_status: z.enum(['active', 'waiting', 'blocked']).optional(),
 });
 
 export type ProfileFormData = z.infer<typeof profileSchema>;

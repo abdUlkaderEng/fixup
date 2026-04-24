@@ -27,8 +27,8 @@ export function useProfileForm(user: User | undefined): UseProfileFormReturn {
       () => ({
          name: user?.name || '',
          phone_number: user?.phone_number || '',
-         latitude: user?.latitude ?? undefined,
-         longitude: user?.longitude ?? undefined,
+         latitude: user?.latitude ? parseFloat(user.latitude) : undefined,
+         longitude: user?.longitude ? parseFloat(user.longitude) : undefined,
          detailed_address: user?.detailed_address || '',
          area_address_id: user?.area_address_id ?? undefined,
          birth_date: user?.birth_date || '',
@@ -46,8 +46,8 @@ export function useProfileForm(user: User | undefined): UseProfileFormReturn {
          form.reset({
             name: user.name || '',
             phone_number: user.phone_number || '',
-            latitude: user.latitude ?? undefined,
-            longitude: user.longitude ?? undefined,
+            latitude: user.latitude ? parseFloat(user.latitude) : undefined,
+            longitude: user.longitude ? parseFloat(user.longitude) : undefined,
             detailed_address: user.detailed_address || '',
             area_address_id: user.area_address_id ?? undefined,
             birth_date: user.birth_date || '',

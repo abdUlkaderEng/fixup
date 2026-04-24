@@ -9,11 +9,7 @@ import type { Career } from './career';
 // Worker Status
 // ============================================
 
-export type WorkerStatus = 'waiting' | 'active' | 'blocked';
-
-// ============================================
-// Worker Service (simplified service reference)
-// ============================================
+export type WorkerStatus = 'active' | 'waiting' | 'blocked';
 
 export interface WorkerService {
    id: number;
@@ -21,11 +17,8 @@ export interface WorkerService {
    career_id?: number;
    created_at?: string;
    updated_at?: string;
+   pivot?: { worker_id: number; service_id: number };
 }
-
-// ============================================
-// Base Worker Entity
-// ============================================
 
 export interface Worker {
    id: number;
@@ -38,10 +31,4 @@ export interface Worker {
    updated_at: string;
    career?: Career | null;
    services?: WorkerService[];
-}
-
-// Worker with all relations populated (auth/session format)
-export interface WorkerWithRelations extends Worker {
-   career: Career;
-   services: WorkerService[];
 }

@@ -13,9 +13,4 @@ export type { Service, ServiceWithTimestamps } from './service';
 export type { Area, Address, PublicArea } from './address';
 
 // Worker entity
-export type {
-   WorkerStatus,
-   WorkerService,
-   Worker,
-   WorkerWithRelations,
-} from './worker';
+export type { WorkerStatus, WorkerService, Worker } from './worker';

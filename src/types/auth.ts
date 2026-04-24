@@ -1,5 +1,5 @@
 import type { Worker } from '@/types/entities/worker';
-import type { Address } from '@/types/entities/address';
+import type { UserAddress, Area } from '@/types/entities/address';
 
 export interface LoginRequest {
    email: string;
@@ -18,21 +18,16 @@ export interface RegisterRequest {
    password: string;
    password_confirmation: string;
 }
-// export interface Address {
-//    id: number;
-//    area_name: string;
-//    created_at?: string;
-//    updated_at?: string;
-// }
+
+// ============================================
+// User - Matches Backend Auth Response
+// ============================================
+
 export interface User {
-   id: number;
+   id: string;
    name: string;
    email: string;
    phone_number: string | null;
-   latitude: number | null;
-   longitude: number | null;
-   detailed_address: string | null;
-   area_address_id: number | null;
    birth_date: string | null;
    profile_picture: string | null;
    role: string;
@@ -40,8 +35,14 @@ export interface User {
    email_verified_at: string | null;
    created_at: string;
    updated_at: string;
-   address?: Address | null;
+   // Auth-specific fields
+   accessToken?: string;
+   provider?: string;
+   // Nested relations
+   address?: UserAddress | null;
    worker?: Worker | null;
+   // Area info (fetched separately or nested)
+   area?: Area | null;
 }
 
 export interface AuthResponse {

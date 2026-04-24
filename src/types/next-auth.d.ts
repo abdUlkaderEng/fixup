@@ -1,7 +1,7 @@
 import 'next-auth';
 import 'next-auth/jwt';
 import type { Worker } from '@/types/entities/worker';
-import type { Address } from '@/types/entities/address';
+import type { UserAddress } from '@/types/entities/address';
 
 // ============================================
 // Common User Profile Fields (DRY pattern)
@@ -9,8 +9,9 @@ import type { Address } from '@/types/entities/address';
 
 type UserProfileFields = {
    phone_number?: string | null;
-   latitude?: number | null;
-   longitude?: number | null;
+   // latitude/longitude come from backend as strings
+   latitude?: string | null;
+   longitude?: string | null;
    detailed_address?: string | null;
    area_address_id?: number | null;
    birth_date?: string | null;
@@ -20,7 +21,8 @@ type UserProfileFields = {
    updated_at?: string;
    is_active?: number;
    profile_picture?: string | null;
-   address?: Address | null;
+   // Full nested address object (includes area_address.area_name)
+   address?: UserAddress | null;
    worker?: Worker | null;
 };
 

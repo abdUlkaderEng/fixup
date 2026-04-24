@@ -21,6 +21,8 @@ import {
    NearlyDateField,
    YearsExperienceField,
    AccountStatusField,
+   CareerField,
+   ServicesField,
    ActionButtons,
 } from './components';
 
@@ -60,7 +62,7 @@ export function ProfileView({
    }
 
    const displayRole = roleLabel || user.role;
-
+   console.log(user);
    return (
       <div className="min-h-[calc(100vh-4rem)] mt-16 bg-linear-to-br from-background via-muted/50 to-background p-4 sm:p-6 lg:p-8">
          <div className="max-w-4xl mx-auto">
@@ -75,25 +77,45 @@ export function ProfileView({
                         email={user.email}
                         verified={!!user.email_verified_at}
                      />
-                     <PhoneField form={form} isEditing={isEditing} />
-                     <AddressField form={form} isEditing={isEditing} />
-                     <BirthDateField form={form} isEditing={isEditing} />
+                     <PhoneField
+                        form={form}
+                        isEditing={isEditing}
+                        user={user}
+                     />
+                     <AddressField
+                        form={form}
+                        isEditing={isEditing}
+                        user={user}
+                     />
+                     <BirthDateField
+                        form={form}
+                        isEditing={isEditing}
+                        user={user}
+                     />
                      <RoleField role={displayRole} />
                      <CreatedAtField createdAt={user.created_at} />
 
                      {/* Worker-specific fields */}
                      {isWorker && (
                         <>
-                           <AboutField form={form} isEditing={isEditing} />
-                           <NearlyDateField form={form} isEditing={isEditing} />
-                           <YearsExperienceField
-                              form={form}
-                              isEditing={isEditing}
-                           />
+                           <CareerField worker={user.worker} />
                            <AccountStatusField
                               form={form}
                               isEditing={isEditing}
+                              worker={user.worker}
                            />
+                           <AboutField
+                              form={form}
+                              isEditing={isEditing}
+                              worker={user.worker}
+                           />
+                           <ServicesField worker={user.worker} />
+                           <YearsExperienceField
+                              form={form}
+                              isEditing={isEditing}
+                              worker={user.worker}
+                           />
+                           <NearlyDateField form={form} isEditing={isEditing} />
                         </>
                      )}
                   </div>

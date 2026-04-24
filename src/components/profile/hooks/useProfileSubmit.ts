@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import { toast } from 'sonner';
 import type { User } from 'next-auth';
 import { userApi } from '@/api/user';
+import { mapBackendUserToAuthUser } from '@/lib/next-auth-config/mappers';
 import type { ProfileFormData } from '@/components/profile/schemas';
 
 interface UseProfileSubmitReturn {
@@ -29,14 +30,13 @@ export function useProfileSubmit(
 
          try {
             const response = await userApi.updateProfile(data);
-            const freshUser = await userApi.getCurrentUser();
+            const freshBackendUser = await userApi.getCurrentUser();
+            const freshUser = mapBackendUserToAuthUser(
+               freshBackendUser,
+               sessionUser?.accessToken
+            );
 
-            await update({
-               user: {
-                  ...sessionUser,
-                  ...freshUser,
-               },
-            });
+            await update({ user: freshUser });
 
             toast.success(response.message || 'تم تحديث الملف الشخصي بنجاح');
             onSuccess();

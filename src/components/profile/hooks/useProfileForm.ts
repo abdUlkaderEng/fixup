@@ -21,10 +21,31 @@ interface UseProfileFormReturn {
    handleCancel: () => void;
 }
 
-/**
- * Hook to manage profile form state and edit mode
- * Supports both customer and worker profiles
- */
+function buildDefaultValues(
+   user: User | undefined,
+   isWorker: boolean
+): ProfileFormData {
+   return {
+      name: user?.name || '',
+      phone_number: user?.phone_number || '',
+      latitude: user?.latitude ? parseFloat(user.latitude) : undefined,
+      longitude: user?.longitude ? parseFloat(user.longitude) : undefined,
+      detailed_address: user?.detailed_address || '',
+      area_address_id: user?.area_address_id ?? undefined,
+      birth_date: user?.birth_date || '',
+      ...(isWorker && {
+         about: user?.worker?.about || '',
+         years_experience:
+            user?.worker?.years_experience != null
+               ? String(user.worker.years_experience)
+               : '',
+         account_status:
+            (user?.worker?.status as 'active' | 'waiting' | 'blocked') ||
+            'waiting',
+      }),
+   };
+}
+
 export function useProfileForm({
    user,
    isWorker = false,
@@ -32,26 +53,7 @@ export function useProfileForm({
    const [isEditing, setIsEditing] = useState(false);
 
    const defaultValues = useMemo(
-      () => ({
-         name: user?.name || '',
-         phone_number: user?.phone_number || '',
-         latitude: user?.latitude ?? undefined,
-         longitude: user?.longitude ?? undefined,
-         detailed_address: user?.detailed_address || '',
-         area_address_id: user?.area_address_id ?? undefined,
-         birth_date: user?.birth_date || '',
-         ...(isWorker && {
-            about: (user as { about?: string })?.about || '',
-            nearly_date: (user as { nearly_date?: string })?.nearly_date || '',
-            years_experience:
-               (user as { years_experience?: string })?.years_experience || '',
-            account_status: ((user as { account_status?: string })
-               ?.account_status || 'pending') as
-               | 'active'
-               | 'pending'
-               | 'suspended',
-         }),
-      }),
+      () => buildDefaultValues(user, isWorker),
       [user, isWorker]
    );
 
@@ -61,30 +63,7 @@ export function useProfileForm({
    });
 
    const handleEdit = useCallback(() => {
-      if (user) {
-         form.reset({
-            name: user.name || '',
-            phone_number: user.phone_number || '',
-            latitude: user.latitude ?? undefined,
-            longitude: user.longitude ?? undefined,
-            detailed_address: user.detailed_address || '',
-            area_address_id: user.area_address_id ?? undefined,
-            birth_date: user.birth_date || '',
-            ...(isWorker && {
-               about: (user as { about?: string })?.about || '',
-               nearly_date:
-                  (user as { nearly_date?: string })?.nearly_date || '',
-               years_experience:
-                  (user as { years_experience?: string })?.years_experience ||
-                  '',
-               account_status: ((user as { account_status?: string })
-                  ?.account_status || 'pending') as
-                  | 'active'
-                  | 'pending'
-                  | 'suspended',
-            }),
-         });
-      }
+      form.reset(buildDefaultValues(user, isWorker));
       setIsEditing(true);
    }, [form, user, isWorker]);
 
@@ -92,12 +71,7 @@ export function useProfileForm({
       setIsEditing(false);
    }, []);
 
-   return {
-      form,
-      isEditing,
-      handleEdit,
-      handleCancel,
-   };
+   return { form, isEditing, handleEdit, handleCancel };
 }
 
 export default useProfileForm;
