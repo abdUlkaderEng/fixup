@@ -1,58 +1,93 @@
 'use client';
 
-import { Pencil, LogOut, X, Check, Loader2, RefreshCcw } from 'lucide-react';
+import {
+   Pencil,
+   LogOut,
+   X,
+   Check,
+   Loader2,
+   RefreshCcw,
+   Wrench,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-interface ActionButtonsProps {
-   isEditing: boolean;
+interface SaveCancelProps {
    isSubmitting: boolean;
-   onEdit: () => void;
+   onCancel: () => void;
+   formId: string;
+}
+
+function SaveCancelButtons({
+   isSubmitting,
+   onCancel,
+   formId,
+}: SaveCancelProps) {
+   return (
+      <div className="flex gap-3 h-12">
+         <Button
+            type="button"
+            variant="outline"
+            onClick={onCancel}
+            disabled={isSubmitting}
+            className="flex-1 h-full gap-2"
+         >
+            <X className="h-4 w-4" />
+            إلغاء
+         </Button>
+         <Button
+            type="submit"
+            form={formId}
+            disabled={isSubmitting}
+            className="flex-1 h-full gap-2"
+         >
+            {isSubmitting ? (
+               <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  جاري الحفظ...
+               </>
+            ) : (
+               <>
+                  <Check className="h-4 w-4" />
+                  حفظ التغييرات
+               </>
+            )}
+         </Button>
+      </div>
+   );
+}
+
+interface ActionButtonsProps {
+   isWorker: boolean;
+   editMode: 'base' | 'worker' | null;
+   isSubmitting: boolean;
+   activeFormId: string;
+   onEditBase: () => void;
+   onEditWorker: () => void;
    onCancel: () => void;
    onLogout: () => void;
-   showConvertButton: boolean;
+   showConvertButton?: boolean;
    onConvertToWorker?: () => void;
 }
 
 export function ActionButtons({
-   isEditing,
+   isWorker,
+   editMode,
    isSubmitting,
-   onEdit,
+   activeFormId,
+   onEditBase,
+   onEditWorker,
    onCancel,
    onLogout,
    showConvertButton,
    onConvertToWorker,
 }: ActionButtonsProps) {
-   if (isEditing) {
+   if (editMode !== null) {
       return (
-         <div className="flex gap-3 h-12">
-            <Button
-               type="button"
-               variant="outline"
-               onClick={onCancel}
-               disabled={isSubmitting}
-               className="flex-1 h-full gap-2"
-            >
-               <X className="h-4 w-4" />
-               إلغاء
-            </Button>
-            <Button
-               type="submit"
-               disabled={isSubmitting}
-               className="flex-1 h-full gap-2"
-            >
-               {isSubmitting ? (
-                  <>
-                     <Loader2 className="h-4 w-4 animate-spin" />
-                     جاري الحفظ...
-                  </>
-               ) : (
-                  <>
-                     <Check className="h-4 w-4" />
-                     حفظ التغييرات
-                  </>
-               )}
-            </Button>
-         </div>
+         <SaveCancelButtons
+            isSubmitting={isSubmitting}
+            onCancel={onCancel}
+            formId={activeFormId}
+         />
       );
    }
 
@@ -61,12 +96,24 @@ export function ActionButtons({
          <Button
             type="button"
             variant="outline"
-            onClick={onEdit}
+            onClick={onEditBase}
             className="flex-1 h-12 gap-2"
          >
             <Pencil className="h-4 w-4" />
-            تعديل الملف الشخصي
+            {isWorker ? 'تعديل البيانات الشخصية' : 'تعديل الملف الشخصي'}
          </Button>
+
+         {isWorker && (
+            <Button
+               type="button"
+               variant="outline"
+               onClick={onEditWorker}
+               className="flex-1 h-12 gap-2"
+            >
+               <Wrench className="h-4 w-4" />
+               تعديل بيانات الفني
+            </Button>
+         )}
 
          {showConvertButton && onConvertToWorker && (
             <Button

@@ -26,13 +26,6 @@ import { Button } from '@/components/ui/button';
 import { FloatingLabelInput } from '@/components/ui/floating-input';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
-   Select,
-   SelectContent,
-   SelectItem,
-   SelectTrigger,
-   SelectValue,
-} from '@/components/ui/select';
-import {
    Form,
    FormControl,
    FormField,
@@ -46,6 +39,7 @@ import { toast } from 'sonner';
 import { authApi } from '@/api/auth';
 import { MapPicker } from '@/components/map-picker';
 import { usePublicAreas } from '@/hooks/public/use-public-areas';
+import AreaSelect from '@/components/publicComponents/area-select';
 
 type SignupFormValues = z.input<typeof signupSchema>;
 
@@ -53,10 +47,6 @@ export default function SignupPage() {
    const [showPassword, setShowPassword] = useState(false);
    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
    const [isLoading, setIsLoading] = useState(false);
-
-   const { areas, isLoading: isLoadingAreas } = usePublicAreas({
-      perPage: 100,
-   });
 
    const form = useForm<SignupFormValues, unknown, SignupInput>({
       resolver: zodResolver(signupSchema),
@@ -279,47 +269,11 @@ export default function SignupPage() {
                            name="area_address_id"
                            render={({ field }) => (
                               <FormItem className="space-y-0">
-                                 <Select
-                                    value={
-                                       field.value
-                                          ? String(field.value)
-                                          : 'none'
-                                    }
-                                    onValueChange={(value) =>
-                                       field.onChange(Number(value))
-                                    }
-                                    disabled={isLoading || isLoadingAreas}
-                                 >
-                                    <SelectTrigger className="w-full" dir="rtl">
-                                       <SelectValue
-                                          placeholder={
-                                             isLoadingAreas
-                                                ? 'جاري تحميل المناطق...'
-                                                : 'اختر المنطقة'
-                                          }
-                                       />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                       {isLoadingAreas ? (
-                                          <SelectItem value="" disabled>
-                                             جاري تحميل المناطق...
-                                          </SelectItem>
-                                       ) : areas.length === 0 ? (
-                                          <SelectItem value="none" disabled>
-                                             لا توجد مناطق متاحة
-                                          </SelectItem>
-                                       ) : (
-                                          areas.map((area) => (
-                                             <SelectItem
-                                                key={area.id}
-                                                value={String(area.id)}
-                                             >
-                                                {area.area_name}
-                                             </SelectItem>
-                                          ))
-                                       )}
-                                    </SelectContent>
-                                 </Select>
+                                 <AreaSelect
+                                    value={field.value ?? null}
+                                    onChange={(v) => field.onChange(v ?? 0)}
+                                    disabled={isLoading}
+                                 />
                                  <FormMessage />
                               </FormItem>
                            )}

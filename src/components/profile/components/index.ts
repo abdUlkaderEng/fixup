@@ -15,5 +15,6 @@ export {
    AccountStatusField,
    CareerField,
    ServicesField,
+   WorkerImagesField,
 } from './WorkerFields';
 export { ActionButtons } from './ActionButtons';

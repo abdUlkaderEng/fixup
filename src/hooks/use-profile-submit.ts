@@ -4,7 +4,8 @@ import { useState, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { toast } from 'sonner';
 import type { User } from 'next-auth';
-import { userApi } from '@/api/user';
+import { updateUserProfile } from '@/api/customer';
+import { mapBackendUserToAuthUser } from '@/lib/next-auth-config/mappers';
 import type { ProfileFormData } from '@/app/customer/profile/schemas';
 
 interface UseProfileSubmitReturn {
@@ -12,10 +13,6 @@ interface UseProfileSubmitReturn {
    onSubmit: (data: ProfileFormData) => Promise<void>;
 }
 
-/**
- * Hook to handle profile update submission
- * Single Responsibility: Profile update API calls and session refresh
- */
 export function useProfileSubmit(
    sessionUser: User | undefined,
    onSuccess: () => void
@@ -26,27 +23,30 @@ export function useProfileSubmit(
    const onSubmit = useCallback(
       async (data: ProfileFormData) => {
          setIsSubmitting(true);
-
          try {
-            const response = await userApi.updateProfile(data);
-            const freshUser = await userApi.getCurrentUser();
-
-            await update({
-               user: {
-                  ...sessionUser,
-                  ...freshUser,
-               },
+            const response = await updateUserProfile({
+               name: data.name,
+               phone_number: data.phone_number,
+               latitude: data.latitude,
+               longitude: data.longitude,
+               detailed_address: data.detailed_address || undefined,
+               area_address_id: data.area_address_id,
             });
+
+            const freshUser = mapBackendUserToAuthUser(
+               response.user,
+               sessionUser?.accessToken
+            );
+            await update({ user: freshUser });
 
             toast.success(response.message || 'تم تحديث الملف الشخصي بنجاح');
             onSuccess();
          } catch (error) {
-            const message =
+            toast.error(
                error instanceof Error
                   ? error.message
-                  : 'حدث خطأ أثناء تحديث الملف الشخصي';
-            toast.error(message);
-            console.error('Profile update error:', error);
+                  : 'حدث خطأ أثناء تحديث الملف الشخصي'
+            );
          } finally {
             setIsSubmitting(false);
          }
@@ -54,10 +54,7 @@ export function useProfileSubmit(
       [update, sessionUser, onSuccess]
    );
 
-   return {
-      isSubmitting,
-      onSubmit,
-   };
+   return { isSubmitting, onSubmit };
 }
 
 export default useProfileSubmit;

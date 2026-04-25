@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { AdminHeader, SidebarNav } from '@/components/admin';
 import { useAuthToken } from '@/hooks/use-auth-token';
+import { resolveImageUrl } from '@/lib/resolve-image-url';
 
 /**
  * Admin layout component
@@ -25,6 +26,7 @@ export default function AdminLayout({
    const adminName = session?.user?.name || 'المشرف';
    const adminEmail = session?.user?.email || 'admin@fixup.com';
    const adminInitial = adminName.charAt(0).toUpperCase();
+   const adminImage = resolveImageUrl(session?.user?.profile_picture);
 
    return (
       <div className="min-h-screen bg-gray-100 text-gray-900">
@@ -59,9 +61,9 @@ export default function AdminLayout({
             <div className="border-t border-gray-200 bg-gray-50/50 p-3">
                <div className="flex items-center gap-2.5 mb-2 px-2 py-2 rounded-lg">
                   <div className="h-8 w-8 rounded-full bg-[#13377b]/10 flex items-center justify-center shrink-0 text-[#13377b]">
-                     {session?.user?.profile_picture ? (
+                     {adminImage ? (
                         <Image
-                           src={session.user.profile_picture}
+                           src={adminImage}
                            alt={adminName}
                            width={32}
                            height={32}

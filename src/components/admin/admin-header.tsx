@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { SidebarNav } from './sidebar-nav';
 import Image from 'next/image';
+import { resolveImageUrl } from '@/lib/resolve-image-url';
 
 /**
  * Admin header component
@@ -17,6 +18,7 @@ export function AdminHeader() {
    const { data: session } = useSession();
    const adminName = session?.user?.name || 'المشرف';
    const adminInitial = adminName.charAt(0).toUpperCase();
+   const adminImage = resolveImageUrl(session?.user?.profile_picture);
 
    return (
       <header className="lg:hidden sticky top-0 z-30 flex h-14 items-center justify-between border-b border-gray-200 bg-white px-4 shadow-sm">
@@ -60,9 +62,9 @@ export function AdminHeader() {
                      <div className="border-t border-gray-200 bg-gray-50/50 p-3">
                         <div className="flex items-center gap-3 mb-2 px-1 py-2 rounded-lg">
                            <div className="h-9 w-9 rounded-full bg-[#13377b]/10 flex items-center justify-center shrink-0 text-[#13377b]">
-                              {session?.user?.profile_picture ? (
+                              {adminImage ? (
                                  <Image
-                                    src={session.user.profile_picture}
+                                    src={adminImage}
                                     alt={adminName}
                                     width={36}
                                     height={36}
@@ -110,9 +112,9 @@ export function AdminHeader() {
          {/* Admin avatar */}
          <div className="flex items-center gap-2">
             <div className="h-7 w-7 rounded-full bg-[#13377b]/10 flex items-center justify-center shrink-0 text-[#13377b]">
-               {session?.user?.profile_picture ? (
+               {adminImage ? (
                   <Image
-                     src={session.user.profile_picture}
+                     src={adminImage}
                      alt={adminName}
                      width={28}
                      height={28}

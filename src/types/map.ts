@@ -34,4 +34,6 @@ export interface MapPickerProps {
    onLocationSelect?: (lng: number, lat: number) => void;
    className?: string;
    mapTilerKey: string;
+   /** When true the map is rendered as a read-only preview (no clicks, no draggable marker) */
+   readOnly?: boolean;
 }

@@ -10,11 +10,14 @@ import {
 } from '@/components/ui/form';
 import { InfoField } from '@/components/sections/info-field';
 import type { UseFormReturn } from 'react-hook-form';
-import type { UnifiedProfileFormData } from '@/components/profile/schemas';
+import type { BaseProfileFormData } from '@/components/profile/schemas';
 import type { User } from 'next-auth';
+import { MapPicker } from '@/components/map-picker';
+import { usePublicAreas } from '@/hooks/public/use-public-areas';
+import AreaSelect from '@/components/publicComponents/area-select';
 
 interface FieldProps {
-   form: UseFormReturn<UnifiedProfileFormData>;
+   form: UseFormReturn<BaseProfileFormData>;
    isEditing: boolean;
    user: User;
 }
@@ -85,7 +88,7 @@ export function AddressField({ form, isEditing, user }: FieldProps) {
          title="العنوان"
       >
          {isEditing ? (
-            <div className="space-y-2">
+            <div className="space-y-3">
                <FormField
                   control={form.control}
                   name="detailed_address"
@@ -103,69 +106,46 @@ export function AddressField({ form, isEditing, user }: FieldProps) {
                      </FormItem>
                   )}
                />
-               <div className="grid grid-cols-2 gap-2">
-                  <FormField
-                     control={form.control}
-                     name="area_address_id"
-                     render={({ field }) => (
-                        <FormItem>
-                           <FormControl>
-                              <Input
-                                 {...field}
-                                 value={field.value || ''}
-                                 type="number"
-                                 placeholder="معرف المنطقة"
-                                 className="text-right"
-                              />
-                           </FormControl>
-                           <FormMessage />
-                        </FormItem>
-                     )}
-                  />
-               </div>
-               <div className="grid grid-cols-2 gap-2">
-                  <FormField
-                     control={form.control}
-                     name="latitude"
-                     render={({ field }) => (
-                        <FormItem>
-                           <FormControl>
-                              <Input
-                                 {...field}
-                                 value={field.value || ''}
-                                 type="number"
-                                 step="any"
-                                 placeholder="خط العرض"
-                                 className="text-right"
-                              />
-                           </FormControl>
-                           <FormMessage />
-                        </FormItem>
-                     )}
-                  />
-                  <FormField
-                     control={form.control}
-                     name="longitude"
-                     render={({ field }) => (
-                        <FormItem>
-                           <FormControl>
-                              <Input
-                                 {...field}
-                                 value={field.value || ''}
-                                 type="number"
-                                 step="any"
-                                 placeholder="خط الطول"
-                                 className="text-right"
-                              />
-                           </FormControl>
-                           <FormMessage />
-                        </FormItem>
-                     )}
-                  />
-               </div>
+
+               <FormField
+                  control={form.control}
+                  name="area_address_id"
+                  render={({ field }) => (
+                     <FormItem>
+                        <AreaSelect
+                           value={field.value ?? null}
+                           onChange={(v) => field.onChange(v ?? 0)}
+                        />
+                        <FormMessage />
+                     </FormItem>
+                  )}
+               />
+
+               <FormField
+                  control={form.control}
+                  name="latitude"
+                  render={({ field }) => (
+                     <div>
+                        <MapPicker
+                           mapTilerKey={process.env.NEXT_PUBLIC_MAPTILER_KEY!}
+                           initialLng={
+                              Number(form.getValues('longitude')) || lng || 0
+                           }
+                           initialLat={
+                              Number(form.getValues('latitude')) || lat || 0
+                           }
+                           onLocationSelect={(lngVal, latVal) => {
+                              form.setValue('latitude', latVal);
+                              form.setValue('longitude', lngVal);
+                           }}
+                        />
+                        <FormMessage />
+                     </div>
+                  )}
+               />
             </div>
          ) : (
-            <div className="space-y-1">
+            <div className="space-y-3">
                <p className="text-muted-foreground">
                   {user.detailed_address || 'غير متوفر'}
                </p>
@@ -175,9 +155,17 @@ export function AddressField({ form, isEditing, user }: FieldProps) {
                   </p>
                )}
                {lat && lng && (
-                  <p className="text-xs text-muted-foreground">
-                     الإحداثيات: {lat}, {lng}
-                  </p>
+                  <div>
+                     <div className="mb-2 text-xs text-muted-foreground">
+                        إحداثيات:
+                     </div>
+                     <MapPicker
+                        mapTilerKey={process.env.NEXT_PUBLIC_MAPTILER_KEY!}
+                        initialLng={lng}
+                        initialLat={lat}
+                        readOnly
+                     />
+                  </div>
                )}
             </div>
          )}

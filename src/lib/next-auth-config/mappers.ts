@@ -120,6 +120,7 @@ export const updateTokenFromSession = (
 ): void => {
    const updatableFields = [
       'name',
+      'image',
       'phone_number',
       'latitude',
       'longitude',
@@ -140,4 +141,9 @@ export const updateTokenFromSession = (
          token[field] = sessionUser[field] ?? token[field];
       }
    });
+
+   // Keep NextAuth standard image field aligned with backend profile_picture.
+   if (sessionUser.profile_picture !== undefined) {
+      token.image = sessionUser.profile_picture ?? token.image;
+   }
 };

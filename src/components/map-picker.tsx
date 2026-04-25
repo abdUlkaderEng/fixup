@@ -13,6 +13,7 @@ import { SearchResult } from '@/types/map';
 
 const DEFAULT_CENTER = { lng: 0, lat: 20 };
 const DEFAULT_ZOOM = 2;
+const LOCATION_ZOOM = 14;
 
 // Global flag to ensure RTL plugin is only loaded once
 let rtlPluginLoaded = false;
@@ -24,6 +25,7 @@ export function MapPicker({
    onLocationSelect,
    className,
    mapTilerKey,
+   readOnly = false,
 }: MapPickerProps) {
    const mapContainer = useRef<HTMLDivElement>(null);
    const map = useRef<maplibregl.Map | null>(null);
@@ -32,9 +34,11 @@ export function MapPicker({
 
    const hasInitialLocation =
       initialLng !== DEFAULT_CENTER.lng || initialLat !== DEFAULT_CENTER.lat;
+   // Capture initial values once — never let prop changes re-init the map
    const initialLocationRef = useRef<Location | null>(
       hasInitialLocation ? { lng: initialLng, lat: initialLat } : null
    );
+   const initialZoomRef = useRef(hasInitialLocation ? LOCATION_ZOOM : zoom);
 
    const [selectedLocation, setSelectedLocation] = useState<Location | null>(
       initialLocationRef.current
@@ -67,16 +71,21 @@ export function MapPicker({
          );
          rtlPluginLoaded = true;
       }
+      const initCenter = initialLocationRef.current
+         ? [initialLocationRef.current.lng, initialLocationRef.current.lat]
+         : [DEFAULT_CENTER.lng, DEFAULT_CENTER.lat];
+
       const newMap = new maplibregl.Map({
          container: mapContainer.current,
          style: `https://api.maptiler.com/maps/streets/style.json?key=${mapTilerKey}`,
-         center: [initialLng, initialLat],
-         zoom: zoom,
+         center: initCenter as [number, number],
+         zoom: initialZoomRef.current,
       });
 
       newMap.addControl(new maplibregl.NavigationControl(), 'top-right');
 
       const handleClick = (e: maplibregl.MapMouseEvent) => {
+         if (readOnly) return;
          const { lng, lat } = e.lngLat;
 
          if (marker.current) {
@@ -84,18 +93,20 @@ export function MapPicker({
          } else {
             marker.current = new maplibregl.Marker({
                color: '#ef4444',
-               draggable: true,
+               draggable: !readOnly,
             })
                .setLngLat([lng, lat])
                .addTo(newMap);
 
-            marker.current.on('dragend', () => {
-               const pos = marker.current?.getLngLat();
-               if (pos) {
-                  setSelectedLocation({ lng: pos.lng, lat: pos.lat });
-                  onLocationSelectRef.current?.(pos.lng, pos.lat);
-               }
-            });
+            if (!readOnly) {
+               marker.current.on('dragend', () => {
+                  const pos = marker.current?.getLngLat();
+                  if (pos) {
+                     setSelectedLocation({ lng: pos.lng, lat: pos.lat });
+                     onLocationSelectRef.current?.(pos.lng, pos.lat);
+                  }
+               });
+            }
          }
 
          setSelectedLocation({ lng, lat });
@@ -135,13 +146,14 @@ export function MapPicker({
          marker.current = null;
       };
 
-      newMap.on('click', handleClick);
+      if (!readOnly) newMap.on('click', handleClick);
       addMarkerToMap(newMap, initialLocationRef.current);
 
       map.current = newMap;
 
       return () => cleanupMap(newMap, handleClick);
-   }, [initialLng, initialLat, zoom, mapTilerKey, updateLocation]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, [mapTilerKey, updateLocation, readOnly]);
 
    const handleGetCurrentLocation = () => {
       if (!navigator.geolocation) {
@@ -167,17 +179,19 @@ export function MapPicker({
             } else {
                marker.current = new maplibregl.Marker({
                   color: '#ef4444',
-                  draggable: true,
+                  draggable: !readOnly,
                })
                   .setLngLat([longitude, latitude])
                   .addTo(map.current!);
 
-               marker.current.on('dragend', () => {
-                  const pos = marker.current?.getLngLat();
-                  if (pos) {
-                     updateLocation(pos.lng, pos.lat);
-                  }
-               });
+               if (!readOnly) {
+                  marker.current.on('dragend', () => {
+                     const pos = marker.current?.getLngLat();
+                     if (pos) {
+                        updateLocation(pos.lng, pos.lat);
+                     }
+                  });
+               }
             }
 
             updateLocation(longitude, latitude);
@@ -217,17 +231,19 @@ export function MapPicker({
       } else {
          marker.current = new maplibregl.Marker({
             color: '#ef4444',
-            draggable: true,
+            draggable: !readOnly,
          })
             .setLngLat([lng, lat])
             .addTo(map.current!);
 
-         marker.current.on('dragend', () => {
-            const pos = marker.current?.getLngLat();
-            if (pos) {
-               updateLocation(pos.lng, pos.lat);
-            }
-         });
+         if (!readOnly) {
+            marker.current.on('dragend', () => {
+               const pos = marker.current?.getLngLat();
+               if (pos) {
+                  updateLocation(pos.lng, pos.lat);
+               }
+            });
+         }
       }
 
       updateLocation(lng, lat);
@@ -253,16 +269,18 @@ export function MapPicker({
                   <span>Click on the map to select a location</span>
                )}
             </div>
-            <Button
-               variant="outline"
-               size="sm"
-               onClick={handleGetCurrentLocation}
-               disabled={isLocating}
-               className="gap-1.5"
-            >
-               <Crosshair className="size-3.5" />
-               {isLocating ? 'Locating...' : 'Current Location'}
-            </Button>
+            {!readOnly && (
+               <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleGetCurrentLocation}
+                  disabled={isLocating}
+                  className="gap-1.5"
+               >
+                  <Crosshair className="size-3.5" />
+                  {isLocating ? 'Locating...' : 'Current Location'}
+               </Button>
+            )}
          </div>
 
          {(searchError || locationError) && (
@@ -275,16 +293,18 @@ export function MapPicker({
             ref={mapContainer}
             className="relative h-100 w-full overflow-hidden rounded-lg border"
          >
-            <SearchControl
-               isOpen={isSearchOpen}
-               query={searchQuery}
-               results={searchResults}
-               isSearching={isSearching}
-               onOpen={() => setIsSearchOpen(true)}
-               onClose={closeSearch}
-               onQueryChange={setSearchQuery}
-               onSelect={handleSelectResult}
-            />
+            {!readOnly && (
+               <SearchControl
+                  isOpen={isSearchOpen}
+                  query={searchQuery}
+                  results={searchResults}
+                  isSearching={isSearching}
+                  onOpen={() => setIsSearchOpen(true)}
+                  onClose={closeSearch}
+                  onQueryChange={setSearchQuery}
+                  onSelect={handleSelectResult}
+               />
+            )}
          </div>
       </div>
    );

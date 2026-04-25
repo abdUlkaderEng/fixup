@@ -20,6 +20,12 @@ export interface WorkerService {
    pivot?: { worker_id: number; service_id: number };
 }
 
+export interface WorkerImage {
+   id: number;
+   path: string;
+   worker_id: number;
+}
+
 export interface Worker {
    id: number;
    user_id: number;
@@ -31,4 +37,5 @@ export interface Worker {
    updated_at: string;
    career?: Career | null;
    services?: WorkerService[];
+   images?: WorkerImage[];
 }

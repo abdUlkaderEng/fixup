@@ -50,19 +50,32 @@ export interface AuthResponse {
    user: User;
 }
 
-export interface UpdateProfileRequest {
+export interface UpdateCustomerProfileRequest {
    name: string;
    phone_number: string;
+   profile_picture?: File | null;
    latitude?: number;
    longitude?: number;
    detailed_address?: string;
    area_address_id?: number;
-   birth_date?: string;
 }
 
 export interface UpdateProfileResponse {
    message: string;
    user: User;
+}
+
+export interface UpdateWorkerProfileRequest {
+   about: string;
+   years_experience: number;
+   services: number[];
+   images?: File[];
+   delete_images?: number[];
+}
+
+export interface UpdateWorkerProfileResponse {
+   message: string;
+   data: Worker;
 }
 
 export interface ApiError {
@@ -78,17 +91,3 @@ export interface RegisterWorkerRequest {
    services: number[];
    images?: File[];
 }
-
-// register work didnt return anything
-// export interface RegisterWorkerResponse {
-//    message: string;
-//    worker: {
-//       id: number;
-//       career_id: string;
-//       about: string;
-//       years_experience: number;
-//       user_id: number;
-//       created_at: string;
-//       updated_at: string;
-//    };
-// }
