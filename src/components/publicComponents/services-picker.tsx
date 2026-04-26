@@ -1,8 +1,8 @@
 'use client';
 
-import * as React from 'react';
-import { Loader2, Wrench } from 'lucide-react';
-import { Checkbox } from '@/components/ui/checkbox';
+import { CheckCircle2, Wrench } from 'lucide-react';
+
+import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { usePublicServices } from '@/hooks/public/use-public-services';
 
@@ -26,11 +26,26 @@ export function ServicesPicker({
       perPage,
    });
 
+   const handleToggle = (serviceId: number) => {
+      if (disabled) return;
+
+      if (value.includes(serviceId)) {
+         onChange(value.filter((v) => v !== serviceId));
+      } else {
+         onChange([...value, serviceId]);
+      }
+   };
+
    if (!careerId) {
       return (
-         <div className="rounded-xl border border-dashed border-muted-foreground/30 p-6 text-center">
-            <Wrench className="mx-auto mb-2 h-8 w-8 text-muted-foreground/50" />
-            <p className="text-sm text-muted-foreground">
+         <div className="rounded-xl border border-dashed border-border/80 bg-muted/20 p-8 text-center">
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-muted text-muted-foreground">
+               <Wrench className="h-5 w-5" />
+            </div>
+            <h3 className="text-base font-semibold text-foreground">
+               اختر المجال المهني
+            </h3>
+            <p className="mt-1 text-sm text-muted-foreground">
                اختر المجال المهني أولاً لعرض الخدمات المتاحة
             </p>
          </div>
@@ -39,58 +54,79 @@ export function ServicesPicker({
 
    if (isLoading) {
       return (
-         <div className="flex items-center justify-center gap-2 py-8 text-sm text-muted-foreground">
-            <Loader2 className="h-4 w-4 animate-spin" />
-            جاري تحميل الخدمات...
+         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, index) => (
+               <Card
+                  key={index}
+                  className="overflow-hidden border border-border/60"
+               >
+                  <CardContent className="space-y-3 p-4">
+                     <div className="h-5 w-2/3 animate-pulse rounded bg-muted" />
+                     <div className="h-4 w-full animate-pulse rounded bg-muted" />
+                     <div className="h-4 w-1/2 animate-pulse rounded bg-muted" />
+                  </CardContent>
+               </Card>
+            ))}
          </div>
       );
    }
 
    if (!services || services.length === 0) {
       return (
-         <div className="rounded-xl border border-dashed border-muted-foreground/30 p-6 text-center">
-            <Wrench className="mx-auto mb-2 h-8 w-8 text-muted-foreground/50" />
-            <p className="text-sm text-muted-foreground">
-               لا توجد خدمات متاحة لهذا المجال
+         <div className="rounded-xl border border-dashed border-border/80 bg-muted/20 p-8 text-center">
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-muted text-muted-foreground">
+               <Wrench className="h-5 w-5" />
+            </div>
+            <h3 className="text-base font-semibold text-foreground">
+               لا توجد خدمات متاحة
+            </h3>
+            <p className="mt-1 text-sm text-muted-foreground">
+               لا توجد خدمات متاحة لهذا المجال حالياً.
             </p>
          </div>
       );
    }
 
    return (
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
          {services.map((service) => {
             const isSelected = value.includes(service.id);
 
             return (
-               <label
+               <button
                   key={service.id}
+                  type="button"
+                  onClick={() => handleToggle(service.id)}
+                  disabled={disabled}
                   className={cn(
-                     'flex cursor-pointer items-start gap-3 rounded-xl border p-4 transition-colors',
+                     'text-right rounded-xl border p-4 transition-all duration-200',
+                     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30',
+                     disabled && 'opacity-50 cursor-not-allowed',
                      isSelected
-                        ? 'border-primary bg-primary/5'
-                        : 'border-border hover:border-primary/40 hover:bg-muted/40'
+                        ? 'border-primary/40 bg-primary/5 shadow-sm'
+                        : 'border-border/70 bg-card hover:border-primary/30 hover:shadow-sm'
                   )}
+                  aria-pressed={isSelected}
                >
-                  <Checkbox
-                     checked={isSelected}
-                     onCheckedChange={(checked) => {
-                        if (checked) {
-                           onChange([...value, service.id]);
-                           return;
-                        }
-
-                        onChange(value.filter((v) => v !== service.id));
-                     }}
-                     disabled={disabled}
-                  />
-                  <div className="space-y-1">
-                     <p className="text-sm font-medium">{service.name}</p>
-                     <p className="text-xs text-muted-foreground">
-                        يمكنك اختيار أكثر من خدمة ضمن نفس التخصص.
-                     </p>
+                  <div className="flex items-start justify-between gap-3">
+                     <div className="space-y-2">
+                        <h3 className="line-clamp-1 text-base font-semibold text-foreground">
+                           {service.name}
+                        </h3>
+                        <p className="line-clamp-2 text-sm text-muted-foreground">
+                           اضغط لاختيار الخدمة أو إلغاء اختيارها.
+                        </p>
+                     </div>
+                     <CheckCircle2
+                        className={cn(
+                           'mt-0.5 h-5 w-5 shrink-0 transition-colors',
+                           isSelected
+                              ? 'text-primary'
+                              : 'text-muted-foreground/40'
+                        )}
+                     />
                   </div>
-               </label>
+               </button>
             );
          })}
       </div>

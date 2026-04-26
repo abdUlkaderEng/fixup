@@ -34,9 +34,9 @@ export default function CreateOrderPage() {
 
    const mapTilerKey = process.env.NEXT_PUBLIC_MAPTILER_KEY;
 
-   const { careers, isLoading: isLoadingCareers } = usePublicCareers();
+   const { careers } = usePublicCareers();
 
-   const { services, isLoading: isLoadingServices } = usePublicServices({
+   const { services } = usePublicServices({
       careerId: selectedCareerId,
       perPage: 100,
       autoFetch: Boolean(selectedCareerId),
@@ -82,14 +82,6 @@ export default function CreateOrderPage() {
       const selectedSet = new Set(selectedServiceIds);
       return services.filter((service) => selectedSet.has(service.id));
    }, [services, selectedServiceIds]);
-
-   const handleToggleService = (serviceId: number) => {
-      setSelectedServiceIds((prev) =>
-         prev.includes(serviceId)
-            ? prev.filter((id) => id !== serviceId)
-            : [...prev, serviceId]
-      );
-   };
 
    const clearSelections = () => {
       setSelectedServiceIds([]);
@@ -171,14 +163,10 @@ export default function CreateOrderPage() {
                      className="space-y-6"
                   >
                      <CreateOrderServicesSection
-                        careers={careers}
                         selectedCareerId={selectedCareerId}
                         onCareerChange={setSelectedCareerId}
-                        isLoadingCareers={isLoadingCareers}
-                        services={services}
                         selectedServiceIds={selectedServiceIds}
-                        onToggleService={handleToggleService}
-                        isLoadingServices={isLoadingServices}
+                        onServicesChange={setSelectedServiceIds}
                      />
 
                      <CreateOrderDetailsSection control={form.control} />
