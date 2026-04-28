@@ -2,142 +2,127 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 
-/**
- * Route constants for centralized routing configuration
- */
+// ============================================
+// Configuration
+// ============================================
+
 const ROUTES = {
    HOME: '/',
    LOGIN: '/auth/login',
    ADMIN_DASHBOARD: '/admin/dashboard',
    WORKER_DASHBOARD: '/worker/dashboard',
+   CUSTOMER_DASHBOARD: '/customer/profile',
 } as const;
 
-/**
- * User roles for authorization checks
- */
 const USER_ROLES = {
    ADMIN: 'admin',
    WORKER: 'worker',
+   CUSTOMER: 'customer',
 } as const;
 
+type UserRole = (typeof USER_ROLES)[keyof typeof USER_ROLES];
+
+interface RouteConfig {
+   prefix: string;
+   allowedRoles: UserRole[];
+   requiresAuth: boolean;
+   redirectOnUnauthorized: string;
+}
+
 /**
- * Route prefixes for path matching
+ * Route configurations - order matters (more specific first)
+ * Each route defines:
+ * - prefix: URL path prefix to match
+ * - allowedRoles: Which roles can access this route
+ * - requiresAuth: Whether authentication is required
+ * - redirectOnUnauthorized: Where to redirect if user lacks permission
  */
-const PROTECTED_PATHS = {
-   ADMIN: '/admin',
-   WORKER: '/worker',
-   AUTH: {
-      LOGIN: '/auth/login',
-      SIGNUP: '/auth/signup',
+const ROUTE_CONFIGS: RouteConfig[] = [
+   {
+      prefix: '/admin',
+      allowedRoles: [USER_ROLES.ADMIN],
+      requiresAuth: true,
+      redirectOnUnauthorized: ROUTES.LOGIN,
    },
-   PROFILE: '/profile',
-} as const;
+   {
+      prefix: '/worker',
+      allowedRoles: [USER_ROLES.WORKER],
+      requiresAuth: true,
+      redirectOnUnauthorized: ROUTES.LOGIN,
+   },
+   {
+      prefix: '/customer',
+      allowedRoles: [USER_ROLES.CUSTOMER],
+      requiresAuth: true,
+      redirectOnUnauthorized: ROUTES.LOGIN,
+   },
+   {
+      prefix: '/orders',
+      allowedRoles: [USER_ROLES.CUSTOMER],
+      requiresAuth: true,
+      redirectOnUnauthorized: ROUTES.LOGIN,
+   },
+   {
+      prefix: '/profile',
+      allowedRoles: [USER_ROLES.ADMIN, USER_ROLES.WORKER, USER_ROLES.CUSTOMER],
+      requiresAuth: true,
+      redirectOnUnauthorized: ROUTES.LOGIN,
+   },
+];
 
-/**
- * Type for JWT token with role information
- */
+const AUTH_ROUTES = ['/auth/login', '/auth/signup'] as const;
+
+// ============================================
+// Types
+// ============================================
+
 interface AuthToken {
    role?: string;
 }
 
-/**
- * Checks if pathname is an admin route
- * @param pathname - The request pathname
- * @returns True if admin route, false otherwise
- */
-function isAdminRoute(pathname: string): boolean {
-   return pathname.startsWith(PROTECTED_PATHS.ADMIN);
-}
+// ============================================
+// Helpers
+// ============================================
 
-/**
- * Checks if pathname is a worker route
- * @param pathname - The request pathname
- * @returns True if worker route, false otherwise
- */
-function isWorkerRoute(pathname: string): boolean {
-   return pathname.startsWith(PROTECTED_PATHS.WORKER);
-}
-
-/**
- * Checks if pathname is an authentication route
- * @param pathname - The request pathname
- * @returns True if auth route, false otherwise
- */
-function isAuthRoute(pathname: string): boolean {
-   return (
-      pathname.startsWith(PROTECTED_PATHS.AUTH.LOGIN) ||
-      pathname.startsWith(PROTECTED_PATHS.AUTH.SIGNUP)
-   );
-}
-
-/**
- * Checks if pathname is a profile route
- * @param pathname - The request pathname
- * @returns True if profile route, false otherwise
- */
-function isProfileRoute(pathname: string): boolean {
-   return pathname.startsWith(PROTECTED_PATHS.PROFILE);
-}
-
-/**
- * Checks if user has admin role
- * @param token - The JWT token from next-auth
- * @returns True if admin, false otherwise
- */
-function isAdmin(token: AuthToken | null): boolean {
-   return token?.role === USER_ROLES.ADMIN;
-}
-
-/**
- * Checks if user has worker role
- * @param token - The JWT token from next-auth
- * @returns True if worker, false otherwise
- */
-function isWorker(token: AuthToken | null): boolean {
-   return token?.role === USER_ROLES.WORKER;
-}
-
-/**
- * Checks if user is authenticated
- * @param token - The JWT token from next-auth
- * @returns True if authenticated, false otherwise
- */
 function isAuthenticated(token: AuthToken | null): boolean {
    return token !== null;
 }
 
-/**
- * Creates redirect response to specified path
- * @param req - The NextRequest object
- * @param path - The path to redirect to
- * @returns NextResponse redirect
- */
+function isAuthRoute(pathname: string): boolean {
+   return AUTH_ROUTES.some((route) => pathname.startsWith(route));
+}
+
+function findMatchingRoute(pathname: string): RouteConfig | undefined {
+   return ROUTE_CONFIGS.find((config) => pathname.startsWith(config.prefix));
+}
+
+function getRoleDashboard(role: UserRole): string {
+   switch (role) {
+      case USER_ROLES.ADMIN:
+         return ROUTES.ADMIN_DASHBOARD;
+      case USER_ROLES.WORKER:
+         return ROUTES.WORKER_DASHBOARD;
+      case USER_ROLES.CUSTOMER:
+         return ROUTES.CUSTOMER_DASHBOARD;
+      default:
+         return ROUTES.HOME;
+   }
+}
+
 function redirectTo(req: NextRequest, path: string): NextResponse {
    return NextResponse.redirect(new URL(path, req.url));
 }
 
-/**
- * Gets the appropriate redirect path for an authenticated user based on role
- * @param token - The JWT token from next-auth
- * @returns The appropriate route path for the user
- */
-function getRoleBasedRedirectPath(token: AuthToken | null): string {
-   if (isAdmin(token)) return ROUTES.ADMIN_DASHBOARD;
-   if (isWorker(token)) return ROUTES.WORKER_DASHBOARD;
-   return ROUTES.HOME;
+function getRoleFromToken(token: AuthToken | null): UserRole | null {
+   if (!token?.role) return null;
+   const role = token.role as UserRole;
+   return Object.values(USER_ROLES).includes(role) ? role : null;
 }
 
-/**
- * Middleware handler for route protection and authentication
- * Handles four scenarios:
- * 1. Admin routes: Requires authentication + admin role
- * 2. Worker routes: Requires authentication + worker role
- * 3. Auth routes (login/signup): Redirect authenticated users away
- * 4. Profile routes: Requires authentication
- *
- * @param req - The incoming NextRequest
- * @returns NextResponse (redirect or continue)
- */
+// ============================================
+// Middleware
+// ============================================
+
 export async function middleware(req: NextRequest): Promise<NextResponse> {
    const token = (await getToken({
       req,
@@ -145,68 +130,66 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
    })) as AuthToken | null;
 
    const { pathname } = req.nextUrl;
+   const userRole = getRoleFromToken(token);
 
-   // Scenario 1: Protect admin routes - requires admin role
-   if (isAdminRoute(pathname)) {
-      if (!isAuthenticated(token)) {
-         // Not logged in, send to login
-         return redirectTo(req, ROUTES.LOGIN);
+   // 1. Handle auth routes - redirect logged-in users to their dashboard
+   if (isAuthRoute(pathname)) {
+      if (isAuthenticated(token) && userRole) {
+         return redirectTo(req, getRoleDashboard(userRole));
       }
-
-      if (!isAdmin(token)) {
-         // Logged in but not admin, send to home
-         return redirectTo(req, ROUTES.HOME);
-      }
-
-      // Admin user accessing admin route - allow
       return NextResponse.next();
    }
 
-   // Scenario 2: Protect worker routes - requires worker role
-   if (isWorkerRoute(pathname)) {
-      if (!isAuthenticated(token)) {
-         // Not logged in, send to login
-         return redirectTo(req, ROUTES.LOGIN);
+   // 2. Check if route requires specific permissions
+   const matchedRoute = findMatchingRoute(pathname);
+
+   if (matchedRoute) {
+      // Not authenticated -> redirect to login
+      if (matchedRoute.requiresAuth && !isAuthenticated(token)) {
+         return redirectTo(req, matchedRoute.redirectOnUnauthorized);
       }
 
-      if (!isWorker(token)) {
-         // Logged in but not worker, send to home
-         return redirectTo(req, ROUTES.HOME);
+      // Authenticated but wrong role -> redirect to their dashboard
+      if (userRole && !matchedRoute.allowedRoles.includes(userRole)) {
+         return redirectTo(req, getRoleDashboard(userRole));
       }
 
-      // Worker user accessing worker route - allow
+      // All checks passed
       return NextResponse.next();
    }
 
-   // Scenario 3: Redirect authenticated users away from auth pages
-   if (isAuthRoute(pathname) && isAuthenticated(token)) {
-      const redirectPath = getRoleBasedRedirectPath(token);
-      return redirectTo(req, redirectPath);
-   }
+   // 3. Handle cross-access restrictions for authenticated users on unmatched routes
+   if (isAuthenticated(token) && userRole) {
+      // Admin trying to access non-admin routes
+      if (userRole === USER_ROLES.ADMIN) {
+         return redirectTo(req, ROUTES.ADMIN_DASHBOARD);
+      }
 
-   // Scenario 4: Protect profile routes - requires authentication
-   if (isProfileRoute(pathname) && !isAuthenticated(token)) {
-      return redirectTo(req, ROUTES.LOGIN);
+      // Worker trying to access non-worker routes
+      if (userRole === USER_ROLES.WORKER) {
+         return redirectTo(req, ROUTES.WORKER_DASHBOARD);
+      }
+
+      // Customers can access remaining public routes
    }
 
    // Allow all other requests
    return NextResponse.next();
 }
 
-/**
- * Middleware matcher configuration
- * Defines which routes trigger the middleware
- */
+// ============================================
+// Config
+// ============================================
+
 export const config = {
    matcher: [
-      // Admin routes
       '/admin/:path*',
-      // Worker routes
       '/worker/:path*',
-      // Auth routes
+      '/customer/:path*',
+      '/orders/:path*',
       '/auth/login',
       '/auth/signup',
-      // Profile routes
       '/profile/:path*',
+      '/',
    ],
 };
