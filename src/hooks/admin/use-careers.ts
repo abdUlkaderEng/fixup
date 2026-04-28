@@ -35,7 +35,6 @@ export function useCareers(options: UseCareersOptions = {}): UseCareersReturn {
          errorMessage: 'حدث خطأ أثناء جلب المهن',
       }
    );
-
    return {
       careers: data ?? [],
       isLoading,

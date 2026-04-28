@@ -18,7 +18,7 @@ export function AdminHeader() {
    const { data: session } = useSession();
    const adminName = session?.user?.name || 'المشرف';
    const adminInitial = adminName.charAt(0).toUpperCase();
-   const adminImage = resolveImageUrl(session?.user?.profile_picture);
+   const adminImage = resolveImageUrl(session?.user?.profile_image);
 
    return (
       <header className="lg:hidden sticky top-0 z-30 flex h-14 items-center justify-between border-b border-gray-200 bg-white px-4 shadow-sm">

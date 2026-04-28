@@ -13,8 +13,9 @@ import type { UseFormReturn } from 'react-hook-form';
 import type { BaseProfileFormData } from '@/components/profile/schemas';
 import type { User } from 'next-auth';
 import { MapPicker } from '@/components/map-picker';
-import { usePublicAreas } from '@/hooks/public/use-public-areas';
 import AreaSelect from '@/components/publicComponents/area-select';
+import usePublicDataStore from '@/stores/public-data';
+import { use } from 'react';
 
 interface FieldProps {
    form: UseFormReturn<BaseProfileFormData>;
@@ -77,10 +78,20 @@ export function PhoneField({ form, isEditing, user }: FieldProps) {
 }
 
 export function AddressField({ form, isEditing, user }: FieldProps) {
-   const areaName = user.address?.area_address?.area_name ?? null;
    const areaId = user.area_address_id;
    const lat = user.latitude ? parseFloat(user.latitude) : null;
    const lng = user.longitude ? parseFloat(user.longitude) : null;
+
+   // Resolve area name: prefer session nested object, fall back to store cache
+   const areaNameFromStore = usePublicDataStore((state) => {
+      if (!areaId) return null;
+      for (const entry of Object.values(state.areaCache)) {
+         const match = entry.areas.find((a) => a.id === areaId);
+         if (match) return match.area_name;
+      }
+      return null;
+   });
+   const areaName = areaNameFromStore;
 
    return (
       <InfoField
@@ -124,8 +135,8 @@ export function AddressField({ form, isEditing, user }: FieldProps) {
                <FormField
                   control={form.control}
                   name="latitude"
-                  render={({ field }) => (
-                     <div>
+                  render={() => (
+                     <div className="rounded-xl overflow-hidden border border-border/60 shadow-xs h-64">
                         <MapPicker
                            mapTilerKey={process.env.NEXT_PUBLIC_MAPTILER_KEY!}
                            initialLng={
@@ -155,10 +166,7 @@ export function AddressField({ form, isEditing, user }: FieldProps) {
                   </p>
                )}
                {lat && lng && (
-                  <div>
-                     <div className="mb-2 text-xs text-muted-foreground">
-                        إحداثيات:
-                     </div>
+                  <div className="rounded-xl overflow-hidden border border-border/60 shadow-xs h-52">
                      <MapPicker
                         mapTilerKey={process.env.NEXT_PUBLIC_MAPTILER_KEY!}
                         initialLng={lng}

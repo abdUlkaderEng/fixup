@@ -25,7 +25,8 @@ export function ProfileHeader({
    isEditing,
 }: ProfileHeaderProps) {
    const inputRef = useRef<HTMLInputElement>(null);
-   const selectedFile = form?.watch('profile_picture');
+   const selectedFile = form?.watch('profile_image');
+
    const previewSrc = useMemo(
       () =>
          selectedFile instanceof File
@@ -36,9 +37,7 @@ export function ProfileHeader({
 
    useEffect(
       () => () => {
-         if (previewSrc) {
-            URL.revokeObjectURL(previewSrc);
-         }
+         if (previewSrc) URL.revokeObjectURL(previewSrc);
       },
       [previewSrc]
    );
@@ -50,47 +49,46 @@ export function ProfileHeader({
    const imageSrc = previewSrc ?? resolvedStoredImage;
 
    return (
-      <div className="mb-8">
-         <div className="relative w-24 h-24 mx-auto mb-4">
-            {imageSrc ? (
-               <Image
-                  src={imageSrc}
-                  alt={name || 'profile'}
-                  fill
-                  className="rounded-full object-cover"
-                  unoptimized
-               />
-            ) : (
-               <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center">
-                  <User className="h-12 w-12 text-primary" />
-               </div>
-            )}
+      <div className="flex flex-col items-center py-8">
+         {/* Avatar */}
+         <div className="relative mb-5">
+            <div className="w-28 h-28 rounded-full ring-4 ring-primary/20 ring-offset-2 ring-offset-background overflow-hidden shadow-md">
+               {imageSrc ? (
+                  <Image
+                     src={imageSrc}
+                     alt={name || 'profile'}
+                     fill
+                     className="object-cover rounded-full"
+                     unoptimized
+                  />
+               ) : (
+                  <div className="w-full h-full bg-primary/10 flex items-center justify-center">
+                     <User className="h-14 w-14 text-primary" />
+                  </div>
+               )}
+            </div>
 
             {isEditing && form && (
                <FormField
                   control={form.control}
-                  name="profile_picture"
+                  name="profile_image"
                   render={({ field: { onChange } }) => (
                      <FormItem className="absolute bottom-0 left-0">
                         <button
                            type="button"
                            onClick={() => inputRef.current?.click()}
-                           className="w-8 h-8 bg-primary rounded-full flex items-center justify-center shadow"
+                           className="w-9 h-9 bg-primary rounded-full flex items-center justify-center shadow-lg ring-2 ring-background transition-transform hover:scale-105"
                         >
                            <Camera className="h-4 w-4 text-primary-foreground" />
                         </button>
                         <input
                            ref={inputRef}
                            type="file"
-                           accept="image/jpg,image/jpeg,image/png"
+                           accept="image/jpeg,image/png"
                            className="hidden"
                            onChange={(e) => {
                               const file = e.target.files?.[0];
-                              if (file) {
-                                 onChange(file);
-                              }
-
-                              // Allow re-selecting the same file.
+                              if (file) onChange(file);
                               e.currentTarget.value = '';
                            }}
                         />
@@ -100,8 +98,8 @@ export function ProfileHeader({
             )}
          </div>
 
-         <h1 className="text-3xl font-bold text-center mb-2">{name}</h1>
-         <p className="text-muted-foreground text-center">{email}</p>
+         <h1 className="text-3xl font-bold tracking-tight">{name}</h1>
+         <p className="text-sm text-muted-foreground mt-1">{email}</p>
       </div>
    );
 }

@@ -15,7 +15,8 @@ export const mapBackendUserToAuthUser = (
    id: String(backendUser.id),
    name: backendUser.name,
    email: backendUser.email,
-   image: backendUser.profile_picture,
+   image: backendUser.profile_image,
+   profile_image: backendUser.profile_image,
    accessToken,
    phone_number: backendUser.phone_number,
    latitude: backendUser.address?.latitude ?? null,
@@ -28,7 +29,6 @@ export const mapBackendUserToAuthUser = (
    created_at: backendUser.created_at,
    updated_at: backendUser.updated_at,
    is_active: backendUser.is_active,
-   profile_picture: backendUser.profile_picture,
    address: backendUser.address ?? null,
    worker: backendUser.worker ?? null,
 });
@@ -41,7 +41,7 @@ export const mapGoogleProfileToAuthUser = (
    id: String(backendUser.id),
    name: backendUser.name ?? profile.name,
    email: backendUser.email ?? profile.email,
-   image: backendUser.profile_picture ?? profile.image,
+   image: backendUser.profile_image ?? profile.image,
    accessToken: token,
    phone_number: backendUser.phone_number,
    latitude: backendUser.address?.latitude ?? null,
@@ -54,7 +54,7 @@ export const mapGoogleProfileToAuthUser = (
    created_at: backendUser.created_at,
    updated_at: backendUser.updated_at,
    is_active: backendUser.is_active,
-   profile_picture: backendUser.profile_picture,
+   profile_image: backendUser.profile_image,
    address: backendUser.address ?? null,
    worker: backendUser.worker ?? null,
 });
@@ -80,7 +80,7 @@ export const syncUserToToken = (
       created_at: user.created_at,
       updated_at: user.updated_at,
       is_active: user.is_active,
-      profile_picture: user.profile_picture,
+      profile_image: user.profile_image,
       address: user.address,
       worker: user.worker,
    });
@@ -108,7 +108,7 @@ export const syncTokenToSession = (
       created_at: token.created_at,
       updated_at: token.updated_at,
       is_active: token.is_active,
-      profile_picture: token.profile_picture,
+      profile_image: token.profile_image,
       address: token.address,
       worker: token.worker,
    });
@@ -129,7 +129,7 @@ export const updateTokenFromSession = (
       'birth_date',
       'email',
       'role',
-      'profile_picture',
+      'profile_image',
       'email_verified_at',
       'updated_at',
       'address',
@@ -142,8 +142,8 @@ export const updateTokenFromSession = (
       }
    });
 
-   // Keep NextAuth standard image field aligned with backend profile_picture.
-   if (sessionUser.profile_picture !== undefined) {
-      token.image = sessionUser.profile_picture ?? token.image;
+   // Keep NextAuth standard image field aligned with backend profile_image.
+   if (sessionUser.profile_image !== undefined) {
+      token.image = sessionUser.profile_image ?? token.image;
    }
 };

@@ -78,7 +78,7 @@ export const signInCallback: CallbacksOptions['signIn'] = async ({
             email: googleProfile.email,
             name: googleProfile.name,
             google_id: googleProfile.sub,
-            profile_picture: googleProfile.image,
+            profile_image: googleProfile.image,
          }
       );
 

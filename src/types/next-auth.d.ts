@@ -20,7 +20,7 @@ type UserProfileFields = {
    created_at?: string;
    updated_at?: string;
    is_active?: number;
-   profile_picture?: string | null;
+   profile_image?: string | null;
    // Full nested address object (includes area_address.area_name)
    address?: UserAddress | null;
    worker?: Worker | null;

@@ -56,7 +56,7 @@ export default function CreateOrderPage() {
          detailedAddress: '',
          latitude: 0,
          longitude: 0,
-         image: undefined,
+         images: [],
       },
    });
 
@@ -119,7 +119,8 @@ export default function CreateOrderPage() {
             detailed_address: values.detailedAddress,
             latitude: values.latitude,
             longitude: values.longitude,
-            has_image: Boolean(values.image),
+            has_images: values.images.length > 0,
+            images_count: values.images.length,
          };
 
          console.log('Create order payload:', payload);
@@ -136,7 +137,7 @@ export default function CreateOrderPage() {
             detailedAddress: '',
             latitude: 0,
             longitude: 0,
-            image: undefined,
+            images: [],
          });
          setHasMapSelection(false);
          clearSelections();

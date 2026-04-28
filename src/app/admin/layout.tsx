@@ -26,7 +26,7 @@ export default function AdminLayout({
    const adminName = session?.user?.name || 'المشرف';
    const adminEmail = session?.user?.email || 'admin@fixup.com';
    const adminInitial = adminName.charAt(0).toUpperCase();
-   const adminImage = resolveImageUrl(session?.user?.profile_picture);
+   const adminImage = resolveImageUrl(session?.user?.profile_image);
 
    return (
       <div className="min-h-screen bg-gray-100 text-gray-900">

@@ -6,7 +6,7 @@ export const baseProfileSchema = z.object({
       .min(1, 'الاسم مطلوب')
       .min(3, 'الاسم يجب أن يكون 3 أحرف على الأقل')
       .max(50, 'الاسم يجب أن لا يتجاوز 50 حرف'),
-   profile_picture: z.instanceof(File).optional().nullable(),
+   profile_image: z.instanceof(File).optional().nullable(),
    phone_number: z
       .string()
       .min(1, 'رقم الهاتف مطلوب')

@@ -20,7 +20,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
 import {
    Form,
    FormControl,
@@ -29,21 +28,13 @@ import {
    FormLabel,
    FormMessage,
 } from '@/components/ui/form';
-import {
-   Select,
-   SelectContent,
-   SelectItem,
-   SelectTrigger,
-   SelectValue,
-} from '@/components/ui/select';
 import CareerSelect from '@/components/publicComponents/career-select';
 import ServicesPicker from '@/components/publicComponents/services-picker';
-import { cn } from '@/lib/utils';
+import { ImageUploadField } from '@/components/image-upload';
 import { getWorkerSignupDraft, type WorkerSignupDraft } from '../signup-flow';
 import { workerInfoSchema, type WorkerInfoInput } from '../schemas';
 import { useWorkerRegister } from '@/hooks/use-worker-register';
 import { usePublicCareers } from '@/hooks/public/use-public-careers';
-import { usePublicServices } from '@/hooks/public/use-public-services';
 
 export default function WorkerInfoPage() {
    const router = useRouter();
@@ -51,6 +42,7 @@ export default function WorkerInfoPage() {
       null
    );
    const [isPageReady, setIsPageReady] = useState(false);
+
    const form = useForm<WorkerInfoInput>({
       resolver: zodResolver(workerInfoSchema),
       defaultValues: {
@@ -64,27 +56,18 @@ export default function WorkerInfoPage() {
 
    useEffect(() => {
       const draft = getWorkerSignupDraft();
-
       if (!draft) {
          router.replace('/auth/signup');
          return;
       }
-
       setSignupDraft(draft);
       setIsPageReady(true);
    }, [router]);
 
    const { isSubmitting, onSubmit } = useWorkerRegister(signupDraft);
-
-   // Fetch careers and services
-   const { careers, isLoading: isLoadingCareers } = usePublicCareers();
+   const { isLoading: isLoadingCareers } = usePublicCareers();
    const selectedCareerId = form.watch('career_id');
-   const { services, isLoading: isLoadingServices } = usePublicServices({
-      careerId: selectedCareerId || undefined,
-      perPage: 100,
-   });
 
-   // Clear services when career changes
    useEffect(() => {
       if (selectedCareerId) {
          form.setValue('services', []);
@@ -93,7 +76,7 @@ export default function WorkerInfoPage() {
 
    if (!isPageReady || !signupDraft) {
       return (
-         <div className="min-h-[calc(100vh-4rem)] mt-16 flex items-center justify-center bg-linear-to-br from-background via-muted/50 to-background p-4 sm:p-6 lg:p-8">
+         <div className="mt-16 flex min-h-[calc(100vh-4rem)] items-center justify-center bg-linear-to-br from-background via-muted/50 to-background p-4 sm:p-6 lg:p-8">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
                <Loader2 className="h-4 w-4 animate-spin" />
                جاري تجهيز بيانات العامل...
@@ -103,7 +86,7 @@ export default function WorkerInfoPage() {
    }
 
    return (
-      <div className="min-h-[calc(100vh-4rem)] mt-16 flex items-center justify-center bg-linear-to-br from-background via-muted/50 to-background p-4 sm:p-6 lg:p-8">
+      <div className="mt-16 flex min-h-[calc(100vh-4rem)] items-center justify-center bg-linear-to-br from-background via-muted/50 to-background p-4 sm:p-6 lg:p-8">
          <div className="w-full max-w-3xl">
             <Link
                href="/auth/signup"
@@ -177,10 +160,8 @@ export default function WorkerInfoPage() {
                                        type="number"
                                        min={0}
                                        value={field.value}
-                                       onChange={(event) =>
-                                          field.onChange(
-                                             Number(event.target.value)
-                                          )
+                                       onChange={(e) =>
+                                          field.onChange(Number(e.target.value))
                                        }
                                        disabled={isSubmitting}
                                        aria-invalid={!!fieldState.error}
@@ -226,32 +207,38 @@ export default function WorkerInfoPage() {
                                  <span>صور الأعمال</span>
                               </FormLabel>
                               <FormControl>
-                                 <Input
-                                    type="file"
-                                    multiple
-                                    accept="image/*"
-                                    className="h-11"
-                                    disabled={isSubmitting}
-                                    onChange={(event) => {
-                                       const files = Array.from(
-                                          event.target.files ?? []
-                                       );
-                                       field.onChange(files);
+                                 <ImageUploadField
+                                    state={{
+                                       existingImages: [],
+                                       newFiles: field.value ?? [],
+                                       deletedIds: [],
                                     }}
+                                    callbacks={{
+                                       onNewFilesAdd: (files) =>
+                                          field.onChange([
+                                             ...(field.value ?? []),
+                                             ...files,
+                                          ]),
+                                       onNewFileRemove: (index) => {
+                                          const current = field.value ?? [];
+                                          field.onChange(
+                                             current.filter(
+                                                (_, i) => i !== index
+                                             )
+                                          );
+                                       },
+                                       onExistingImageDelete: () => {},
+                                       onExistingImageRestore: () => {},
+                                    }}
+                                    config={{
+                                       imageBaseUrl:
+                                          process.env.NEXT_PUBLIC_IMAGE_URL ||
+                                          '',
+                                    }}
+                                    isEditing={true}
+                                    disabled={isSubmitting}
                                  />
                               </FormControl>
-                              {field.value && field.value.length > 0 ? (
-                                 <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
-                                    {field.value.map((file) => (
-                                       <span
-                                          key={file.name}
-                                          className="rounded-full bg-muted px-3 py-1"
-                                       >
-                                          {file.name}
-                                       </span>
-                                    ))}
-                                 </div>
-                              ) : null}
                               <FormMessage />
                            </FormItem>
                         )}
@@ -269,7 +256,7 @@ export default function WorkerInfoPage() {
                               <ServicesPicker
                                  careerId={selectedCareerId}
                                  value={field.value}
-                                 onChange={(v) => field.onChange(v)}
+                                 onChange={field.onChange}
                                  disabled={isSubmitting}
                               />
                               <FormMessage />

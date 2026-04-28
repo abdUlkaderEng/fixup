@@ -10,7 +10,7 @@ export const createOrderSchema = z.object({
    detailedAddress: z.string().min(5, 'يرجى كتابة عنوان تفصيلي واضح'),
    latitude: z.number(),
    longitude: z.number(),
-   image: z.any().optional(),
+   images: z.array(z.any()).default([]),
 });
 
 export type CreateOrderFormValues = z.infer<typeof createOrderSchema>;

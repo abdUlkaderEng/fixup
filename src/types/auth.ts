@@ -29,7 +29,7 @@ export interface User {
    email: string;
    phone_number: string | null;
    birth_date: string | null;
-   profile_picture: string | null;
+   profile_image: string | null;
    role: string;
    is_active: number;
    email_verified_at: string | null;
@@ -53,7 +53,7 @@ export interface AuthResponse {
 export interface UpdateCustomerProfileRequest {
    name: string;
    phone_number: string;
-   profile_picture?: File | null;
+   profile_image?: File | null;
    latitude?: number;
    longitude?: number;
    detailed_address?: string;

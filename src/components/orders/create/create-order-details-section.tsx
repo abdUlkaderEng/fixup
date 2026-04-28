@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import { ImagePlus, ShieldCheck } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 import type { Control } from 'react-hook-form';
 
 import { SectionPanel } from '@/components/ui/section-panel';
@@ -11,8 +11,8 @@ import {
    FormLabel,
    FormMessage,
 } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { ImageUploadField } from '@/components/image-upload';
 import type { CreateOrderFormValues } from '@/app/orders/create/schema';
 
 interface CreateOrderDetailsSectionProps {
@@ -49,35 +49,42 @@ export function CreateOrderDetailsSection({
 
             <FormField
                control={control}
-               name="image"
+               name="images"
                render={({ field }) => (
                   <FormItem>
-                     <FormLabel>إرفاق صورة (اختياري)</FormLabel>
+                     <FormLabel>إرفاق صور (اختياري)</FormLabel>
                      <FormControl>
-                        <div className="rounded-xl border border-dashed border-border/80 bg-muted/20 p-4">
-                           <label className="flex cursor-pointer items-center gap-3 text-sm">
-                              <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-background">
-                                 <ImagePlus className="h-5 w-5 text-muted-foreground" />
-                              </span>
-                              <span className="text-muted-foreground">
-                                 اختر صورة توضيحية للمشكلة أو مكان العمل
-                              </span>
-                              <Input
-                                 type="file"
-                                 accept="image/*"
-                                 className="hidden"
-                                 onChange={(event) => {
-                                    const file = event.target.files?.[0];
-                                    field.onChange(file);
-                                 }}
-                              />
-                           </label>
-                           {field.value instanceof File ? (
-                              <p className="mt-2 text-xs text-muted-foreground">
-                                 {field.value.name}
-                              </p>
-                           ) : null}
-                        </div>
+                        <ImageUploadField
+                           state={{
+                              existingImages: [],
+                              newFiles: (field.value as File[]) ?? [],
+                              deletedIds: [],
+                           }}
+                           callbacks={{
+                              onNewFilesAdd: (newFiles) => {
+                                 field.onChange([
+                                    ...((field.value as File[]) ?? []),
+                                    ...newFiles,
+                                 ]);
+                              },
+                              onNewFileRemove: (index) => {
+                                 const current = (field.value as File[]) ?? [];
+                                 field.onChange(
+                                    current.filter((_, i) => i !== index)
+                                 );
+                              },
+                              onExistingImageDelete: () => {},
+                              onExistingImageRestore: () => {},
+                           }}
+                           config={{
+                              imageBaseUrl: '',
+                              uploadButtonText: 'اختيار صور',
+                              uploadHintText:
+                                 'اختر صوراً توضيحية للمشكلة أو مكان العمل',
+                              emptyStateText: 'لم يتم اختيار صور بعد',
+                           }}
+                           isEditing={true}
+                        />
                      </FormControl>
                      <FormMessage />
                   </FormItem>

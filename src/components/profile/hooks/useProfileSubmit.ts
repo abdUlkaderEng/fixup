@@ -32,7 +32,7 @@ export function useProfileSubmit(
             const response = await updateUserProfile({
                name: data.name,
                phone_number: data.phone_number,
-               profile_picture: data.profile_picture ?? undefined,
+               profile_image: data.profile_image ?? undefined,
                latitude: data.latitude,
                longitude: data.longitude,
                detailed_address: data.detailed_address || undefined,
