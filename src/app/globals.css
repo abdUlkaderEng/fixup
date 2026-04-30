@@ -347,3 +347,4 @@
 .app-choice-card-idle {
    @apply border-border/70 bg-card hover:border-primary/30 hover:bg-primary/3;
 }
+

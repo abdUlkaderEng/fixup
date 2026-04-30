@@ -41,6 +41,12 @@ export { useWorkerRegister } from './use-worker-register';
 export { usePhotonSearch } from './use-photon-search';
 
 // ============================================
+// Order Hooks
+// ============================================
+export { useCreateOrder } from './order';
+export type { UseCreateOrderReturn } from './order';
+
+// ============================================
 // Admin Hooks (re-exported)
 // ============================================
 export * from './admin';

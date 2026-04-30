@@ -1,36 +1,57 @@
 ﻿'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2 } from 'lucide-react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
+import { useSession } from 'next-auth/react';
 
 import { createOrderSchema, type CreateOrderFormValues } from './schema';
+import { useAuthToken } from '@/hooks/use-auth-token';
 import { CreateOrderDetailsSection } from '@/components/orders/create/create-order-details-section';
 import { CreateOrderHeader } from '@/components/orders/create/create-order-header';
 import { CreateOrderLocationSection } from '@/components/orders/create/create-order-location-section';
+import { type OrderReviewData } from '@/components/orders/create/order-review';
 import { CreateOrderServicesSection } from '@/components/orders/create/create-order-services-section';
-import { CreateOrderSettingsSection } from '@/components/orders/create/create-order-settings-section';
 import { CreateOrderSummary } from '@/components/orders/create/create-order-summary';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
-import { usePublicAreas, usePublicCareers, usePublicServices } from '@/hooks';
+import {
+   usePublicAreas,
+   usePublicCareers,
+   usePublicServices,
+   useCreateOrder,
+} from '@/hooks';
 import { useSearchParams } from 'next/navigation';
+import { Loader2 } from 'lucide-react';
+import CreateOrderSettingsSection from '@/components/orders/create/create-order-settings-section';
 
 export default function CreateOrderPage() {
+   useAuthToken();
+
    const searchParams = useSearchParams();
    const queryCareerId = Number(searchParams.get('careerId'));
    const queryCareerName = searchParams.get('careerName');
+   const { data: session } = useSession();
 
-   const [selectedCareerId, setSelectedCareerId] = useState<number | undefined>(
+   const { createOrder, isLoading: isSubmitting } = useCreateOrder();
+
+   const initialCareerId =
       Number.isFinite(queryCareerId) && queryCareerId > 0
          ? queryCareerId
-         : undefined
+         : undefined;
+
+   const [selectedCareerId, setSelectedCareerId] = useState<number | undefined>(
+      initialCareerId
+   );
+   // Track which career the current service selection belongs to so we can reset on change
+   const [servicesCareerId, setServicesCareerId] = useState<number | undefined>(
+      initialCareerId
    );
    const [selectedServiceIds, setSelectedServiceIds] = useState<number[]>([]);
-   const [hasMapSelection, setHasMapSelection] = useState(false);
-   const [isSubmitting, setIsSubmitting] = useState(false);
+   const [mapPicked, setMapPicked] = useState(false);
+   const [reviewValues, setReviewValues] =
+      useState<CreateOrderFormValues | null>(null);
 
    const mapTilerKey = process.env.NEXT_PUBLIC_MAPTILER_KEY;
 
@@ -46,34 +67,54 @@ export default function CreateOrderPage() {
       perPage: 100,
    });
 
+   const user = session?.user;
+   const areaAddressId = user?.area_address_id;
+   const defaultLatitude = user?.latitude ? parseFloat(user.latitude) : 0;
+   const defaultLongitude = user?.longitude ? parseFloat(user.longitude) : 0;
+   const hasUserLocation = defaultLatitude !== 0 && defaultLongitude !== 0;
+
+   // Derived: map is considered selected if user has saved coords OR manually picked
+   const hasMapSelection = hasUserLocation || mapPicked;
+
+   const defaultValues: CreateOrderFormValues = {
+      description: '',
+      priority: 'normal',
+      areaAddressId: typeof areaAddressId === 'number' ? areaAddressId : 0,
+      detailedAddress: user?.detailed_address ?? '',
+      latitude: defaultLatitude,
+      longitude: defaultLongitude,
+      images: [],
+   };
+
    const form = useForm<CreateOrderFormValues>({
       resolver: zodResolver(createOrderSchema),
-      defaultValues: {
-         description: '',
-         priority: 'normal',
-         budgetTier: 'economic',
-         areaAddressId: 0,
-         detailedAddress: '',
-         latitude: 0,
-         longitude: 0,
-         images: [],
-      },
+      defaultValues,
    });
 
-   useEffect(() => {
-      if (Number.isFinite(queryCareerId) && queryCareerId > 0) {
-         setSelectedCareerId(queryCareerId);
+   const formValues = useWatch({ control: form.control });
+
+   const hasFormChangedSinceReview =
+      !reviewValues ||
+      formValues.description !== reviewValues.description ||
+      formValues.areaAddressId !== reviewValues.areaAddressId ||
+      formValues.detailedAddress !== reviewValues.detailedAddress ||
+      formValues.latitude !== reviewValues.latitude ||
+      formValues.longitude !== reviewValues.longitude ||
+      (formValues.images?.length ?? 0) !== reviewValues.images.length;
+
+   const handleCareerChange = (careerId: number) => {
+      setSelectedCareerId(careerId);
+      // Reset services only when career actually changes
+      if (careerId !== servicesCareerId) {
+         setSelectedServiceIds([]);
+         setServicesCareerId(careerId);
       }
-   }, [queryCareerId]);
+   };
 
-   useEffect(() => {
-      setSelectedServiceIds([]);
-   }, [selectedCareerId]);
-
-   const selectedCareer = useMemo(() => {
-      if (!selectedCareerId) return undefined;
-      return careers.find((career) => career.id === selectedCareerId);
-   }, [careers, selectedCareerId]);
+   const selectedCareer = useMemo(
+      () => careers.find((career) => career.id === selectedCareerId),
+      [careers, selectedCareerId]
+   );
 
    const selectedCareerDisplayName =
       selectedCareer?.name ?? queryCareerName ?? 'غير محدد';
@@ -83,70 +124,85 @@ export default function CreateOrderPage() {
       return services.filter((service) => selectedSet.has(service.id));
    }, [services, selectedServiceIds]);
 
-   const clearSelections = () => {
-      setSelectedServiceIds([]);
+   const clearSelections = () => setSelectedServiceIds([]);
+
+   const resetOrderForm = () => {
+      setReviewValues(null);
+      form.reset({
+         description: '',
+         priority: 'normal',
+         areaAddressId: 0,
+         detailedAddress: '',
+         latitude: 0,
+         longitude: 0,
+         images: [],
+      });
+      setMapPicked(false);
+      clearSelections();
    };
 
-   const onSubmit = async (values: CreateOrderFormValues) => {
+   const validateOrderBeforeReview = () => {
       if (!selectedCareerId) {
          toast.error('يرجى اختيار تصنيف مهني أولاً');
-         return;
+         return false;
       }
-
       if (selectedServiceIds.length === 0) {
          toast.error('يرجى اختيار خدمة واحدة على الأقل');
-         return;
+         return false;
       }
-
       if (!hasMapSelection) {
          toast.error('يرجى تحديد الموقع من الخريطة');
+         return false;
+      }
+      return true;
+   };
+
+   const handleOpenReview = (values: CreateOrderFormValues) => {
+      if (!validateOrderBeforeReview()) {
+         console.log('_________Error Validation________');
          return;
       }
+      console.log('_________Success Validation________');
+      setReviewValues(values);
+   };
 
-      setIsSubmitting(true);
+   const reviewData = useMemo<OrderReviewData | null>(() => {
+      if (!reviewValues) return null;
+      return {
+         careerName: selectedCareerDisplayName,
+         services: selectedServices,
+         description: reviewValues.description,
+         area: areas.find((area) => area.id === reviewValues.areaAddressId),
+         detailedAddress: reviewValues.detailedAddress,
+         latitude: reviewValues.latitude,
+         longitude: reviewValues.longitude,
+         imagesCount: reviewValues.images.length,
+      };
+   }, [areas, reviewValues, selectedCareerDisplayName, selectedServices]);
 
-      try {
-         const payload = {
-            career_id: selectedCareerId,
-            services: selectedServiceIds.map((serviceId) => ({
-               service_id: serviceId,
-               quantity: 1,
-            })),
-            description: values.description,
-            priority: values.priority,
-            budget_tier: values.budgetTier,
-            area_address_id: values.areaAddressId,
-            detailed_address: values.detailedAddress,
-            latitude: values.latitude,
-            longitude: values.longitude,
-            has_images: values.images.length > 0,
-            images_count: values.images.length,
-         };
+   const submitOrder = async () => {
+      if (!reviewValues || !selectedCareerId) return;
 
-         console.log('Create order payload:', payload);
+      const scheduledAt = new Date();
+      scheduledAt.setDate(scheduledAt.getDate() + 1);
 
-         toast.success('تم تجهيز الطلب بنجاح', {
-            description: 'تم حفظ بيانات الطلب مبدئياً، وجاهز لربط API الإرسال.',
-         });
+      const result = await createOrder({
+         description: reviewValues.description,
+         scheduled_at: scheduledAt.toISOString().slice(0, 19),
+         priority: reviewValues.priority === 'urgent',
+         career_id: selectedCareerId,
+         services: selectedServiceIds,
+         address: {
+            latitude: reviewValues.latitude,
+            longitude: reviewValues.longitude,
+            detailed_address: reviewValues.detailedAddress,
+            area_address_id: reviewValues.areaAddressId,
+         },
+      });
 
-         form.reset({
-            description: '',
-            priority: 'normal',
-            budgetTier: 'economic',
-            areaAddressId: 0,
-            detailedAddress: '',
-            latitude: 0,
-            longitude: 0,
-            images: [],
-         });
-         setHasMapSelection(false);
-         clearSelections();
-      } catch {
-         toast.error('تعذر تجهيز الطلب', {
-            description: 'حدث خطأ غير متوقع، يرجى المحاولة مرة أخرى.',
-         });
-      } finally {
-         setIsSubmitting(false);
+      if (result) {
+         console.log('_______RESULTE______' + result);
+         resetOrderForm();
       }
    };
 
@@ -160,20 +216,18 @@ export default function CreateOrderPage() {
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
                <Form {...form}>
                   <form
-                     onSubmit={form.handleSubmit(onSubmit)}
+                     onSubmit={form.handleSubmit(handleOpenReview)}
                      className="space-y-6"
                   >
                      <CreateOrderServicesSection
                         selectedCareerId={selectedCareerId}
-                        onCareerChange={setSelectedCareerId}
+                        onCareerChange={handleCareerChange}
                         selectedServiceIds={selectedServiceIds}
                         onServicesChange={setSelectedServiceIds}
                      />
 
                      <CreateOrderDetailsSection control={form.control} />
-
                      <CreateOrderSettingsSection control={form.control} />
-
                      <CreateOrderLocationSection
                         control={form.control}
                         setValue={form.setValue}
@@ -181,13 +235,13 @@ export default function CreateOrderPage() {
                         isLoadingAreas={isLoadingAreas}
                         mapTilerKey={mapTilerKey}
                         hasMapSelection={hasMapSelection}
-                        onMapSelectionChange={setHasMapSelection}
+                        onMapSelectionChange={setMapPicked}
                      />
 
                      <Button
                         type="submit"
                         className="h-11 w-full text-base font-semibold"
-                        disabled={isSubmitting}
+                        disabled={isSubmitting || !hasFormChangedSinceReview}
                      >
                         {isSubmitting ? (
                            <>
@@ -195,7 +249,7 @@ export default function CreateOrderPage() {
                               جاري تجهيز الطلب...
                            </>
                         ) : (
-                           'إرسال الطلب'
+                           'مراجعة الطلب'
                         )}
                      </Button>
                   </form>
@@ -205,6 +259,9 @@ export default function CreateOrderPage() {
                   selectedServices={selectedServices}
                   selectedCareerDisplayName={selectedCareerDisplayName}
                   onClear={clearSelections}
+                  reviewData={reviewData}
+                  onConfirm={submitOrder}
+                  isSubmitting={isSubmitting}
                />
             </div>
          </div>

@@ -19,3 +19,15 @@ export type {
    WorkerImage,
    Worker,
 } from './worker';
+
+// Order entity
+export type {
+   OrderStatus,
+   OrderAddress,
+   OrderAddressRequest,
+   OrderImage,
+   OrderUser,
+   Order,
+   CreateOrderRequest,
+   CreateOrderResponse,
+} from './order';

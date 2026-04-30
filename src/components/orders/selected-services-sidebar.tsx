@@ -16,7 +16,7 @@ export function SelectedServicesSidebar({
    onClear,
 }: SelectedServicesSidebarProps) {
    return (
-      <Card className="sticky top-20 border-border/70 shadow-sm">
+      <Card className=" top-20 border-border/70 shadow-sm">
          <CardHeader className="space-y-1 border-b border-border/70 pb-4">
             <CardTitle className="flex items-center gap-2 text-lg">
                <ListChecks className="h-5 w-5 text-primary" />
