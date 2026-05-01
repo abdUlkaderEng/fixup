@@ -10,8 +10,9 @@ import { Navbar } from './Navbar';
 export function ConditionalNavbar() {
    const pathname = usePathname();
    const isAdminRoute = pathname?.startsWith('/admin');
+   const isWorkerRoute = pathname?.startsWith('/worker');
 
-   if (isAdminRoute) {
+   if (isAdminRoute || isWorkerRoute) {
       return null;
    }
 

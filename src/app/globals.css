@@ -348,3 +348,91 @@
    @apply border-border/70 bg-card hover:border-primary/30 hover:bg-primary/3;
 }
 
+/* ============================================
+   WORKER DASHBOARD THEME
+   Primary: #13377b  |  Accent: var(--secondary) = #f8c617
+   Yellow used as a restrained highlight, not a fill color
+   ============================================ */
+
+/* Sidebar */
+.worker-sidebar {
+   @apply bg-card flex flex-col;
+}
+
+.worker-logo-icon {
+   @apply bg-[#13377b];
+}
+
+.worker-avatar {
+   @apply bg-secondary/20 text-secondary-foreground font-bold;
+}
+
+.worker-identity-card {
+   @apply bg-muted/50 border border-border/60 rounded-xl;
+}
+
+/* Nav items */
+.worker-nav-item {
+   @apply text-muted-foreground;
+}
+
+.worker-nav-active {
+   @apply bg-secondary/10 text-foreground border border-secondary/25 font-semibold;
+}
+
+.worker-nav-idle {
+   @apply hover:bg-muted/60 hover:text-foreground;
+}
+
+/* Mobile toggle button */
+.worker-mobile-toggle {
+   @apply bg-[#13377b] shadow-lg;
+}
+
+/* Welcome Banner — flat primary, no gradient noise */
+.worker-welcome-banner {
+   @apply bg-[#13377b];
+}
+
+/* Stat cards */
+.worker-stat-card {
+   @apply bg-card transition-colors duration-200 hover:bg-muted/30;
+}
+
+/* Order card */
+.worker-order-card {
+   @apply bg-card;
+}
+
+/* Status badges on orders */
+.worker-badge {
+   @apply border;
+}
+
+.worker-badge-pending {
+   @apply bg-secondary/10 text-[#8a6e00] border-secondary/30 dark:text-secondary dark:bg-secondary/8 dark:border-secondary/20;
+}
+
+.worker-badge-active {
+   @apply bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-800/40;
+}
+
+.worker-badge-done {
+   @apply bg-sky-50 text-sky-700 border-sky-200 dark:bg-sky-950/30 dark:text-sky-400 dark:border-sky-800/40;
+}
+
+.worker-badge-cancelled {
+   @apply bg-rose-50 text-rose-600 border-rose-200 dark:bg-rose-950/30 dark:text-rose-400 dark:border-rose-800/40;
+}
+
+/* Offer CTA — yellow that reads well without burning the eye */
+.worker-offer-btn {
+   background-color: var(--secondary);
+   color: #1a1200;
+   border-color: transparent;
+}
+
+.worker-offer-btn:hover {
+   background-color: color-mix(in srgb, var(--secondary) 88%, white 12%);
+}
+

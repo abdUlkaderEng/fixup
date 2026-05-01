@@ -30,4 +30,12 @@ export type {
    Order,
    CreateOrderRequest,
    CreateOrderResponse,
+   WorkerOrderPriority,
+   WorkerOrderAreaAddress,
+   WorkerOrderAddress,
+   WorkerOrderImage,
+   WorkerOrderService,
+   WorkerOrderCareer,
+   WorkerOrder,
+   WorkerOrdersResponse,
 } from './order';

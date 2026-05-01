@@ -72,6 +72,63 @@ export interface Order {
 }
 
 // ============================================
+// Worker Orders — response shape from /worker/orders
+// Kept separate to avoid polluting the shared Order entity
+// ============================================
+
+export interface WorkerOrderAreaAddress {
+   id: number;
+   name: string;
+}
+
+export interface WorkerOrderAddress {
+   id: number;
+   latitude: number;
+   longitude: number;
+   detailed_address: string;
+   area_address: WorkerOrderAreaAddress;
+}
+
+export interface WorkerOrderImage {
+   id: number;
+   url: string;
+}
+
+export interface WorkerOrderService {
+   id: number;
+   name: string;
+}
+
+export interface WorkerOrderCareer {
+   id: number;
+   name: string;
+}
+
+export type WorkerOrderPriority = 'high' | 'normal';
+
+export interface WorkerOrder {
+   id: number;
+   user_id: number;
+   description: string;
+   status: OrderStatus;
+   expires_at: string;
+   scheduled_at: string;
+   priority: WorkerOrderPriority;
+   address_id: number;
+   career_id: number;
+   career: WorkerOrderCareer;
+   services: WorkerOrderService[];
+   images: WorkerOrderImage[];
+   address: WorkerOrderAddress;
+   services_count: number;
+   matched_services_count: number;
+}
+
+export interface WorkerOrdersResponse {
+   data: WorkerOrder[];
+}
+
+// ============================================
 // API Request / Response
 // ============================================
 
