@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { ImageUploadThemeTokens } from '../types';
@@ -18,10 +18,15 @@ export function NewImagePreview({
    tokens,
    label = 'صورة جديدة',
 }: NewImagePreviewProps) {
-   const [url] = useState(() => URL.createObjectURL(file));
-   const cleanup = useRef(() => URL.revokeObjectURL(url));
+   const [url, setUrl] = useState<string | null>(null);
 
-   useEffect(() => cleanup.current, []);
+   useEffect(() => {
+      const objectUrl = URL.createObjectURL(file);
+      setUrl(objectUrl);
+      return () => URL.revokeObjectURL(objectUrl);
+   }, [file]);
+
+   if (!url) return null;
 
    return (
       <div
@@ -38,7 +43,10 @@ export function NewImagePreview({
          />
          <button
             type="button"
-            onClick={onRemove}
+            onClick={(e) => {
+               e.stopPropagation();
+               onRemove();
+            }}
             className="absolute left-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-destructive hover:bg-destructive/90 text-white shadow-md transition-colors"
          >
             <X className="h-3.5 w-3.5" />

@@ -30,11 +30,20 @@ export function ImageUploadField({
       deletedIds: state.deletedIds,
       onStateChange: (changes) => {
          if (changes.newFiles !== undefined) {
-            const addedFiles = changes.newFiles.slice(state.newFiles.length);
-            if (addedFiles.length > 0) {
-               callbacks.onNewFilesAdd(addedFiles);
+            // Full replacement — derive add vs. remove by comparing lengths
+            const next = changes.newFiles;
+            const prev = state.newFiles;
+            if (next.length > prev.length) {
+               // Files were added — forward only the newly appended ones
+               callbacks.onNewFilesAdd(next.slice(prev.length));
             } else {
-               callbacks.onNewFilesAdd([]);
+               // A file was removed — find which index was removed and notify
+               const removedIndex = prev.findIndex(
+                  (_, i) => i >= next.length || prev[i] !== next[i]
+               );
+               if (removedIndex !== -1) {
+                  callbacks.onNewFileRemove(removedIndex);
+               }
             }
          }
          if (changes.deletedIds !== undefined) {

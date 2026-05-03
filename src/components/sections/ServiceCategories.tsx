@@ -183,7 +183,7 @@ export function ServiceCategories() {
                                                   translate-y-full group-hover:translate-y-0 transition-all duration-500 pt-0 flex justify-start mt-auto pb-4"
                         >
                            <Link
-                              href={`/orders/create?careerId=${career.id}&careerName=${encodeURIComponent(career.title)}`}
+                              href={`/customer/orders/create?careerId=${career.id}&careerName=${encodeURIComponent(career.title)}`}
                               className="group/link flex items-center gap-2 text-sm text-card-foreground/60 font-medium transition-all duration-300 hover:gap-4 hover:text-card-foreground"
                            >
                               <span className="relative">

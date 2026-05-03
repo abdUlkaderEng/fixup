@@ -16,7 +16,7 @@ function WorkerLayoutInner({ children }: { children: React.ReactNode }) {
    const workerName = session?.user?.name || 'الفني';
 
    return (
-      <div className="min-h-screen bg-background">
+      <div className="worker-theme min-h-screen bg-background">
          <WorkerSidebar workerName={workerName} />
          {/*
             Desktop: mr tracks sidebar width — 18rem (expanded) or 4rem (collapsed).

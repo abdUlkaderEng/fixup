@@ -436,3 +436,41 @@
    background-color: color-mix(in srgb, var(--secondary) 88%, white 12%);
 }
 
+.worker-theme {
+   --primary: var(--secondary);
+   --primary-foreground: var(--secondary-foreground);
+   --ring: var(--secondary);
+   --sidebar-primary: var(--secondary);
+   --sidebar-primary-foreground: var(--secondary-foreground);
+   --sidebar-ring: var(--secondary);
+}
+
+.worker-sidebar {
+   @apply bg-card/95 backdrop-blur-sm;
+}
+
+.worker-logo-icon {
+   @apply bg-primary;
+}
+
+.worker-avatar {
+   @apply bg-primary/20 text-primary;
+}
+
+.worker-nav-active {
+   @apply border-primary/25 bg-primary/10;
+}
+
+.worker-mobile-toggle {
+   @apply bg-primary;
+}
+
+.worker-dashboard-shell {
+   /* background-image:
+      radial-gradient(circle at top right, color-mix(in srgb, var(--primary) 18%, transparent), transparent 28%),
+      linear-gradient(to bottom, color-mix(in srgb, var(--primary) 6%, transparent), transparent 28%); */
+}
+
+.worker-dashboard-hero {
+   /* @apply relative bg-gradient-to-l from-primary via-primary to-primary/85; */
+}

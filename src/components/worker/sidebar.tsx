@@ -41,61 +41,59 @@ function SidebarInner({
 
    return (
       <div className="flex h-full flex-col">
-         {/* Header */}
-         <div className="flex h-16 shrink-0 items-center justify-between px-5 border-b border-border/60">
+         <div className="flex h-16 shrink-0 items-center justify-between border-b border-border/60 px-5">
             <Link
                href="/worker/dashboard"
                className="flex items-center gap-2.5"
                onClick={onClose}
             >
-               <div className="worker-logo-icon h-8 w-8 rounded-lg flex items-center justify-center shadow-sm">
+               <div className="worker-logo-icon flex h-8 w-8 items-center justify-center rounded-lg shadow-sm">
                   <Wrench className="h-4 w-4 text-white" />
                </div>
                <div>
                   <span className="text-base font-bold tracking-tight text-foreground">
                      FIXUP
                   </span>
-                  <p className="text-[10px] text-secondary leading-tight font-medium">
+                  <p className="text-[10px] font-medium leading-tight text-primary">
                      منطقة الفني
                   </p>
                </div>
             </Link>
-            {showCloseBtn && (
+            {showCloseBtn ? (
                <button
                   onClick={onClose}
-                  className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded-lg hover:bg-muted"
+                  className="rounded-lg p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                   aria-label="إغلاق القائمة"
                >
                   <X className="h-5 w-5" />
                </button>
-            )}
+            ) : null}
          </div>
 
-         {/* Worker Identity */}
-         <div className="px-4 py-4 border-b border-border/40">
-            <div className="flex items-center gap-3 px-2 py-2.5 rounded-xl worker-identity-card">
-               <div className="worker-avatar h-9 w-9 rounded-full flex items-center justify-center shrink-0 text-sm font-bold shadow-sm">
+         <div className="border-b border-border/40 px-4 py-4">
+            <div className="worker-identity-card flex items-center gap-3 rounded-xl px-2 py-2.5">
+               <div className="worker-avatar flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold shadow-sm">
                   {initial}
                </div>
                <div className="min-w-0">
-                  <p className="text-sm font-semibold text-foreground truncate">
+                  <p className="truncate text-sm font-semibold text-foreground">
                      {workerName}
                   </p>
-                  <p className="text-[11px] text-secondary font-medium">
+                  <p className="text-[11px] font-medium text-primary">
                      فني معتمد
                   </p>
                </div>
             </div>
          </div>
 
-         {/* Navigation */}
-         <nav className="flex-1 overflow-y-auto scrollbar-hover px-3 py-4 space-y-1">
+         <nav className="scrollbar-hover flex-1 space-y-1 overflow-y-auto px-3 py-4">
             <p className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/50">
                القائمة الرئيسية
             </p>
             {NAV_LINKS.map(({ href, label, icon: Icon }) => {
                const isActive =
                   pathname === href || pathname?.startsWith(href + '/');
+
                return (
                   <Link
                      key={href}
@@ -110,23 +108,22 @@ function SidebarInner({
                         className={cn(
                            'h-4 w-4 shrink-0',
                            isActive
-                              ? 'text-secondary'
+                              ? 'text-primary'
                               : 'text-muted-foreground group-hover:text-foreground'
                         )}
                      />
                      <span className="flex-1">{label}</span>
-                     {isActive && (
-                        <ChevronLeft className="h-3.5 w-3.5 text-secondary/70" />
-                     )}
+                     {isActive ? (
+                        <ChevronLeft className="h-3.5 w-3.5 text-primary/70" />
+                     ) : null}
                   </Link>
                );
             })}
          </nav>
 
-         {/* Bottom */}
-         <div className="shrink-0 border-t border-border/60 p-4 space-y-3">
-            <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-muted/40">
-               <span className="text-xs text-muted-foreground font-medium">
+         <div className="shrink-0 space-y-3 border-t border-border/60 p-4">
+            <div className="flex items-center justify-between rounded-xl bg-muted/40 px-3 py-2">
+               <span className="text-xs font-medium text-muted-foreground">
                   المظهر
                </span>
                <ThemeToggle />
@@ -135,7 +132,7 @@ function SidebarInner({
             <Button
                variant="ghost"
                size="sm"
-               className="w-full justify-start gap-2.5 h-9 text-xs text-muted-foreground hover:text-destructive hover:bg-destructive/8 rounded-xl transition-colors"
+               className="h-9 w-full justify-start gap-2.5 rounded-xl text-xs text-muted-foreground transition-colors hover:bg-destructive/8 hover:text-destructive"
                onClick={() => signOut({ callbackUrl: '/' })}
             >
                <LogOut className="h-3.5 w-3.5" />
@@ -152,38 +149,36 @@ export function WorkerSidebar({ workerName }: WorkerSidebarProps) {
 
    return (
       <>
-         {/* ── Desktop sidebar ────────────────────────────────────── */}
-         {/* Collapsed rail (icons only) when closed, full panel when open */}
          <aside
             className={cn(
-               'worker-sidebar fixed right-0 top-0 z-40 hidden lg:flex flex-col h-screen border-l border-border/60 shadow-sm transition-all duration-300 ease-in-out overflow-hidden',
+               'worker-sidebar fixed right-0 top-0 z-40 hidden h-screen flex-col overflow-hidden border-l border-border/60 shadow-sm transition-all duration-300 ease-in-out lg:flex',
                open ? 'w-72' : 'w-16'
             )}
          >
             {open ? (
                <SidebarInner
                   workerName={workerName}
-                  onClose={() => {}} // desktop: don't auto-close on nav
+                  onClose={() => {}}
                   showCloseBtn={false}
                />
             ) : (
-               /* Collapsed rail */
-               <div className="flex flex-col items-center h-full py-4 gap-2">
-                  <div className="worker-logo-icon h-8 w-8 rounded-lg flex items-center justify-center shadow-sm mb-4">
+               <div className="flex h-full flex-col items-center gap-2 py-4">
+                  <div className="worker-logo-icon mb-4 flex h-8 w-8 items-center justify-center rounded-lg shadow-sm">
                      <Wrench className="h-4 w-4 text-white" />
                   </div>
                   {NAV_LINKS.map(({ href, label, icon: Icon }) => {
                      const isActive =
                         pathname === href || pathname?.startsWith(href + '/');
+
                      return (
                         <Link
                            key={href}
                            href={href}
                            title={label}
                            className={cn(
-                              'flex items-center justify-center h-10 w-10 rounded-xl transition-all duration-200',
+                              'flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-200',
                               isActive
-                                 ? 'bg-secondary/10 text-secondary border border-secondary/25'
+                                 ? 'border border-primary/25 bg-primary/10 text-primary'
                                  : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                            )}
                         >
@@ -195,12 +190,11 @@ export function WorkerSidebar({ workerName }: WorkerSidebarProps) {
             )}
          </aside>
 
-         {/* Desktop toggle button — sits on the sidebar edge */}
          <button
             onClick={toggle}
             aria-label={open ? 'طي القائمة' : 'توسيع القائمة'}
             className={cn(
-               'fixed top-4 z-50 hidden lg:flex items-center justify-center h-8 w-8 rounded-full bg-card border border-border shadow-md text-muted-foreground hover:text-foreground transition-all duration-300',
+               'fixed top-4 z-50 hidden h-8 w-8 items-center justify-center rounded-full border border-border bg-card text-muted-foreground shadow-md transition-all duration-300 hover:text-foreground lg:flex',
                open ? 'right-[268px]' : 'right-[52px]'
             )}
          >
@@ -211,30 +205,27 @@ export function WorkerSidebar({ workerName }: WorkerSidebarProps) {
             )}
          </button>
 
-         {/* ── Mobile hamburger ───────────────────────────────────── */}
          <button
-            className="worker-mobile-toggle fixed top-4 right-4 z-50 flex lg:hidden items-center justify-center h-10 w-10 rounded-xl transition-all duration-200"
+            className="worker-mobile-toggle fixed top-4 right-4 z-50 flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-200 lg:hidden"
             onClick={toggle}
             aria-label="فتح القائمة"
          >
             <Menu className="h-5 w-5 text-white" />
          </button>
 
-         {/* ── Mobile backdrop ────────────────────────────────────── */}
          <div
             className={cn(
-               'fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden transition-opacity duration-300',
+               'fixed inset-0 z-40 bg-black/50 backdrop-blur-sm transition-opacity duration-300 lg:hidden',
                open
-                  ? 'opacity-100 pointer-events-auto'
-                  : 'opacity-0 pointer-events-none'
+                  ? 'pointer-events-auto opacity-100'
+                  : 'pointer-events-none opacity-0'
             )}
             onClick={close}
          />
 
-         {/* ── Mobile sidebar ─────────────────────────────────────── */}
          <aside
             className={cn(
-               'worker-sidebar fixed right-0 top-0 z-50 flex h-screen w-72 flex-col lg:hidden border-l border-border/60 shadow-xl transition-transform duration-300 ease-in-out',
+               'worker-sidebar fixed right-0 top-0 z-50 flex h-screen w-72 flex-col border-l border-border/60 shadow-xl transition-transform duration-300 ease-in-out lg:hidden',
                open ? 'translate-x-0' : 'translate-x-full'
             )}
          >
