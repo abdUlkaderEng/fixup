@@ -1,28 +1,20 @@
 'use client';
 
+import { BriefcaseBusiness, Clock3, ShieldCheck, Sparkles } from 'lucide-react';
 import {
-   BriefcaseBusiness,
-   Clock3,
-   ShieldCheck,
-   Sparkles,
-   type LucideIcon,
-} from 'lucide-react';
+   AuthDashboardStatsGrid,
+   type AuthDashboardStatItem,
+} from '@/components/AuthDashboard';
 import type { WorkerOrder } from '@/types/entities/order';
 
 interface WorkerDashboardOverviewProps {
    orders: WorkerOrder[];
 }
 
-interface StatCard {
-   label: string;
-   value: number;
-   icon: LucideIcon;
-}
-
 export function WorkerDashboardOverview({
    orders,
 }: WorkerDashboardOverviewProps) {
-   const stats: StatCard[] = [
+   const stats: AuthDashboardStatItem[] = [
       {
          label: 'إجمالي الطلبات المتاحة',
          value: orders.length,
@@ -47,35 +39,7 @@ export function WorkerDashboardOverview({
       },
    ];
 
-   return (
-      <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-         {stats.map((stat) => {
-            const Icon = stat.icon;
-
-            return (
-               <div
-                  key={stat.label}
-                  className="app-section-panel border-border/60 p-4"
-               >
-                  <div className="flex items-center justify-between gap-3">
-                     <div>
-                        <p className="text-2xl font-bold text-foreground">
-                           {stat.value}
-                        </p>
-                        <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
-                           {stat.label}
-                        </p>
-                     </div>
-
-                     <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10">
-                        <Icon className="h-5 w-5 text-primary" />
-                     </div>
-                  </div>
-               </div>
-            );
-         })}
-      </section>
-   );
+   return <AuthDashboardStatsGrid theme="worker" items={stats} />;
 }
 
 export default WorkerDashboardOverview;

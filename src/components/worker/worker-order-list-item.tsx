@@ -1,6 +1,12 @@
 'use client';
 
 import { CalendarDays, Clock3, MapPin, Sparkles, Wrench } from 'lucide-react';
+import {
+   AuthDashboardChip,
+   AuthDashboardMetaGrid,
+   AuthDashboardMetaItem,
+   AuthDashboardOrderCard,
+} from '@/components/AuthDashboard';
 import { Button } from '@/components/ui';
 import { cn } from '@/lib/utils';
 import type { WorkerOrder } from '@/types/entities/order';
@@ -25,7 +31,7 @@ export function WorkerOrderListItem({
    const canSendOffer = order.status === 'pending';
 
    return (
-      <article className="app-section-panel border-border/60 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/20 hover:shadow-md sm:p-5">
+      <AuthDashboardOrderCard theme="worker">
          <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                <div className="space-y-2">
@@ -70,62 +76,40 @@ export function WorkerOrderListItem({
                </div>
             </div>
 
-            <div className="grid gap-3 rounded-2xl border border-border/60 bg-muted/[0.35] p-3 lg:grid-cols-4">
-               <div className="flex items-center gap-2 text-sm">
-                  <StatusIcon className="h-4 w-4 text-primary" />
-                  <div>
-                     <p className="text-xs text-muted-foreground">الحالة</p>
-                     <p className="font-medium text-foreground">
-                        {statusMeta.label}
-                     </p>
-                  </div>
-               </div>
-
-               <div className="flex items-center gap-2 text-sm">
-                  <Wrench className="h-4 w-4 text-primary" />
-                  <div>
-                     <p className="text-xs text-muted-foreground">التخصص</p>
-                     <p className="font-medium text-foreground">
-                        {order.career.name}
-                     </p>
-                  </div>
-               </div>
-
-               <div className="flex items-center gap-2 text-sm">
-                  <MapPin className="h-4 w-4 text-primary" />
-                  <div>
-                     <p className="text-xs text-muted-foreground">المنطقة</p>
-                     <p className="font-medium text-foreground">
-                        {order.address.area_address.area_name}
-                     </p>
-                  </div>
-               </div>
-
-               <div className="flex items-center gap-2 text-sm">
-                  <Clock3 className="h-4 w-4 text-primary" />
-                  <div>
-                     <p className="text-xs text-muted-foreground">المهلة</p>
-                     <p className="font-medium text-foreground">
-                        {getWorkerOrderExpiryLabel(order.expires_at)}
-                     </p>
-                  </div>
-               </div>
-            </div>
+            <AuthDashboardMetaGrid columnsClassName="lg:grid-cols-4">
+               <AuthDashboardMetaItem
+                  icon={<StatusIcon className="h-4 w-4" />}
+                  label="الحالة"
+                  value={statusMeta.label}
+               />
+               <AuthDashboardMetaItem
+                  icon={<Wrench className="h-4 w-4" />}
+                  label="التخصص"
+                  value={order.career.name}
+               />
+               <AuthDashboardMetaItem
+                  icon={<MapPin className="h-4 w-4" />}
+                  label="المنطقة"
+                  value={order.address.area_address.area_name}
+               />
+               <AuthDashboardMetaItem
+                  icon={<Clock3 className="h-4 w-4" />}
+                  label="المهلة"
+                  value={getWorkerOrderExpiryLabel(order.expires_at)}
+               />
+            </AuthDashboardMetaGrid>
 
             <div className="flex flex-wrap items-center justify-between gap-3">
                <div className="flex flex-wrap gap-2">
                   {order.services.slice(0, 4).map((service) => (
-                     <span
-                        key={service.id}
-                        className="rounded-full border border-primary/12 bg-secondary/[0.05] px-3 py-1 text-xs font-medium text-primary"
-                     >
+                     <AuthDashboardChip key={service.id}>
                         {service.name}
-                     </span>
+                     </AuthDashboardChip>
                   ))}
                   {order.services.length > 4 ? (
-                     <span className="rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-muted-foreground">
+                     <AuthDashboardChip tone="neutral">
                         +{order.services.length - 4} خدمات
-                     </span>
+                     </AuthDashboardChip>
                   ) : null}
                </div>
 
@@ -159,7 +143,7 @@ export function WorkerOrderListItem({
                </Button>
             </div>
          </div>
-      </article>
+      </AuthDashboardOrderCard>
    );
 }
 
