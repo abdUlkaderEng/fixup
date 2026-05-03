@@ -78,7 +78,7 @@ export interface Order {
 
 export interface WorkerOrderAreaAddress {
    id: number;
-   name: string;
+   area_name: string;
 }
 
 export interface WorkerOrderAddress {

@@ -39,3 +39,10 @@ export type {
    WorkerOrder,
    WorkerOrdersResponse,
 } from './order';
+
+export type {
+   PriceOfferStatus,
+   WorkerPriceOfferDraft,
+   CreateWorkerPriceOfferRequest,
+   CreateWorkerPriceOfferResponse,
+} from './price-offer';

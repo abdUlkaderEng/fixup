@@ -83,18 +83,17 @@ const modalThemeClasses: Record<
    },
    worker: {
       content:
-         'border-secondary/35 bg-white shadow-[0_24px_80px_-28px_rgba(248,198,23,0.38)]',
-      header:
-         'border-secondary/30 bg-gradient-to-l from-secondary/18 to-secondary/8',
-      title: 'text-[#8a6e00]',
-      description: 'text-[#8a6e00]/80',
-      footer: 'border-secondary/25 bg-secondary/10',
+         'border-secondary/20 bg-card text-card-foreground shadow-[0_24px_80px_-28px_rgba(248,198,23,0.28)]',
+      header: 'border-secondary/15 bg-muted/70',
+      title: 'text-secondary',
+      description: 'text-muted-foreground',
+      footer: 'border-secondary/15 bg-muted/55',
       closeButton:
-         'border-secondary/35 bg-white text-[#6e5700] hover:bg-secondary/10 hover:border-secondary/50',
+         'border-secondary/20 bg-card text-secondary hover:bg-secondary/8 hover:border-secondary/35',
       primaryButton:
          'bg-secondary text-secondary-foreground hover:bg-secondary/90 shadow-sm',
       secondaryButton:
-         'border-secondary/35 bg-white text-[#6e5700] hover:bg-secondary/10 hover:border-secondary/50',
+         'border-secondary/20 bg-card text-secondary hover:bg-secondary/8 hover:border-secondary/35',
    },
 };
 

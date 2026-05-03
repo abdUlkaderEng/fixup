@@ -139,7 +139,7 @@ export function ProfileView({
    const displayRole = roleLabel || user.role;
 
    return (
-      <div className="min-h-[calc(100vh-4rem)] mt-16 bg-linear-to-br from-background via-muted/30 to-background">
+      <div className="min-h-[calc(100vh-4rem)]  bg-linear-to-br from-background via-muted/30 to-background">
          <div className=" max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <BackLink href={backLink} label={backLabel} />
 

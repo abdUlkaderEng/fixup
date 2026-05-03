@@ -13,7 +13,7 @@ import {
 
 interface WorkerOrderListItemProps {
    order: WorkerOrder;
-   onSendOffer: (orderId: number) => void;
+   onSendOffer: (order: WorkerOrder) => void;
 }
 
 export function WorkerOrderListItem({
@@ -96,7 +96,7 @@ export function WorkerOrderListItem({
                   <div>
                      <p className="text-xs text-muted-foreground">المنطقة</p>
                      <p className="font-medium text-foreground">
-                        {order.address.area_address.name}
+                        {order.address.area_address.area_name}
                      </p>
                   </div>
                </div>
@@ -117,7 +117,7 @@ export function WorkerOrderListItem({
                   {order.services.slice(0, 4).map((service) => (
                      <span
                         key={service.id}
-                        className="rounded-full border border-primary/12 bg-primary/[0.05] px-3 py-1 text-xs font-medium text-primary"
+                        className="rounded-full border border-primary/12 bg-secondary/[0.05] px-3 py-1 text-xs font-medium text-primary"
                      >
                         {service.name}
                      </span>
@@ -152,7 +152,7 @@ export function WorkerOrderListItem({
                <Button
                   size="sm"
                   disabled={!canSendOffer}
-                  onClick={() => canSendOffer && onSendOffer(order.id)}
+                  onClick={() => canSendOffer && onSendOffer(order)}
                   className="h-10 rounded-xl px-5 text-sm font-semibold"
                >
                   إرسال عرض سعر

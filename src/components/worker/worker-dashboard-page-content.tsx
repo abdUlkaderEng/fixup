@@ -1,10 +1,13 @@
 'use client';
 
+import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { BriefcaseBusiness, Loader2 } from 'lucide-react';
 import { useAuthToken } from '@/hooks';
-import { useWorkerOrders } from '@/hooks/worker';
+import { usePriceOffer, useWorkerOrders } from '@/hooks/worker';
 import { EmptyState, SectionPanel } from '@/components/ui';
+import type { WorkerPriceOfferDraft, WorkerOrder } from '@/types/entities';
+import { PriceOfferModal } from './price-offer-modal';
 import { WorkerDashboardHeader } from './worker-dashboard-header';
 import { WorkerDashboardOverview } from './worker-dashboard-overview';
 import { WorkerOrderListItem } from './worker-order-list-item';
@@ -14,18 +17,36 @@ export function WorkerDashboardPageContent() {
 
    const { data: session } = useSession();
    const { orders, isLoading } = useWorkerOrders();
+   const { submitPriceOffer, isSubmittingPriceOffer } = usePriceOffer();
+   const [selectedOrder, setSelectedOrder] = useState<WorkerOrder | null>(null);
+   const [isOfferModalOpen, setIsOfferModalOpen] = useState(false);
 
    const firstName = (session?.user?.name || 'الفني').split(' ')[0];
    const pendingCount = orders.filter(
       (order) => order.status === 'pending'
    ).length;
+   const workerId = Number(session?.user?.worker?.id ?? session?.user?.id ?? 0);
 
-   const handleSendOffer = (orderId: number) => {
-      console.log('Send offer for order', orderId);
+   const handleSendOffer = (order: WorkerOrder) => {
+      setSelectedOrder(order);
+      setIsOfferModalOpen(true);
+   };
+
+   const handleOfferModalChange = (open: boolean) => {
+      setIsOfferModalOpen(open);
+
+      if (!open) {
+         setSelectedOrder(null);
+      }
+   };
+
+   const handleSubmitOffer = async (draft: WorkerPriceOfferDraft) => {
+      await submitPriceOffer(draft);
+      handleOfferModalChange(false);
    };
 
    return (
-      <div className="  worker-dashboard-shell">
+      <div className="app-page-gradient  worker-dashboard-shell">
          <div className="container mx-auto px-4">
             <WorkerDashboardHeader
                firstName={firstName}
@@ -65,6 +86,15 @@ export function WorkerDashboardPageContent() {
                </SectionPanel>
             </div>
          </div>
+
+         <PriceOfferModal
+            open={isOfferModalOpen}
+            order={selectedOrder}
+            workerId={workerId}
+            isSubmitting={isSubmittingPriceOffer}
+            onOpenChange={handleOfferModalChange}
+            onSubmit={handleSubmitOffer}
+         />
       </div>
    );
 }
