@@ -106,6 +106,58 @@ export interface WorkerOrderCareer {
 
 export type WorkerOrderPriority = 'high' | 'normal';
 
+export interface CustomerOrderAreaAddress {
+   id: number;
+   name: string;
+}
+
+export interface CustomerOrderAddress {
+   id: number;
+   latitude: number;
+   longitude: number;
+   detailed_address: string;
+   area_address?: CustomerOrderAreaAddress | null;
+}
+
+export interface CustomerOrderImage {
+   id: number;
+   url?: string;
+   path?: string;
+}
+
+export interface CustomerOrderCareer {
+   id: number;
+   name: string;
+}
+
+export interface CustomerOrderWorker {
+   id: number;
+   name: string;
+   phone?: string | null;
+   rating?: number | null;
+}
+
+export interface CustomerOrder {
+   id: number;
+   user_id: number;
+   description: string;
+   status: OrderStatus;
+   scheduled_at: string;
+   expires_at: string;
+   created_at: string;
+   updated_at: string;
+   priority?: WorkerOrderPriority | boolean;
+   career?: CustomerOrderCareer | null;
+   services: WorkerOrderService[];
+   images: CustomerOrderImage[];
+   address: CustomerOrderAddress;
+   worker?: CustomerOrderWorker | null;
+}
+
+export interface CustomerOrdersResponse {
+   data: CustomerOrder[];
+}
+
 export interface WorkerOrder {
    id: number;
    user_id: number;

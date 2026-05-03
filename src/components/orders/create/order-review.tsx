@@ -45,6 +45,7 @@ export function OrderReview({
          title="مراجعة الطلب"
          description="راجع بيانات الطلب قبل الإرسال"
          size="lg"
+         theme="customer"
          showCloseButton={false}
          className="order-review-modal"
          headerClassName="order-review-header"

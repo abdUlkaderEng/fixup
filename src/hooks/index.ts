@@ -44,7 +44,8 @@ export { usePhotonSearch } from './use-photon-search';
 // Order Hooks
 // ============================================
 export { useCreateOrder } from './order';
-export type { UseCreateOrderReturn } from './order';
+export { useCustomerOrders } from './order';
+export type { UseCreateOrderReturn, UseCustomerOrdersReturn } from './order';
 
 // ============================================
 // Admin Hooks (re-exported)

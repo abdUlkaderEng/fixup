@@ -20,7 +20,7 @@ import {
    SelectTrigger,
    SelectValue,
 } from '@/components/ui/select';
-import type { CreateOrderFormValues } from '@/app/orders/create/schema';
+import type { CreateOrderFormValues } from '@/app/customer/orders/create/schema';
 import type { PublicArea } from '@/types/public';
 
 interface CreateOrderLocationSectionProps {

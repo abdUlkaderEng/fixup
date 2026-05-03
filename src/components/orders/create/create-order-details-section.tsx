@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { ImageUploadField } from '@/components/image-upload';
-import type { CreateOrderFormValues } from '@/app/orders/create/schema';
+import type { CreateOrderFormValues } from '@/app/customer/orders/create/schema';
 
 interface CreateOrderDetailsSectionProps {
    control: Control<CreateOrderFormValues>;

@@ -3,6 +3,7 @@
 import { useImageUploadLogic } from './hooks';
 import { ImageGallery } from './components/ImageGallery';
 import { UploadZone } from './components/UploadZone';
+import { IMAGE_UPLOAD_THEMES } from './types';
 import type { ImageUploadProps } from './types';
 
 export function ImageUploadField({
@@ -11,7 +12,10 @@ export function ImageUploadField({
    config,
    isEditing,
    disabled = false,
+   theme = 'default',
 }: ImageUploadProps) {
+   const tokens = IMAGE_UPLOAD_THEMES[theme];
+
    const {
       visibleExistingImages,
       hasImages,
@@ -78,6 +82,7 @@ export function ImageUploadField({
                deletedIds={state.deletedIds}
                imageBaseUrl={imageBaseUrl}
                isEditing={isEditing}
+               tokens={tokens}
                onExistingImageToggle={toggleExistingImageDelete}
                onNewFileRemove={removeNewFile}
                savedLabel={savedLabel}
@@ -90,6 +95,7 @@ export function ImageUploadField({
             <UploadZone
                inputRef={inputRef}
                onFileSelect={handleNewFiles}
+               tokens={tokens}
                buttonText={uploadButtonText}
                hintText={uploadHintText}
                statsText={statsText}

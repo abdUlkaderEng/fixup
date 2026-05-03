@@ -1,6 +1,6 @@
 'use client';
 
-import type { ExistingImage } from '../types';
+import type { ExistingImage, ImageUploadThemeTokens } from '../types';
 import { ExistingImageCard } from './ExistingImageCard';
 import { NewImagePreview } from './NewImagePreview';
 
@@ -10,6 +10,7 @@ interface ImageGalleryProps {
    deletedIds: number[];
    imageBaseUrl: string;
    isEditing: boolean;
+   tokens: ImageUploadThemeTokens;
    onExistingImageToggle: (id: number) => void;
    onNewFileRemove: (index: number) => void;
    savedLabel?: string;
@@ -23,6 +24,7 @@ export function ImageGallery({
    deletedIds,
    imageBaseUrl,
    isEditing,
+   tokens,
    onExistingImageToggle,
    onNewFileRemove,
    savedLabel,
@@ -39,6 +41,7 @@ export function ImageGallery({
                image={image}
                isMarkedForDelete={isMarkedForDelete(image.id)}
                imageBaseUrl={imageBaseUrl}
+               tokens={tokens}
                savedLabel={savedLabel}
                pendingDeleteLabel={pendingDeleteLabel}
                onToggleDelete={() => onExistingImageToggle(image.id)}
@@ -51,6 +54,7 @@ export function ImageGallery({
                <NewImagePreview
                   key={`${file.name}-${file.size}-${file.lastModified}`}
                   file={file}
+                  tokens={tokens}
                   onRemove={() => onNewFileRemove(index)}
                   label={newFileLabel}
                />

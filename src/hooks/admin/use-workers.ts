@@ -9,7 +9,6 @@ import type {
    WorkerFilters,
    PaginatedWorkersResponse,
 } from '@/types/admin/index';
-import { Cagliostro } from 'next/font/google';
 
 export interface UseWorkersReturn {
    workers: Worker[];
@@ -68,7 +67,9 @@ export function useWorkers(options: UseWorkersOptions = {}): UseWorkersReturn {
             perPage,
          };
 
-         const response = await workersApi.getAll(filters);
+         const response = filters.status
+            ? await workersApi.getFiltered(filters)
+            : await workersApi.getAll(filters);
          console.log(response.data);
          setWorkersState(response.data);
          pagination.updatePagination({

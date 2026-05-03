@@ -29,6 +29,7 @@ export {
    ModalPrimaryButton,
    ModalSecondaryButton,
 } from './app-modal';
+export type { AppModalTheme } from './app-modal';
 export { ConfirmDialog, DeleteConfirmDialog } from './confirm-dialog';
 export type { ConfirmDialogProps } from './confirm-dialog';
 

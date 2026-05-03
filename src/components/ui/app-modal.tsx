@@ -17,6 +17,8 @@ export interface BaseModalProps {
    onOpenChange?: (open: boolean) => void;
 }
 
+export type AppModalTheme = 'admin' | 'customer' | 'worker';
+
 interface AppModalProps extends BaseModalProps {
    title: string;
    description?: string;
@@ -31,6 +33,7 @@ interface AppModalProps extends BaseModalProps {
    showCloseButton?: boolean;
    closeButtonText?: string;
    onClose?: () => void;
+   theme?: AppModalTheme;
 }
 
 const sizeClasses = {
@@ -39,6 +42,60 @@ const sizeClasses = {
    lg: 'max-w-2xl',
    xl: 'max-w-4xl',
    full: 'max-w-[95vw]',
+};
+
+const modalThemeClasses: Record<
+   AppModalTheme,
+   {
+      content: string;
+      header: string;
+      title: string;
+      description: string;
+      footer: string;
+      closeButton: string;
+      primaryButton: string;
+      secondaryButton: string;
+   }
+> = {
+   admin: {
+      content: 'admin-modal-content border-gray-200',
+      header: 'border-gray-200 bg-gray-50',
+      title: 'text-gray-900',
+      description: 'text-gray-500',
+      footer: 'border-gray-200 bg-gray-50',
+      closeButton: 'admin-btn-secondary',
+      primaryButton: 'admin-btn-primary',
+      secondaryButton: 'admin-btn-secondary',
+   },
+   customer: {
+      content:
+         'border-primary/15 bg-white shadow-[0_24px_80px_-28px_rgba(19,55,123,0.32)]',
+      header: 'border-primary/12 bg-gradient-to-l from-primary/8 to-primary/3',
+      title: 'text-primary',
+      description: 'text-primary/70',
+      footer: 'border-primary/10 bg-primary/[0.03]',
+      closeButton:
+         'border-primary/18 bg-white text-primary hover:bg-primary/5 hover:border-primary/30',
+      primaryButton:
+         'bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm',
+      secondaryButton:
+         'border-primary/18 bg-white text-primary hover:bg-primary/5 hover:border-primary/30',
+   },
+   worker: {
+      content:
+         'border-secondary/35 bg-white shadow-[0_24px_80px_-28px_rgba(248,198,23,0.38)]',
+      header:
+         'border-secondary/30 bg-gradient-to-l from-secondary/18 to-secondary/8',
+      title: 'text-[#8a6e00]',
+      description: 'text-[#8a6e00]/80',
+      footer: 'border-secondary/25 bg-secondary/10',
+      closeButton:
+         'border-secondary/35 bg-white text-[#6e5700] hover:bg-secondary/10 hover:border-secondary/50',
+      primaryButton:
+         'bg-secondary text-secondary-foreground hover:bg-secondary/90 shadow-sm',
+      secondaryButton:
+         'border-secondary/35 bg-white text-[#6e5700] hover:bg-secondary/10 hover:border-secondary/50',
+   },
 };
 
 export function AppModal({
@@ -57,8 +114,10 @@ export function AppModal({
    showCloseButton = true,
    closeButtonText = 'Close',
    onClose,
+   theme = 'admin',
 }: AppModalProps) {
    const router = useRouter();
+   const themeClasses = modalThemeClasses[theme];
 
    const handleOpenChange = (isOpen: boolean) => {
       if (!isOpen) {
@@ -82,24 +141,26 @@ export function AppModal({
       <Dialog open={open} onOpenChange={handleOpenChange}>
          <DialogContent
             className={cn(
-               'admin-modal-content max-h-[95vh] p-0 gap-0',
-               'border border-gray-200',
+               'max-h-[95vh] gap-0 border p-0',
                'data-[state=open]:animate-in data-[state=closed]:animate-out',
                'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
                'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
+               themeClasses.content,
                sizeClasses[size],
                className
             )}
          >
             <DialogHeader
                className={cn(
-                  'border-b border-gray-200 p-6 pb-4 bg-gray-50',
+                  'border-b p-6 pb-4',
+                  themeClasses.header,
                   headerClassName
                )}
             >
                <DialogTitle
                   className={cn(
-                     'text-xl font-semibold text-gray-900 text-center',
+                     'text-center text-xl font-semibold',
+                     themeClasses.title,
                      titleClassName
                   )}
                >
@@ -108,7 +169,8 @@ export function AppModal({
                {description && (
                   <DialogDescription
                      className={cn(
-                        'text-gray-500 text-center',
+                        'text-center',
+                        themeClasses.description,
                         descriptionClassName
                      )}
                   >
@@ -125,11 +187,16 @@ export function AppModal({
                {children}
             </div>
             {showCloseButton && (
-               <div className="flex items-center justify-end gap-2 pt-4 px-6 pb-6 border-t border-gray-200 bg-gray-50">
+               <div
+                  className={cn(
+                     'flex items-center justify-end gap-2 border-t px-6 pb-6 pt-4',
+                     themeClasses.footer
+                  )}
+               >
                   <Button
                      variant="outline"
                      onClick={handleClose}
-                     className="admin-btn-secondary"
+                     className={themeClasses.closeButton}
                   >
                      {closeButtonText}
                   </Button>
@@ -175,6 +242,7 @@ interface ModalPrimaryButtonProps {
    onClick?: () => void;
    disabled?: boolean;
    className?: string;
+   theme?: AppModalTheme;
 }
 
 export function ModalPrimaryButton({
@@ -182,12 +250,13 @@ export function ModalPrimaryButton({
    onClick,
    disabled,
    className,
+   theme = 'admin',
 }: ModalPrimaryButtonProps) {
    return (
       <Button
          onClick={onClick}
          disabled={disabled}
-         className={cn('admin-btn-primary', className)}
+         className={cn(modalThemeClasses[theme].primaryButton, className)}
       >
          {children}
       </Button>
@@ -199,6 +268,7 @@ interface ModalSecondaryButtonProps {
    onClick?: () => void;
    disabled?: boolean;
    className?: string;
+   theme?: AppModalTheme;
 }
 
 export function ModalSecondaryButton({
@@ -206,13 +276,14 @@ export function ModalSecondaryButton({
    onClick,
    disabled,
    className,
+   theme = 'admin',
 }: ModalSecondaryButtonProps) {
    return (
       <Button
          variant="outline"
          onClick={onClick}
          disabled={disabled}
-         className={cn('admin-btn-secondary', className)}
+         className={cn(modalThemeClasses[theme].secondaryButton, className)}
       >
          {children}
       </Button>

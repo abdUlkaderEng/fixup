@@ -2,16 +2,20 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { X } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import type { ImageUploadThemeTokens } from '../types';
 
 interface NewImagePreviewProps {
    file: File;
    onRemove: () => void;
+   tokens: ImageUploadThemeTokens;
    label?: string;
 }
 
 export function NewImagePreview({
    file,
    onRemove,
+   tokens,
    label = 'صورة جديدة',
 }: NewImagePreviewProps) {
    const [url] = useState(() => URL.createObjectURL(file));
@@ -20,7 +24,12 @@ export function NewImagePreview({
    useEffect(() => cleanup.current, []);
 
    return (
-      <div className="group relative aspect-4/3 overflow-hidden rounded-xl border border-border/70 bg-muted">
+      <div
+         className={cn(
+            'group relative aspect-4/3 overflow-hidden rounded-xl border',
+            tokens.cardBorder
+         )}
+      >
          {/* eslint-disable-next-line @next/next/no-img-element */}
          <img
             src={url}
@@ -30,7 +39,7 @@ export function NewImagePreview({
          <button
             type="button"
             onClick={onRemove}
-            className="absolute left-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-destructive text-white shadow-md"
+            className="absolute left-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-destructive hover:bg-destructive/90 text-white shadow-md transition-colors"
          >
             <X className="h-3.5 w-3.5" />
          </button>

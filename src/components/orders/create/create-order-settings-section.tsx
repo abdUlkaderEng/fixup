@@ -2,7 +2,7 @@
 
 import type { Control } from 'react-hook-form';
 
-import { priorityOptions } from '@/app/orders/create/schema';
+import { priorityOptions } from '@/app/customer/orders/create/schema';
 import { RadioCardGroup } from '@/components/ui/radio-card-group';
 import { SectionPanel } from '@/components/ui/section-panel';
 import {
@@ -11,7 +11,7 @@ import {
    FormLabel,
    FormMessage,
 } from '@/components/ui/form';
-import type { CreateOrderFormValues } from '@/app/orders/create/schema';
+import type { CreateOrderFormValues } from '@/app/customer/orders/create/schema';
 
 interface CreateOrderSettingsSectionProps {
    control: Control<CreateOrderFormValues>;

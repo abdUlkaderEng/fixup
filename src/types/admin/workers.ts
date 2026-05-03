@@ -32,6 +32,7 @@ export interface UpdateWorkerRequest {
    status?: WorkerStatus;
    career_id?: number;
    years_experience?: number;
+   service_ids?: number[];
 }
 
 // ============================================
