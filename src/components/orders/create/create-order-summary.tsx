@@ -5,13 +5,25 @@ import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SelectedServicesSidebar } from '@/components/orders/selected-services-sidebar';
 import type { Service } from '@/types/admin/services';
-import type { OrderReviewData } from './order-review';
+import { PublicArea } from '@/types/entities';
+
+export interface OrderSummaryData {
+   careerName: string;
+   services: Service[];
+   description: string;
+   area?: PublicArea;
+   detailedAddress: string;
+   latitude: number;
+   longitude: number;
+   imagesCount: number;
+   priority: string;
+}
 
 interface CreateOrderSummaryProps {
    selectedServices: Service[];
    selectedCareerDisplayName: string;
    onClear: () => void;
-   reviewData?: OrderReviewData | null;
+   reviewData?: OrderSummaryData | null;
    onConfirm?: () => void;
    isSubmitting?: boolean;
 }
@@ -25,7 +37,7 @@ export function CreateOrderSummary({
    isSubmitting,
 }: CreateOrderSummaryProps) {
    return (
-      <div className="sticky top-20 bottom-0 self-end space-y-4">
+      <div className="sticky top-20 bottom-0 self-end space-y-4 md:relative md:top-0">
          <SelectedServicesSidebar
             selectedServices={selectedServices}
             onClear={onClear}
@@ -44,6 +56,38 @@ export function CreateOrderSummary({
                            المنطقة:
                         </span>{' '}
                         {reviewData.area.area_name}
+                     </p>
+                  )}
+                  {reviewData.detailedAddress && (
+                     <p>
+                        <span className="font-medium text-foreground">
+                           العنوان التفصيلي:
+                        </span>{' '}
+                        {reviewData.detailedAddress}
+                     </p>
+                  )}
+                  {reviewData.description && (
+                     <p>
+                        <span className="font-medium text-foreground">
+                           الوصف :
+                        </span>{' '}
+                        {reviewData.description}
+                     </p>
+                  )}
+                  {reviewData.imagesCount !== 0 && (
+                     <p>
+                        <span className="font-medium text-foreground">
+                           عدد الصور المضافة :
+                        </span>{' '}
+                        {reviewData.imagesCount}
+                     </p>
+                  )}
+                  {reviewData.priority && (
+                     <p>
+                        <span className="font-medium text-foreground">
+                           أولوية الطلب :
+                        </span>{' '}
+                        {reviewData.priority === 'normal' ? 'عادي' : 'مستعجل'}
                      </p>
                   )}
                </div>

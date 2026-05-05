@@ -20,7 +20,7 @@ export function WorkerDashboardPageContent() {
    useAuthToken();
 
    const { data: session } = useSession();
-   const { orders, isLoading } = useWorkerOrders();
+   const { orders, isLoading, refetch } = useWorkerOrders();
    const { submitPriceOffer, isSubmittingPriceOffer } = usePriceOffer();
    const [selectedOrder, setSelectedOrder] = useState<WorkerOrder | null>(null);
    const [isOfferModalOpen, setIsOfferModalOpen] = useState(false);
@@ -30,6 +30,11 @@ export function WorkerDashboardPageContent() {
       (order) => order.status === 'pending'
    ).length;
    const workerId = Number(session?.user?.worker?.id ?? session?.user?.id ?? 0);
+   const workerStatus = session?.user?.worker?.status as
+      | 'active'
+      | 'waiting'
+      | 'blocked'
+      | undefined;
 
    const handleSendOffer = (order: WorkerOrder) => {
       setSelectedOrder(order);
@@ -46,6 +51,12 @@ export function WorkerDashboardPageContent() {
 
    const handleSubmitOffer = async (draft: WorkerPriceOfferDraft) => {
       await submitPriceOffer(draft);
+      // Refresh orders so the one we just offered on disappears
+      try {
+         refetch();
+      } catch {
+         // ignore
+      }
       handleOfferModalChange(false);
    };
 
@@ -54,6 +65,7 @@ export function WorkerDashboardPageContent() {
          <WorkerDashboardHeader
             firstName={firstName}
             pendingCount={pendingCount}
+            workerStatus={workerStatus}
          />
 
          <div className="space-y-6">
@@ -79,6 +91,7 @@ export function WorkerDashboardPageContent() {
                            key={order.id}
                            order={order}
                            onSendOffer={handleSendOffer}
+                           workerStatus={workerStatus}
                         />
                      ))}
                   </div>

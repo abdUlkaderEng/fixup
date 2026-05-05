@@ -20,15 +20,17 @@ import {
 interface WorkerOrderListItemProps {
    order: WorkerOrder;
    onSendOffer: (order: WorkerOrder) => void;
+   workerStatus?: 'active' | 'waiting' | 'blocked' | null;
 }
 
 export function WorkerOrderListItem({
    order,
    onSendOffer,
+   workerStatus,
 }: WorkerOrderListItemProps) {
    const statusMeta = getWorkerOrderStatusMeta(order.status);
    const StatusIcon = statusMeta.icon;
-   const canSendOffer = order.status === 'pending';
+   const canSendOffer = order.status === 'pending' && workerStatus === 'active';
 
    return (
       <AuthDashboardOrderCard theme="worker">

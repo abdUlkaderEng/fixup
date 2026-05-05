@@ -15,12 +15,11 @@ import {
    SheetTrigger,
 } from '@/components/ui/sheet';
 import { useSession, signOut } from 'next-auth/react';
-import ClearCashComponents from '@/app/services/components/ClearCashComponents';
 
 const navigationItems = [
    { name: 'الرئيسية', href: '/' },
-   { name: 'الخدمات', href: '/services' },
-   { name: 'اتصل بنا', href: '/contact' },
+   { name: 'طلباتي', href: '/customer/orders' },
+   { name: 'إنشاء طلب', href: '/customer/orders/create' },
 ];
 
 interface NavbarProps {
@@ -90,10 +89,7 @@ export function Navbar({ className = '' }: NavbarProps) {
                            <span className="sr-only">فتح القائمة</span>
                         </Button>
                      </SheetTrigger>
-                     <SheetContent
-                        side="right"
-                        className="w-[300px] sm:w-[400px]"
-                     >
+                     <SheetContent side="right" className="w-75 sm:w-100">
                         <SheetHeader>
                            <SheetTitle className="text-right">
                               القائمة

@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { AppModal } from '@/components/ui';
 import type { CustomerOrder } from '@/types/entities/order';
 import { CustomerOrderDetails } from './customer-order-details';
@@ -14,6 +15,7 @@ export function CustomerOrderDetailsModal({
    order,
    open,
 }: CustomerOrderDetailsModalProps) {
+   const router = useRouter();
    const statusMeta = getCustomerOrderStatusMeta(order.status);
 
    return (
@@ -23,9 +25,8 @@ export function CustomerOrderDetailsModal({
          description={statusMeta.description}
          size="xl"
          theme="customer"
-         closeHref="/customer/orders"
+         onClose={() => router.back()}
          closeButtonText="إغلاق"
-         contentClassName="bg-white/70"
       >
          <CustomerOrderDetails order={order} />
       </AppModal>

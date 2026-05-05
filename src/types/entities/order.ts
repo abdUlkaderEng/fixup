@@ -113,16 +113,45 @@ export interface CustomerOrderAreaAddress {
 
 export interface CustomerOrderAddress {
    id: number;
-   latitude: number;
-   longitude: number;
+   user_id: number;
+   latitude: string;
+   longitude: string;
    detailed_address: string;
+   area_address_id: number;
    area_address?: CustomerOrderAreaAddress | null;
+   created_at: string;
+   updated_at: string;
 }
 
 export interface CustomerOrderImage {
    id: number;
    url?: string;
    path?: string;
+}
+
+export interface ServicePivot {
+   order_id: number;
+   service_id: number;
+}
+
+export interface CustomerOrderService {
+   id: number;
+   career_id: number;
+   name: string;
+   created_at: string;
+   updated_at: string;
+   pivot: ServicePivot;
+}
+
+export interface OrderOffer {
+   id: number;
+   worker_id: number;
+   order_id: number;
+   price: string;
+   time_range: string;
+   status: string;
+   created_at: string;
+   updated_at: string;
 }
 
 export interface CustomerOrderCareer {
@@ -142,15 +171,18 @@ export interface CustomerOrder {
    user_id: number;
    description: string;
    status: OrderStatus;
+   priority: number;
+   address_id: number;
+   career_id: number;
    scheduled_at: string;
    expires_at: string;
    created_at: string;
    updated_at: string;
-   priority?: WorkerOrderPriority | boolean;
    career?: CustomerOrderCareer | null;
-   services: WorkerOrderService[];
+   services: CustomerOrderService[];
    images: CustomerOrderImage[];
    address: CustomerOrderAddress;
+   offers: OrderOffer[];
    worker?: CustomerOrderWorker | null;
 }
 
@@ -190,6 +222,7 @@ export interface CreateOrderRequest {
    priority: boolean;
    career_id: number;
    services: number[];
+   images: File[];
    address: OrderAddressRequest;
 }
 

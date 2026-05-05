@@ -1,6 +1,8 @@
 'use client';
 
 import { Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { useAuthToken, useCustomerOrders } from '@/hooks';
 import { AppModal } from '@/components/ui';
 import { CustomerOrderDetailsModal } from './customer-order-details-modal';
@@ -14,10 +16,14 @@ export function CustomerOrderDetailsModalView({
 }: CustomerOrderDetailsModalViewProps) {
    useAuthToken();
 
+   const router = useRouter();
+   const { status: sessionStatus } = useSession();
    const { orders, isLoading } = useCustomerOrders();
    const order = orders.find((item) => item.id === orderId);
 
-   if (isLoading) {
+   const handleClose = () => router.back();
+
+   if (sessionStatus === 'loading' || isLoading) {
       return (
          <AppModal
             open
@@ -25,7 +31,7 @@ export function CustomerOrderDetailsModalView({
             description="جاري تحميل بيانات الطلب..."
             size="lg"
             theme="customer"
-            closeHref="/customer/orders"
+            onClose={handleClose}
             closeButtonText="إغلاق"
          >
             <div className="flex min-h-48 flex-col items-center justify-center gap-3 text-muted-foreground">
@@ -44,7 +50,7 @@ export function CustomerOrderDetailsModalView({
             description="تعذر العثور على بيانات هذا الطلب."
             size="lg"
             theme="customer"
-            closeHref="/customer/orders"
+            onClose={handleClose}
             closeButtonText="العودة إلى الطلبات"
          >
             <div className="flex min-h-40 flex-col items-center justify-center gap-3 text-center text-muted-foreground">

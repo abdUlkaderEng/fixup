@@ -7,7 +7,7 @@ import type {
 } from '@/types/entities/order';
 
 const CREATE_ORDER_ENDPOINT = '/order' as const;
-const CUSTOMER_ORDERS_ENDPOINT = '/customer/orders' as const;
+const CUSTOMER_ORDERS_ENDPOINT = '/costmer-orders' as const;
 
 export const ordersApi = {
    async getAll(): Promise<CustomerOrder[]> {

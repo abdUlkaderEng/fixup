@@ -1,4 +1,4 @@
-import { CustomerOrderDetailsView } from '@/components/orders/customer/customer-order-details-view';
+import { redirect } from 'next/navigation';
 
 interface CustomerOrderDetailsPageProps {
    params: Promise<{
@@ -11,5 +11,5 @@ export default async function CustomerOrderDetailsPage({
 }: CustomerOrderDetailsPageProps) {
    const { orderId } = await params;
 
-   return <CustomerOrderDetailsView orderId={Number(orderId)} />;
+   redirect(`/customer/orders?order=${orderId}`);
 }

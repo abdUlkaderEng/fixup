@@ -89,9 +89,6 @@ export function AuthDashboardHero({
                      {icon}
                   </div>
                   <div>
-                     {leadingBadge ? (
-                        <div className="mb-2">{leadingBadge}</div>
-                     ) : null}
                      <h1 className="text-2xl font-bold text-foreground sm:text-3xl">
                         {title}
                      </h1>
@@ -137,6 +134,7 @@ export function AuthDashboardHero({
                   </div>
                ) : null}
             </div>
+            {leadingBadge ? <div className="pt-4">{leadingBadge}</div> : null}
          </section>
       </>
    );

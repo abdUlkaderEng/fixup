@@ -26,7 +26,7 @@ export const customerOrderStatusMap: Record<
       description: 'طلبك ما زال بانتظار التفاعل من الفنيين.',
       icon: Clock3,
       badgeClassName: 'border border-amber-200 bg-amber-50 text-amber-700',
-      panelClassName: 'border-amber-200/80 bg-amber-50/70',
+      panelClassName: 'border-amber-200/80 bg-foreground/5',
    },
    accepted: {
       label: 'تم قبول الطلب',
@@ -81,8 +81,8 @@ export function getOrderCareerName(order: CustomerOrder) {
    return order.career?.name ?? 'خدمة غير محددة';
 }
 
-export function getOrderPriorityLabel(priority?: CustomerOrder['priority']) {
-   if (priority === true || priority === 'high') {
+export function getOrderPriorityLabel(priority?: number) {
+   if (priority === 1) {
       return 'مستعجل';
    }
 

@@ -11,9 +11,11 @@ import { useAuthToken } from '@/hooks/use-auth-token';
 import { CreateOrderDetailsSection } from '@/components/orders/create/create-order-details-section';
 import { CreateOrderHeader } from '@/components/orders/create/create-order-header';
 import { CreateOrderLocationSection } from '@/components/orders/create/create-order-location-section';
-import { type OrderReviewData } from '@/components/orders/create/order-review';
 import { CreateOrderServicesSection } from '@/components/orders/create/create-order-services-section';
-import { CreateOrderSummary } from '@/components/orders/create/create-order-summary';
+import {
+   CreateOrderSummary,
+   OrderSummaryData,
+} from '@/components/orders/create/create-order-summary';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import {
@@ -166,7 +168,7 @@ export default function CreateOrderPage() {
       setReviewValues(values);
    };
 
-   const reviewData = useMemo<OrderReviewData | null>(() => {
+   const reviewData = useMemo<OrderSummaryData | null>(() => {
       if (!reviewValues) return null;
       return {
          careerName: selectedCareerDisplayName,
@@ -177,6 +179,7 @@ export default function CreateOrderPage() {
          latitude: reviewValues.latitude,
          longitude: reviewValues.longitude,
          imagesCount: reviewValues.images.length,
+         priority: reviewValues.priority,
       };
    }, [areas, reviewValues, selectedCareerDisplayName, selectedServices]);
 
@@ -198,6 +201,7 @@ export default function CreateOrderPage() {
             detailed_address: reviewValues.detailedAddress,
             area_address_id: reviewValues.areaAddressId,
          },
+         images: reviewValues.images,
       });
 
       if (result) {

@@ -69,17 +69,17 @@ const modalThemeClasses: Record<
    },
    customer: {
       content:
-         'border-primary/15 bg-white shadow-[0_24px_80px_-28px_rgba(19,55,123,0.32)]',
-      header: 'border-primary/12 bg-gradient-to-l from-primary/8 to-primary/3',
+         'border-primary/15 bg-background shadow-[0_24px_80px_-28px_rgba(19,55,123,0.32)]',
+      header: 'border-primary/12 ',
       title: 'text-primary',
       description: 'text-primary/70',
-      footer: 'border-primary/10 bg-primary/[0.03]',
+      footer: 'border-primary/10 bg-background',
       closeButton:
-         'border-primary/18 bg-white text-primary hover:bg-primary/5 hover:border-primary/30',
+         'border-primary/18 bg-background text-primary hover:bg-primary/5 hover:border-primary/30',
       primaryButton:
          'bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm',
       secondaryButton:
-         'border-primary/18 bg-white text-primary hover:bg-primary/5 hover:border-primary/30',
+         'border-primary/18 bg-background text-primary hover:bg-primary/5 hover:border-primary/30',
    },
    worker: {
       content:
@@ -188,7 +188,7 @@ export function AppModal({
             {showCloseButton && (
                <div
                   className={cn(
-                     'flex items-center justify-end gap-2 border-t px-6 pb-6 pt-4',
+                     'flex items-center justify-end gap-2 border-t px-6 pb-6 ',
                      themeClasses.footer
                   )}
                >

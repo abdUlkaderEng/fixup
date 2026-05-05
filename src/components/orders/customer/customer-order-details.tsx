@@ -3,17 +3,21 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import {
+   BadgeDollarSign,
    CalendarDays,
    Clock3,
+   Images,
    MapPinned,
    RefreshCcw,
    Sparkles,
+   Star,
+   TimerOff,
    UserRound,
    Wrench,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SectionPanel } from '@/components/ui';
-import type { CustomerOrder } from '@/types/entities/order';
+import type { CustomerOrder, OrderOffer } from '@/types/entities/order';
 import {
    formatOrderDate,
    getCustomerOrderStatusMeta,
@@ -25,6 +29,74 @@ import {
 
 interface CustomerOrderDetailsProps {
    order: CustomerOrder;
+}
+
+function OfferStatusBadge({ status }: { status: string }) {
+   const map: Record<string, string> = {
+      pending: 'قيد المراجعة',
+      accepted: 'مقبول',
+      rejected: 'مرفوض',
+   };
+   const colorMap: Record<string, string> = {
+      pending: 'bg-amber-50 text-amber-700 border-amber-200',
+      accepted: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+      rejected: 'bg-rose-50 text-rose-700 border-rose-200',
+   };
+   return (
+      <span
+         className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${colorMap[status] ?? 'bg-muted text-muted-foreground border-border'}`}
+      >
+         {map[status] ?? status}
+      </span>
+   );
+}
+
+function OffersPanel({ offers }: { offers: OrderOffer[] }) {
+   if (offers.length === 0) {
+      return (
+         <SectionPanel
+            title="عروض الأسعار"
+            icon={<BadgeDollarSign className="h-5 w-5" />}
+            className="border-border/60"
+         >
+            <p className="py-4 text-center text-sm text-muted-foreground">
+               لم يصل أي عرض سعر بعد
+            </p>
+         </SectionPanel>
+      );
+   }
+
+   return (
+      <SectionPanel
+         title={`عروض الأسعار (${offers.length})`}
+         icon={<BadgeDollarSign className="h-5 w-5" />}
+         className="border-border/60"
+      >
+         <div className="space-y-3">
+            {offers.map((offer) => (
+               <div
+                  key={offer.id}
+                  className="flex flex-col gap-2 rounded-2xl border border-border/60 bg-muted/30 p-4 sm:flex-row sm:items-center sm:justify-between"
+               >
+                  <div className="space-y-1">
+                     <p className="text-lg font-bold text-foreground">
+                        {offer.price} ر.س
+                     </p>
+                     <p className="text-xs text-muted-foreground">
+                        {offer.time_range}
+                     </p>
+                  </div>
+                  <div className="flex flex-col items-start gap-1 sm:items-end">
+                     <OfferStatusBadge status={offer.status} />
+                     <p className="text-xs text-muted-foreground">
+                        {formatOrderDate(offer.created_at)}
+                     </p>
+                  </div>
+               </div>
+            ))}
+         </div>
+      </SectionPanel>
+   );
 }
 
 function OrderStatusActions({ order }: { order: CustomerOrder }) {
@@ -111,7 +183,7 @@ export function CustomerOrderDetails({ order }: CustomerOrderDetailsProps) {
                   </div>
 
                   <div className="grid gap-3 sm:grid-cols-2">
-                     <div className="rounded-2xl border border-white/60 bg-white/80 p-4 shadow-sm backdrop-blur">
+                     <div className="rounded-2xl border border-border/60 bg-background/80 p-4 shadow-sm backdrop-blur">
                         <p className="text-xs text-muted-foreground">
                            تاريخ الإنشاء
                         </p>
@@ -119,7 +191,7 @@ export function CustomerOrderDetails({ order }: CustomerOrderDetailsProps) {
                            {formatOrderDate(order.created_at)}
                         </p>
                      </div>
-                     <div className="rounded-2xl border border-white/60 bg-white/80 p-4 shadow-sm backdrop-blur">
+                     <div className="rounded-2xl border border-border/60 bg-background/80 p-4 shadow-sm backdrop-blur">
                         <p className="text-xs text-muted-foreground">
                            موعد الخدمة
                         </p>
@@ -127,14 +199,25 @@ export function CustomerOrderDetails({ order }: CustomerOrderDetailsProps) {
                            {formatOrderDate(order.scheduled_at)}
                         </p>
                      </div>
+                     <div className="rounded-2xl border border-border/60 bg-background/80 p-4 shadow-sm backdrop-blur sm:col-span-2">
+                        <div className="flex items-center gap-1.5">
+                           <TimerOff className="h-3.5 w-3.5 text-muted-foreground" />
+                           <p className="text-xs text-muted-foreground">
+                              ينتهي الطلب في
+                           </p>
+                        </div>
+                        <p className="mt-1 font-semibold text-foreground">
+                           {formatOrderDate(order.expires_at)}
+                        </p>
+                     </div>
                   </div>
                </div>
 
-               <div className="rounded-3xl border border-white/70 bg-white/85 p-4 shadow-sm">
+               <div className="rounded-3xl border border-border/70 bg-background/85 p-4 shadow-sm">
                   {imageUrl ? (
-                     <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
+                     <div className="relative aspect-4/3 overflow-hidden rounded-2xl">
                         <Image
-                           src={imageUrl}
+                           src={process.env.NEXT_PUBLIC_IMAGE_URL + imageUrl}
                            alt={`صورة توضيحية للطلب ${order.id}`}
                            fill
                            className="object-cover"
@@ -142,7 +225,7 @@ export function CustomerOrderDetails({ order }: CustomerOrderDetailsProps) {
                         />
                      </div>
                   ) : (
-                     <div className="flex aspect-[4/3] items-center justify-center rounded-2xl bg-primary/[0.05] text-primary">
+                     <div className="flex aspect-4/3 items-center justify-center rounded-2xl bg-primary/5 text-primary">
                         <Sparkles className="h-10 w-10" />
                      </div>
                   )}
@@ -170,38 +253,70 @@ export function CustomerOrderDetails({ order }: CustomerOrderDetailsProps) {
          </section>
 
          <div className="grid gap-4 lg:grid-cols-[minmax(0,1.25fr)_minmax(280px,0.85fr)]">
-            <SectionPanel
-               title="تفاصيل الطلب"
-               icon={<Wrench className="h-5 w-5" />}
-               className="border-border/60"
-            >
-               <div className="space-y-5">
-                  <div>
-                     <p className="text-sm font-medium text-foreground">
-                        الوصف
-                     </p>
-                     <p className="mt-2 whitespace-pre-wrap text-sm leading-8 text-muted-foreground">
-                        {order.description}
-                     </p>
-                  </div>
+            <div className="space-y-4">
+               <SectionPanel
+                  title="تفاصيل الطلب"
+                  icon={<Wrench className="h-5 w-5" />}
+                  className="border-border/60"
+               >
+                  <div className="space-y-5">
+                     <div>
+                        <p className="text-sm font-medium text-foreground">
+                           الوصف
+                        </p>
+                        <p className="mt-2 whitespace-pre-wrap text-sm leading-8 text-muted-foreground">
+                           {order.description}
+                        </p>
+                     </div>
 
-                  <div>
-                     <p className="text-sm font-medium text-foreground">
-                        الخدمات المطلوبة
-                     </p>
-                     <div className="mt-3 flex flex-wrap gap-2">
-                        {order.services.map((service) => (
-                           <span
-                              key={service.id}
-                              className="rounded-full border border-primary/12 bg-primary/[0.05] px-3 py-1 text-xs font-medium text-primary"
-                           >
-                              {service.name}
-                           </span>
-                        ))}
+                     <div>
+                        <p className="text-sm font-medium text-foreground">
+                           الخدمات المطلوبة
+                        </p>
+                        <div className="mt-3 flex flex-wrap gap-2">
+                           {order.services.map((service) => (
+                              <span
+                                 key={service.id}
+                                 className="rounded-full border border-primary/12 bg-primary/5 px-3 py-1 text-xs font-medium text-primary"
+                              >
+                                 {service.name}
+                              </span>
+                           ))}
+                        </div>
                      </div>
                   </div>
-               </div>
-            </SectionPanel>
+               </SectionPanel>
+
+               {order.images.length > 1 && (
+                  <SectionPanel
+                     title={`الصور (${order.images.length})`}
+                     icon={<Images className="h-5 w-5" />}
+                     className="border-border/60"
+                  >
+                     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                        {order.images.map((img, idx) => {
+                           const src = img.url ?? img.path;
+                           return src ? (
+                              <div
+                                 key={img.id}
+                                 className="relative aspect-4/3 overflow-hidden rounded-2xl bg-muted"
+                              >
+                                 <Image
+                                    src={src}
+                                    alt={`صورة ${idx + 1}`}
+                                    fill
+                                    className="object-cover"
+                                    sizes="(max-width: 640px) 50vw, 33vw"
+                                 />
+                              </div>
+                           ) : null;
+                        })}
+                     </div>
+                  </SectionPanel>
+               )}
+
+               <OffersPanel offers={order.offers} />
+            </div>
 
             <div className="space-y-4">
                <SectionPanel
@@ -235,13 +350,32 @@ export function CustomerOrderDetails({ order }: CustomerOrderDetailsProps) {
                         </div>
                      </div>
 
-                     <div className="flex items-center gap-3">
+                     <div className="flex items-start gap-3">
                         <UserRound className="h-4 w-4 text-primary" />
-                        <div>
+                        <div className="space-y-1">
                            <p className="font-medium text-foreground">الفني</p>
-                           <p className="text-muted-foreground">
-                              {order.worker?.name ?? 'لم يتم تعيين فني بعد'}
-                           </p>
+                           {order.worker ? (
+                              <>
+                                 <p className="text-muted-foreground">
+                                    {order.worker.name}
+                                 </p>
+                                 {order.worker.phone && (
+                                    <p className="text-xs text-muted-foreground">
+                                       {order.worker.phone}
+                                    </p>
+                                 )}
+                                 {order.worker.rating != null && (
+                                    <p className="inline-flex items-center gap-1 text-xs text-amber-600">
+                                       <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                                       {order.worker.rating.toFixed(1)}
+                                    </p>
+                                 )}
+                              </>
+                           ) : (
+                              <p className="text-muted-foreground">
+                                 لم يتم تعيين فني بعد
+                              </p>
+                           )}
                         </div>
                      </div>
                   </div>

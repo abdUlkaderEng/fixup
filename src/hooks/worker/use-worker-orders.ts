@@ -32,8 +32,12 @@ export function useWorkerOrders(
       }
    );
 
+   const now = new Date();
+   const validOrders =
+      data?.filter((order) => new Date(order.expires_at) > now) ?? [];
+
    return {
-      orders: data ?? [],
+      orders: validOrders,
       isLoading,
       error,
       refetch,

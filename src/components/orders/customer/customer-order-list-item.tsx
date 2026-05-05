@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { CalendarDays, ChevronLeft, MapPin, Wrench } from 'lucide-react';
+import { CalendarDays, ChevronLeft, MapPin, Zap, Wrench } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
    AuthDashboardActionPill,
@@ -48,6 +48,12 @@ export function CustomerOrderListItem({ order }: CustomerOrderListItemProps) {
                            <StatusIcon className="h-3.5 w-3.5" />
                            {statusMeta.label}
                         </span>
+                        {order.priority === 1 && (
+                           <span className="inline-flex items-center gap-1 rounded-full border border-orange-200 bg-orange-50 px-2.5 py-0.5 text-xs font-medium text-orange-700">
+                              <Zap className="h-3 w-3" />
+                              مستعجل
+                           </span>
+                        )}
                         <span className="text-xs text-muted-foreground">
                            رقم الطلب #{order.id}
                         </span>
@@ -101,9 +107,14 @@ export function CustomerOrderListItem({ order }: CustomerOrderListItemProps) {
                      ) : null}
                   </div>
 
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                     <CalendarDays className="h-4 w-4" />
-                     <span>{formatOrderDate(order.created_at)}</span>
+                  <div className="flex flex-col items-end gap-1 text-xs text-muted-foreground">
+                     <span className="inline-flex items-center gap-1.5">
+                        <CalendarDays className="h-3.5 w-3.5" />
+                        موعد: {formatOrderDate(order.scheduled_at)}
+                     </span>
+                     <span className="text-muted-foreground/60">
+                        أُنشئ: {formatOrderDate(order.created_at)}
+                     </span>
                   </div>
                </div>
             </div>
