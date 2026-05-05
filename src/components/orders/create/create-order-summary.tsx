@@ -37,7 +37,7 @@ export function CreateOrderSummary({
    isSubmitting,
 }: CreateOrderSummaryProps) {
    return (
-      <div className="sticky top-20 bottom-0 self-end space-y-4 md:relative md:top-0">
+      <div className="relative bottom-0 self-end space-y-4 lg:sticky lg:top-20">
          <SelectedServicesSidebar
             selectedServices={selectedServices}
             onClear={onClear}
