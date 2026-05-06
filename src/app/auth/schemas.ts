@@ -32,11 +32,12 @@ export const signupSchema = z
          .string()
          .min(1, 'رقم الهاتف مطلوب')
          .regex(/^[\d\s\-\+\(\)]+$/, 'رقم الهاتف يجب أن يحتوي على أرقام فقط')
-         .min(10, 'رقم الهاتف يجب أن يكون 10 أرقام على الأقل'),
+         .min(10, 'رقم الهاتف يجب أن يكون 10 أرقام على الأقل')
+         .max(10, 'رقم الهاتف يجب أن يكون 10 أرقام '),
       address: z
          .string()
          .min(1, 'العنوان التفصيلي مطلوب')
-         .min(5, 'العنوان يجب أن يكون 5 أحرف على الأقل')
+         .min(30, 'العنوان يجب أن يكون 30 أحرف على الأقل')
          .max(500, 'العنوان يجب أن لا يتجاوز 500 حرف'),
       area_address_id: z.number().min(1, 'معرف المنطقة مطلوب'),
       latitude: z.number().default(0),
@@ -50,11 +51,11 @@ export const signupSchema = z
 
             const now = new Date();
             const minAge = new Date();
-            minAge.setFullYear(now.getFullYear() - 120);
+            minAge.setFullYear(now.getFullYear() - 90);
             const maxAge = new Date();
-            maxAge.setFullYear(now.getFullYear() - 13);
+            maxAge.setFullYear(now.getFullYear() - 18);
             return date >= minAge && date <= maxAge;
-         }, 'تاريخ الميلاد يجب أن يكون بين 13 و 120 سنة'),
+         }, 'تاريخ الميلاد يجب أن يكون بين 18 و 90 سنة'),
       password: z
          .string()
          .min(1, 'كلمة المرور مطلوبة')
@@ -82,8 +83,11 @@ export const workerInfoSchema = z.object({
    about: z
       .string()
       .trim()
-      .min(20, 'نبذة العامل يجب أن تكون 20 حرفاً على الأقل'),
-   years_experience: z.number().min(0, 'سنوات الخبرة يجب أن تكون 0 أو أكثر'),
+      .min(30, 'نبذة العامل يجب أن تكون 30 حرفاً على الأقل'),
+   years_experience: z
+      .number()
+      .min(0, 'سنوات الخبرة يجب أن تكون 0 أو أكثر')
+      .max(30, 'سنوات الخبرة يجب أن تكون 30 أو أقل'),
    images: z.array(fileSchema).optional(),
    services: z.array(z.number()).min(1, 'يجب اختيار خدمة واحدة على الأقل'),
 });
