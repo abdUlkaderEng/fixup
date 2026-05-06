@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Menu, User, LogIn } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,8 @@ import {
    SheetTrigger,
 } from '@/components/ui/sheet';
 import { useSession, signOut } from 'next-auth/react';
+import Image from 'next/image';
+import { resolveImageUrl } from '@/lib/resolve-image-url';
 
 const navigationItems = [
    { name: 'الرئيسية', href: '/' },
@@ -30,6 +32,13 @@ export function Navbar({ className = '' }: NavbarProps) {
    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
    const { data: session, status } = useSession();
    const isAuthenticated = status === 'authenticated';
+   const profileImage = session?.user.profile_image;
+   console.log('PROFILE IMAGE _______' + profileImage);
+   const resolvedStoredImage = useMemo(
+      () => resolveImageUrl(profileImage),
+      [profileImage]
+   );
+   console.log('RESOLVEDIMAGE _______' + resolvedStoredImage);
 
    return (
       <nav
@@ -65,8 +74,18 @@ export function Navbar({ className = '' }: NavbarProps) {
                         href="/customer/profile"
                         className="hover:scale-110 transition-all duration-300"
                      >
-                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                           <User className="h-5 w-5 text-primary" />
+                        <div className="relative w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden">
+                           {resolvedStoredImage ? (
+                              <Image
+                                 src={resolvedStoredImage}
+                                 alt={session.user.name || ''}
+                                 fill
+                                 className="rounded-full object-cover"
+                                 unoptimized
+                              />
+                           ) : (
+                              <User className="h-5 w-5 text-primary" />
+                           )}
                         </div>
                      </Link>
                   ) : (

@@ -42,6 +42,12 @@ export function ProfileHeader({
       [previewSrc]
    );
 
+   useEffect(() => {
+      if (!isEditing) {
+         form?.setValue('profile_image', undefined, { shouldDirty: false });
+      }
+   }, [isEditing, form]);
+
    const resolvedStoredImage = useMemo(
       () => resolveImageUrl(profileImage),
       [profileImage]
@@ -84,7 +90,7 @@ export function ProfileHeader({
                         <input
                            ref={inputRef}
                            type="file"
-                           accept="image/jpeg,image/png"
+                           accept="image/jpeg,image/png,image/jpg"
                            className="hidden"
                            onChange={(e) => {
                               const file = e.target.files?.[0];
