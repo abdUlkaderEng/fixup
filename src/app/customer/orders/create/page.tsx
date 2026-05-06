@@ -24,13 +24,14 @@ import {
    usePublicServices,
    useCreateOrder,
 } from '@/hooks';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import CreateOrderSettingsSection from '@/components/orders/create/create-order-settings-section';
 
 export default function CreateOrderPage() {
    useAuthToken();
 
+   const router = useRouter();
    const searchParams = useSearchParams();
    const queryCareerId = Number(searchParams.get('careerId'));
    const queryCareerName = searchParams.get('careerName');
@@ -205,8 +206,8 @@ export default function CreateOrderPage() {
       });
 
       if (result) {
-         console.log('_______RESULTE______' + result);
          resetOrderForm();
+         router.push('/customer/orders');
       }
    };
 

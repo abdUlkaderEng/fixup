@@ -58,7 +58,7 @@ export function ConfirmDialog({
       <Dialog open={open} onOpenChange={onOpenChange}>
          <DialogContent
             className={cn(
-               'max-w-md',
+               'max-w-md ',
                isAdmin && 'admin-modal-content p-0 gap-0 border border-gray-200'
             )}
          >
@@ -69,16 +69,21 @@ export function ConfirmDialog({
             >
                <DialogTitle
                   className={cn(
-                     'flex items-center gap-2',
+                     'flex items-center justify-center pb-2 gap-2',
                      isAdmin && 'text-base font-semibold text-gray-900'
                   )}
                >
-                  <AlertCircle className={cn('h-5 w-5', iconColor[variant])} />
+                  <AlertCircle
+                     className={cn('h-5 w-5 m-1', iconColor[variant])}
+                  />
                   {title}
                </DialogTitle>
                {description && (
                   <DialogDescription
-                     className={cn(isAdmin && 'text-sm text-gray-500 mt-1')}
+                     className={cn(
+                        'text-center',
+                        isAdmin && 'text-sm text-gray-500 mt-1'
+                     )}
                   >
                      {description}
                   </DialogDescription>
@@ -86,7 +91,7 @@ export function ConfirmDialog({
             </DialogHeader>
             <div
                className={cn(
-                  'flex justify-end gap-2',
+                  'flex justify-end gap-5',
                   isAdmin
                      ? 'px-6 py-4 border-t border-gray-200 bg-gray-50'
                      : 'pt-4'

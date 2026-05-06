@@ -129,7 +129,7 @@ export function ProfileView({
       user,
       handleCancel
    );
-   const handleLogout = useLogout();
+   const { handleLogout, dialog: logoutDialog } = useLogout();
 
    if (status === 'loading') return <LoadingState />;
    if (!isAuthenticated || !user) return <UnauthenticatedState />;
@@ -321,6 +321,7 @@ export function ProfileView({
                )
             )}
          </div>
+         {logoutDialog}
       </div>
    );
 }
