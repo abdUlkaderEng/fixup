@@ -110,6 +110,15 @@ export async function put<T, D = unknown>(url: string, data: D): Promise<T> {
    }
 }
 
+export async function patch<T, D = unknown>(url: string, data?: D): Promise<T> {
+   try {
+      const response = await apiClient.patch<T>(url, data);
+      return response.data;
+   } catch (error) {
+      return handleApiError(error);
+   }
+}
+
 export async function del<T>(url: string): Promise<T> {
    try {
       const response = await apiClient.delete<T>(url);

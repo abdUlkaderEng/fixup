@@ -17,6 +17,8 @@ import {
 import { useSession, signOut } from 'next-auth/react';
 import Image from 'next/image';
 import { resolveImageUrl } from '@/lib/resolve-image-url';
+import { NotificationBell } from '@/components/notifications';
+import { useCustomerNotifications } from '@/hooks/customer';
 
 const navigationItems = [
    { name: 'الرئيسية', href: '/' },
@@ -32,6 +34,9 @@ export function Navbar({ className = '' }: NavbarProps) {
    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
    const { data: session, status } = useSession();
    const isAuthenticated = status === 'authenticated';
+
+   const { notifications, unreadCount, isLoading, refetch, markRead } =
+      useCustomerNotifications({ autoFetch: isAuthenticated });
    const profileImage = session?.user.profile_image;
    console.log('PROFILE IMAGE _______' + profileImage);
    const resolvedStoredImage = useMemo(
@@ -67,6 +72,18 @@ export function Navbar({ className = '' }: NavbarProps) {
                {/* Left side actions */}
                <div className="flex items-center space-x-8 space-x-reverse">
                   <ThemeToggle />
+
+                  {/* Notification Bell — desktop, authenticated only */}
+                  {isAuthenticated && (
+                     <NotificationBell
+                        notifications={notifications}
+                        unreadCount={unreadCount}
+                        isLoading={isLoading}
+                        theme="customer"
+                        onRefresh={refetch}
+                        onMarkRead={markRead}
+                     />
+                  )}
 
                   {/* User Icon or Login Button - Desktop */}
                   {isAuthenticated ? (
@@ -157,6 +174,21 @@ export function Navbar({ className = '' }: NavbarProps) {
                                  </Link>
                               )}
                            </div>
+
+                           {/* Notifications — mobile, authenticated only */}
+                           {isAuthenticated && (
+                              <div className="pt-4 border-t">
+                                 <NotificationBell
+                                    notifications={notifications}
+                                    unreadCount={unreadCount}
+                                    isLoading={isLoading}
+                                    theme="customer"
+                                    onRefresh={refetch}
+                                    onMarkRead={markRead}
+                                    className="w-full justify-start gap-2 rounded-lg px-3"
+                                 />
+                              </div>
+                           )}
 
                            {/* User Profile Section */}
                            {isAuthenticated && (

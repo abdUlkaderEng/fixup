@@ -71,6 +71,11 @@ export function useFetch<T>(
    const isFetchingRef = useRef(false);
    const mountedRef = useRef(true);
    const attemptedFetchRef = useRef(false);
+   // Read sessionStatus through a ref so executeFetch stays stable across session changes
+   const sessionStatusRef = useRef(sessionStatus);
+   useEffect(() => {
+      sessionStatusRef.current = sessionStatus;
+   }, [sessionStatus]);
 
    const [data, setDataState] = useState<T | null>(null);
    const [isLoading, setIsLoading] = useState(false);
@@ -100,7 +105,7 @@ export function useFetch<T>(
          return;
       }
 
-      if (!skipAuthCheck && sessionStatus !== 'authenticated') {
+      if (!skipAuthCheck && sessionStatusRef.current !== 'authenticated') {
          return;
       }
 
@@ -131,20 +136,16 @@ export function useFetch<T>(
          }
          isFetchingRef.current = false;
       }
-   }, [
-      fetcher,
-      requestKey,
-      sessionStatus,
-      skipAuthCheck,
-      errorMessage,
-      onError,
-      onSuccess,
-   ]);
+      // sessionStatus intentionally omitted — read via sessionStatusRef to keep this stable
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, [fetcher, requestKey, skipAuthCheck, errorMessage, onError, onSuccess]);
 
    const refetch = useCallback(() => {
       attemptedFetchRef.current = false;
+      // Clear any stale pending lock so this refetch always goes through
+      markRequestComplete(requestKey);
       executeFetch();
-   }, [executeFetch]);
+   }, [executeFetch, requestKey]);
 
    // Track mounted state
    useEffect(() => {

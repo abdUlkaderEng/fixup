@@ -16,7 +16,31 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { Separator } from '@/components/ui/separator';
+import { NotificationPanel } from '@/components/notifications';
+import { useWorkerNotifications } from '@/hooks/worker';
 import { useSidebar } from './sidebar-context';
+
+function WorkerNotificationPanel({ onNavigate }: { onNavigate: () => void }) {
+   const { notifications, unreadCount, isLoading, refetch, markRead } =
+      useWorkerNotifications();
+
+   return (
+      <div className="mt-3 px-0">
+         <p className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/50">
+            الإشعارات
+         </p>
+         <NotificationPanel
+            notifications={notifications}
+            unreadCount={unreadCount}
+            isLoading={isLoading}
+            theme="worker"
+            onNavigate={onNavigate}
+            onRefresh={refetch}
+            onMarkRead={markRead}
+         />
+      </div>
+   );
+}
 
 const NAV_LINKS = [
    { href: '/worker/dashboard', label: 'لوحة التحكم', icon: LayoutDashboard },
@@ -119,6 +143,9 @@ function SidebarInner({
                   </Link>
                );
             })}
+
+            {/* Notifications panel */}
+            <WorkerNotificationPanel onNavigate={onClose} />
          </nav>
 
          <div className="shrink-0 space-y-3 border-t border-border/60 p-4">

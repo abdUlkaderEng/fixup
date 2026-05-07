@@ -6,6 +6,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { ConditionalNavbar } from '@/components/layout/conditional-navbar';
 import { Toaster } from '@/components/ui/sonner';
 import { AuthProvider } from '@/components/providers/auth-provider';
+import { FCMProvider } from '@/components/providers/FCMProvider';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -59,6 +60,7 @@ export default function RootLayout({
                disableTransitionOnChange={false}
             >
                <AuthProvider>
+                  <FCMProvider />
                   <ConditionalNavbar />
                   <main className="flex-1">{children}</main>
                   <Toaster position="top-center" richColors closeButton />

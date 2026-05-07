@@ -46,3 +46,6 @@ export type {
    CreateWorkerPriceOfferRequest,
    CreateWorkerPriceOfferResponse,
 } from './price-offer';
+
+// Notification entity
+export type { WorkerNotification } from './notification';

@@ -48,6 +48,17 @@ export { useCustomerOrders } from './order';
 export type { UseCreateOrderReturn, UseCustomerOrdersReturn } from './order';
 
 // ============================================
+// Notification Hooks
+// ============================================
+export { useFCM } from './use-fcm';
+export type { UseFCMReturn } from './use-fcm';
+
+// ============================================
+// Customer Hooks
+// ============================================
+export * from './customer';
+
+// ============================================
 // Admin Hooks (re-exported)
 // ============================================
 export * from './admin';

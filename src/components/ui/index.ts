@@ -33,6 +33,21 @@ export type { AppModalTheme } from './app-modal';
 export { ConfirmDialog, DeleteConfirmDialog } from './confirm-dialog';
 export type { ConfirmDialogProps } from './confirm-dialog';
 
+// Notification Components
+export {
+   NotificationPanel,
+   NotificationBell,
+   NotificationList,
+   NotificationItem,
+   notificationThemeTokens,
+} from '@/components/notifications';
+export type {
+   NotificationPanelProps,
+   NotificationBellProps,
+   NotificationTheme,
+   NotificationThemeTokens,
+} from '@/components/notifications';
+
 // Keep existing shadcn component exports
 export * from './avatar';
 export * from './badge';
