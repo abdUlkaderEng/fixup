@@ -1,30 +1,68 @@
 ﻿'use client';
 
-import { CalendarDays, Clock3, MessageCircle, Wallet } from 'lucide-react';
+import {
+   CalendarDays,
+   Clock3,
+   Flame,
+   MessageCircle,
+   Wallet,
+} from 'lucide-react';
 import {
    AuthDashboardMetaGrid,
    AuthDashboardMetaItem,
    AuthDashboardOrderCard,
 } from '@/components/AuthDashboard';
 import { Button } from '@/components/ui';
-import type { WorkerPendingOffer } from '@/types/worker/orders-workflow';
+import { cn } from '@/lib/utils';
+import type {
+   WorkerOfferStatus,
+   WorkerPendingOffer,
+} from '@/types/worker/orders-workflow';
 
 interface WorkerPendingOfferListItemProps {
    offer: WorkerPendingOffer;
    onOpenChat: (conversationId: number, orderId: number) => void;
 }
 
+const OFFER_STATUS_AR: Record<WorkerOfferStatus, string> = {
+   pending: 'بانتظار رد العميل',
+   accepted: 'تم قبول العرض',
+   rejected: 'تم رفض العرض',
+};
+
+const OFFER_STATUS_STYLE: Record<WorkerOfferStatus, string> = {
+   pending:
+      'border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400',
+   accepted:
+      'border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400',
+   rejected:
+      'border-rose-500/30 bg-rose-500/10 text-rose-700 dark:text-rose-400',
+};
+
 export function WorkerPendingOfferListItem({
    offer,
    onOpenChat,
 }: WorkerPendingOfferListItemProps) {
+   const isHighPriority = (offer.order.priority ?? 0) > 0;
+
    return (
       <AuthDashboardOrderCard theme="worker">
          <div className="space-y-4">
             <div className="flex flex-wrap items-center gap-2">
-               <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs font-semibold text-amber-700 dark:text-amber-400">
-                  بانتظار رد العميل
+               <span
+                  className={cn(
+                     'rounded-full border px-3 py-1 text-xs font-semibold',
+                     OFFER_STATUS_STYLE[offer.status]
+                  )}
+               >
+                  {OFFER_STATUS_AR[offer.status]}
                </span>
+               {isHighPriority && (
+                  <span className="inline-flex items-center gap-1 rounded-full border border-rose-500/30 bg-rose-500/10 px-3 py-1 text-xs font-semibold text-rose-700 dark:text-rose-400">
+                     <Flame className="h-3 w-3" />
+                     أولوية عالية
+                  </span>
+               )}
                <span className="rounded-full border border-border/70 bg-background px-3 py-1 text-xs text-muted-foreground">
                   عرض #{offer.id}
                </span>
@@ -39,7 +77,7 @@ export function WorkerPendingOfferListItem({
                </p>
             </div>
 
-            <AuthDashboardMetaGrid columnsClassName="lg:grid-cols-4">
+            <AuthDashboardMetaGrid columnsClassName="lg:grid-cols-3">
                <AuthDashboardMetaItem
                   icon={<Wallet className="h-4 w-4" />}
                   label="السعر المرسل"
@@ -49,11 +87,6 @@ export function WorkerPendingOfferListItem({
                   icon={<Clock3 className="h-4 w-4" />}
                   label="المدة"
                   value={offer.time_range}
-               />
-               <AuthDashboardMetaItem
-                  icon={<Clock3 className="h-4 w-4" />}
-                  label="حالة الطلب"
-                  value={offer.order.status}
                />
                <AuthDashboardMetaItem
                   icon={<CalendarDays className="h-4 w-4" />}

@@ -122,19 +122,22 @@ export interface WorkerAcceptedOffersApiResponse {
    data: WorkerAcceptedOfferBackend[];
 }
 
+export type WorkerOfferStatus = 'pending' | 'accepted' | 'rejected';
+
 export interface WorkerPendingOffer {
    id: number;
    order_id: number;
    conversation_id: number;
    price: string;
    time_range: string;
-   status: 'pending' | 'accepted' | 'rejected';
+   status: WorkerOfferStatus;
    sent_at: string;
    order: {
       id: number;
       description: string;
       scheduled_at: string;
       status: OrderStatus;
+      priority?: number | null;
    };
 }
 

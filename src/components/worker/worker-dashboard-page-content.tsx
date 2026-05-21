@@ -4,7 +4,11 @@ import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { BriefcaseBusiness } from 'lucide-react';
 import { useAuthToken } from '@/hooks';
-import { usePriceOffer, useWorkerOrders } from '@/hooks/worker';
+import {
+   usePriceOffer,
+   useWorkerOrders,
+   useWorkerPendingOffers,
+} from '@/hooks/worker';
 import { EmptyState } from '@/components/ui';
 import {
    AuthDashboardListSection,
@@ -22,7 +26,12 @@ export function WorkerDashboardPageContent() {
    useAuthToken();
 
    const { data: session } = useSession();
-   const { orders, isLoading, refetch } = useWorkerOrders();
+   const { orders, isLoading, refetch, removeOrder } = useWorkerOrders();
+   const {
+      offeredOrderIds,
+      markOrderAsOffered,
+      refetch: refetchOffers,
+   } = useWorkerPendingOffers();
    const { submitPriceOffer, isSubmittingPriceOffer } = usePriceOffer();
    const [selectedOrder, setSelectedOrder] = useState<WorkerOrder | null>(null);
    const [isOfferModalOpen, setIsOfferModalOpen] = useState(false);
@@ -43,7 +52,12 @@ export function WorkerDashboardPageContent() {
    }, []);
 
    const firstName = (session?.user?.name || 'الفني').split(' ')[0];
-   const pendingCount = orders.filter(
+   // Hide orders the worker has already submitted an offer for (each worker
+   // gets one offer per order — backend tracks this via /worker/offers).
+   const visibleOrders = orders.filter(
+      (order) => !offeredOrderIds.has(order.id)
+   );
+   const pendingCount = visibleOrders.filter(
       (order) => order.status === 'pending'
    ).length;
    const workerId = Number(session?.user?.worker?.id ?? session?.user?.id ?? 0);
@@ -68,9 +82,13 @@ export function WorkerDashboardPageContent() {
 
    const handleSubmitOffer = async (draft: WorkerPriceOfferDraft) => {
       await submitPriceOffer(draft);
-      // Refresh orders so the one we just offered on disappears
+      // Instant UX: drop the order from the list now…
+      removeOrder(draft.order_id);
+      markOrderAsOffered(draft.order_id);
+      // …and reconcile both lists with the server.
       try {
          refetch();
+         refetchOffers();
       } catch {
          // ignore
       }
@@ -86,7 +104,7 @@ export function WorkerDashboardPageContent() {
          />
 
          <div className="space-y-6">
-            <WorkerDashboardOverview orders={orders} />
+            <WorkerDashboardOverview orders={visibleOrders} />
 
             <AuthDashboardListSection
                theme="worker"
@@ -95,7 +113,7 @@ export function WorkerDashboardPageContent() {
                isLoading={isLoading}
                loadingText="جاري تحميل الطلبات..."
             >
-               {orders.length === 0 ? (
+               {visibleOrders.length === 0 ? (
                   <EmptyState
                      icon={<BriefcaseBusiness className="h-10 w-10" />}
                      title="لا توجد طلبات متاحة حالياً"
@@ -103,7 +121,7 @@ export function WorkerDashboardPageContent() {
                   />
                ) : (
                   <div className="space-y-4">
-                     {orders.map((order) => (
+                     {visibleOrders.map((order) => (
                         <WorkerOrderListItem
                            key={order.id}
                            order={order}

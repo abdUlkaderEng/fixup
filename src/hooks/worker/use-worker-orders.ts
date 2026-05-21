@@ -10,6 +10,8 @@ export interface UseWorkerOrdersReturn {
    isLoading: boolean;
    error: Error | null;
    refetch: () => void;
+   /** Optimistically drop an order from the list (e.g. right after submitting an offer). */
+   removeOrder: (orderId: number) => void;
 }
 
 export interface UseWorkerOrdersOptions {
@@ -23,7 +25,7 @@ export function useWorkerOrders(
 
    const fetcher = useCallback(() => workerOrdersApi.getAll(), []);
 
-   const { data, isLoading, error, refetch } = useFetch<WorkerOrder[]>(
+   const { data, isLoading, error, refetch, setData } = useFetch<WorkerOrder[]>(
       fetcher,
       generateRequestKey('worker-orders-list'),
       {
@@ -36,10 +38,20 @@ export function useWorkerOrders(
    const validOrders =
       data?.filter((order) => new Date(order.expires_at) > now) ?? [];
 
+   const removeOrder = useCallback(
+      (orderId: number) => {
+         setData((prev) =>
+            prev ? prev.filter((order) => order.id !== orderId) : prev
+         );
+      },
+      [setData]
+   );
+
    return {
       orders: validOrders,
       isLoading,
       error,
       refetch,
+      removeOrder,
    };
 }

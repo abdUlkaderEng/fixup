@@ -21,6 +21,7 @@ function mapPendingOffer(offer: WorkerOfferBackend): WorkerPendingOffer {
          description: offer.order.description,
          scheduled_at: offer.order.scheduled_at,
          status: offer.order.status,
+         priority: offer.order.priority ?? null,
       },
    };
 }
