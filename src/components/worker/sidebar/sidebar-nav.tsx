@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ChevronLeft, MessageCircle } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { ResolvedNavLink } from './types';
 
@@ -75,23 +75,6 @@ function NavSection({ heading, collapsed, children }: NavSectionProps) {
 }
 
 // ---------------------------------------------------------------------------
-// ChatButton
-// ---------------------------------------------------------------------------
-
-function ChatButton({ onClick }: { onClick: () => void }) {
-   return (
-      <button
-         type="button"
-         onClick={onClick}
-         className="worker-nav-item group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 worker-nav-idle"
-      >
-         <MessageCircle className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-foreground" />
-         <span className="flex-1 text-right">محادثة تجريبية</span>
-      </button>
-   );
-}
-
-// ---------------------------------------------------------------------------
 // SidebarNav — public export
 // ---------------------------------------------------------------------------
 
@@ -99,14 +82,12 @@ interface SidebarNavProps {
    navLinks: ResolvedNavLink[];
    collapsed: boolean;
    onNavClick?: () => void;
-   onChatOpen: () => void;
 }
 
 export function SidebarNav({
    navLinks,
    collapsed,
    onNavClick,
-   onChatOpen,
 }: SidebarNavProps) {
    return (
       <nav className="scrollbar-hover flex-1 space-y-1 overflow-y-auto px-2 py-4">
@@ -120,12 +101,6 @@ export function SidebarNav({
                />
             ))}
          </NavSection>
-
-         {!collapsed && (
-            <NavSection heading="المحادثات" collapsed={false}>
-               <ChatButton onClick={onChatOpen} />
-            </NavSection>
-         )}
       </nav>
    );
 }

@@ -48,6 +48,9 @@ export function WorkerChatSheet({
                   isLoadingMessages={chat.isLoadingMessages}
                   onSend={chat.sendMessage}
                   header={<OrderSummaryBanner orderId={orderId} />}
+                  error={chat.error}
+                  pendingIds={chat.pendingIds}
+                  failedIds={chat.failedIds}
                />
             </div>
          </SheetContent>

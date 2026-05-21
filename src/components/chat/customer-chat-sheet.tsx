@@ -53,6 +53,9 @@ export function CustomerChatSheet({
                      isSending={chat.isSending}
                      isLoadingMessages={chat.isLoadingMessages}
                      onSend={chat.sendMessage}
+                     error={chat.error}
+                     pendingIds={chat.pendingIds}
+                     failedIds={chat.failedIds}
                   />
                ) : (
                   <div

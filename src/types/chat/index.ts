@@ -110,6 +110,10 @@ export interface UseChatReturn {
    isSending: boolean;
    sendMessage: (templateId: number) => Promise<void>;
    error: Error | null;
+   /** Set of message ids that are optimistic and awaiting server confirmation. */
+   pendingIds: Set<number>;
+   /** Set of optimistic message ids whose send failed (UI can show retry). */
+   failedIds: Set<number>;
 }
 
 export interface UseConversationReturn {

@@ -1,21 +1,26 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, User } from 'lucide-react';
+import { CheckCircle2, Clock3, LayoutDashboard, User } from 'lucide-react';
 import { useWorkerNotifications } from '@/hooks/worker';
 import { useSidebar } from '../sidebar-context';
 import type { ResolvedNavLink } from './types';
 
 const NAV_LINKS = [
    { href: '/worker/dashboard', label: 'لوحة التحكم', icon: LayoutDashboard },
+   { href: '/worker/offers', label: 'عروضي المرسلة', icon: Clock3 },
+   {
+      href: '/worker/confirmed-orders',
+      label: 'الطلبات المؤكدة',
+      icon: CheckCircle2,
+   },
    { href: '/worker/profile', label: 'الملف الشخصي', icon: User },
 ] as const;
 
 export function useWorkerSidebarState() {
    const { open, toggle, close } = useSidebar();
    const pathname = usePathname();
-   const [chatOpen, setChatOpen] = useState(false);
    const [notifOpen, setNotifOpen] = useState(false);
    const notifications = useWorkerNotifications();
 
@@ -32,9 +37,6 @@ export function useWorkerSidebarState() {
       open,
       toggle,
       close,
-      chatOpen,
-      openChat: () => setChatOpen(true),
-      closeChat: () => setChatOpen(false),
       notifOpen,
       openNotif: () => setNotifOpen(true),
       closeNotif: () => setNotifOpen(false),

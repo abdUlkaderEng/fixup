@@ -2,7 +2,6 @@
 
 import { Menu } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { WorkerChatSheet } from '@/components/chat';
 import {
    SidebarHeader,
    SidebarIdentityCard,
@@ -13,18 +12,11 @@ import {
    useWorkerSidebarState,
 } from './sidebar/index';
 
-// TODO: replace with real conversationId from notification or order context
-const TEST_CONVERSATION_ID = 1;
-const TEST_ORDER_ID = 1;
-
 export function WorkerSidebar({ workerName }: { workerName: string }) {
    const {
       open,
       toggle,
       close,
-      chatOpen,
-      openChat,
-      closeChat,
       notifOpen,
       openNotif,
       closeNotif,
@@ -49,11 +41,7 @@ export function WorkerSidebar({ workerName }: { workerName: string }) {
          >
             <SidebarHeader expanded={open} onToggle={toggle} />
             {open && <SidebarIdentityCard workerName={workerName} />}
-            <SidebarNav
-               navLinks={navLinks}
-               collapsed={!open}
-               onChatOpen={openChat}
-            />
+            <SidebarNav navLinks={navLinks} collapsed={!open} />
             <SidebarFooter
                collapsed={!open}
                unreadCount={unreadCount}
@@ -91,7 +79,6 @@ export function WorkerSidebar({ workerName }: { workerName: string }) {
                      navLinks={navLinks}
                      collapsed={false}
                      onNavClick={close}
-                     onChatOpen={openChat}
                   />
                   <SidebarFooter
                      collapsed={false}
@@ -104,13 +91,6 @@ export function WorkerSidebar({ workerName }: { workerName: string }) {
 
          {/* Global overlays */}
          <MobileNotificationFAB unreadCount={unreadCount} onClick={openNotif} />
-
-         <WorkerChatSheet
-            open={chatOpen}
-            onOpenChange={(v) => (v ? openChat() : closeChat())}
-            conversationId={TEST_CONVERSATION_ID}
-            orderId={TEST_ORDER_ID}
-         />
 
          <NotificationFlyout
             open={notifOpen}
