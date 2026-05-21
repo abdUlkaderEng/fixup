@@ -356,7 +356,7 @@
 
 /* Sidebar */
 .worker-sidebar {
-   @apply bg-card flex flex-col;
+   @apply bg-card;
 }
 
 .worker-logo-icon {
