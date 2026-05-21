@@ -147,6 +147,7 @@ export interface OrderOffer {
    id: number;
    worker_id: number;
    order_id: number;
+   conversation_id: number | null;
    price: string;
    time_range: string;
    status: string;

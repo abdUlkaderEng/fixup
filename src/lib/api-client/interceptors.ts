@@ -64,7 +64,7 @@ const responseSuccessInterceptor = <T>(
  * Response error handler - processes errors and triggers redirects
  */
 const responseErrorInterceptor = (error: AxiosError): Promise<never> => {
-   handleAxiosError(error);
+   // handleAxiosError(error);
    return Promise.reject(error);
 };
 

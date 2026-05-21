@@ -16,6 +16,7 @@ export const FCM_MESSAGE_EVENT = 'fcm:message' as const;
 export interface FcmMessageDetail {
    title: string;
    body?: string;
+   data?: Record<string, string>;
 }
 
 export function dispatchFcmMessage(detail: FcmMessageDetail): void {

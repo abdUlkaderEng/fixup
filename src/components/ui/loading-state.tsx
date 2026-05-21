@@ -17,7 +17,7 @@ const sizeConfig = {
 };
 
 export function LoadingState({
-   message = 'Loading...',
+   message = 'جاري التحميل...',
    className,
    iconClassName,
    size = 'md',

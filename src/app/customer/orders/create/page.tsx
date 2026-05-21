@@ -162,10 +162,8 @@ export default function CreateOrderPage() {
 
    const handleOpenReview = (values: CreateOrderFormValues) => {
       if (!validateOrderBeforeReview()) {
-         console.log('_________Error Validation________');
          return;
       }
-      console.log('_________Success Validation________');
       setReviewValues(values);
    };
 

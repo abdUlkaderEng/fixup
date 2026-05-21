@@ -131,7 +131,11 @@ export function useFCM(): UseFCMReturn {
                      const description = payload.notification?.body;
 
                      toast(title, { description });
-                     dispatchFcmMessage({ title, body: description });
+                     dispatchFcmMessage({
+                        title,
+                        body: description,
+                        data: payload.data,
+                     });
                   }
                );
             }

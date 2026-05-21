@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { BriefcaseBusiness } from 'lucide-react';
 import { useAuthToken } from '@/hooks';
@@ -10,6 +10,8 @@ import {
    AuthDashboardListSection,
    AuthDashboardPageShell,
 } from '@/components/AuthDashboard';
+import { onFcmMessage } from '@/lib/notification-events';
+import { WorkerChatSheet } from '@/components/chat';
 import type { WorkerPriceOfferDraft, WorkerOrder } from '@/types/entities';
 import { PriceOfferModal } from './price-offer-modal';
 import { WorkerDashboardHeader } from './worker-dashboard-header';
@@ -24,6 +26,21 @@ export function WorkerDashboardPageContent() {
    const { submitPriceOffer, isSubmittingPriceOffer } = usePriceOffer();
    const [selectedOrder, setSelectedOrder] = useState<WorkerOrder | null>(null);
    const [isOfferModalOpen, setIsOfferModalOpen] = useState(false);
+   const [chatState, setChatState] = useState<{
+      conversationId: number;
+      orderId: number;
+   } | null>(null);
+
+   useEffect(() => {
+      return onFcmMessage((detail) => {
+         const type = detail.data?.type;
+         const conversationId = Number(detail.data?.conversation_id);
+         const orderId = Number(detail.data?.order_id);
+         if (type === 'new_conversation' && conversationId > 0) {
+            setChatState({ conversationId, orderId });
+         }
+      });
+   }, []);
 
    const firstName = (session?.user?.name || 'الفني').split(' ')[0];
    const pendingCount = orders.filter(
@@ -106,6 +123,15 @@ export function WorkerDashboardPageContent() {
             isSubmitting={isSubmittingPriceOffer}
             onOpenChange={handleOfferModalChange}
             onSubmit={handleSubmitOffer}
+         />
+
+         <WorkerChatSheet
+            open={!!chatState}
+            onOpenChange={(open) => {
+               if (!open) setChatState(null);
+            }}
+            conversationId={chatState?.conversationId ?? 0}
+            orderId={chatState?.orderId ?? 0}
          />
       </AuthDashboardPageShell>
    );

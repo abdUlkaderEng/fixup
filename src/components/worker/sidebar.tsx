@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { signOut } from 'next-auth/react';
@@ -8,6 +9,7 @@ import {
    User,
    LogOut,
    Menu,
+   MessageCircle,
    X,
    ChevronLeft,
    Wrench,
@@ -17,8 +19,14 @@ import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { Separator } from '@/components/ui/separator';
 import { NotificationPanel } from '@/components/notifications';
+import { WorkerChatSheet } from '@/components/chat';
+import { useAuthToken } from '@/hooks/use-auth-token';
 import { useWorkerNotifications } from '@/hooks/worker';
 import { useSidebar } from './sidebar-context';
+
+// TODO: replace with real conversationId from notification or order context
+const TEST_CONVERSATION_ID = 1;
+const TEST_ORDER_ID = 1;
 
 function WorkerNotificationPanel({ onNavigate }: { onNavigate: () => void }) {
    const { notifications, unreadCount, isLoading, refetch, markRead } =
@@ -60,8 +68,10 @@ function SidebarInner({
    onClose: () => void;
    showCloseBtn: boolean;
 }) {
+   useAuthToken();
    const pathname = usePathname();
    const initial = workerName.charAt(0).toUpperCase();
+   const [chatOpen, setChatOpen] = useState(false);
 
    return (
       <div className="flex h-full flex-col">
@@ -146,7 +156,28 @@ function SidebarInner({
 
             {/* Notifications panel */}
             <WorkerNotificationPanel onNavigate={onClose} />
+
+            {/* Test chat button — replace conversationId/orderId with real values later */}
+            <div className="mt-3">
+               <p className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/50">
+                  المحادثات
+               </p>
+               <button
+                  onClick={() => setChatOpen(true)}
+                  className="worker-nav-item group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 worker-nav-idle"
+               >
+                  <MessageCircle className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-foreground" />
+                  <span className="flex-1 text-right">محادثة تجريبية</span>
+               </button>
+            </div>
          </nav>
+
+         <WorkerChatSheet
+            open={chatOpen}
+            onOpenChange={setChatOpen}
+            conversationId={TEST_CONVERSATION_ID}
+            orderId={TEST_ORDER_ID}
+         />
 
          <div className="shrink-0 space-y-3 border-t border-border/60 p-4">
             <div className="flex items-center justify-between rounded-xl bg-muted/40 px-3 py-2">
