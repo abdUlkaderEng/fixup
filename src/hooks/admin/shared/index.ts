@@ -10,6 +10,9 @@ export {
    isRequestPending,
    markRequestPending,
    markRequestComplete,
+   getCachedData,
+   setCachedData,
+   clearCachedData,
 } from './use-fetch';
 
 export type { UseFetchOptions, UseFetchReturn } from './use-fetch';

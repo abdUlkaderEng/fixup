@@ -16,11 +16,14 @@ import {
    TimerOff,
    UserRound,
    Wrench,
+   Zap,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SectionPanel } from '@/components/ui';
 import { CustomerChatSheet } from '@/components/chat';
 import type { CustomerOrder, OrderOffer } from '@/types/entities/order';
+import type { PublicCareer } from '@/types/public/careers';
+import type { PublicArea } from '@/types/public/areas';
 import {
    formatOrderDate,
    getCustomerOrderStatusMeta,
@@ -32,6 +35,8 @@ import {
 
 interface CustomerOrderDetailsProps {
    order: CustomerOrder;
+   careers?: PublicCareer[];
+   areas?: PublicArea[];
 }
 
 function OfferStatusBadge({ status }: { status: string }) {
@@ -180,10 +185,16 @@ function OrderStatusActions({ order }: { order: CustomerOrder }) {
    );
 }
 
-export function CustomerOrderDetails({ order }: CustomerOrderDetailsProps) {
+export function CustomerOrderDetails({
+   order,
+   careers = [],
+   areas = [],
+}: CustomerOrderDetailsProps) {
    const statusMeta = getCustomerOrderStatusMeta(order.status);
    const StatusIcon = statusMeta.icon;
    const imageUrl = getOrderPrimaryImage(order);
+   const careerName = getOrderCareerName(order, careers);
+   const areaName = getOrderAreaName(order, areas);
 
    return (
       <div className="space-y-4">
@@ -206,7 +217,7 @@ export function CustomerOrderDetails({ order }: CustomerOrderDetailsProps) {
 
                   <div>
                      <h2 className="text-2xl font-bold text-foreground">
-                        {getOrderCareerName(order)}
+                        {careerName}
                      </h2>
                      <p className="mt-2 max-w-2xl text-sm leading-7 text-muted-foreground">
                         {statusMeta.description}
@@ -360,7 +371,7 @@ export function CustomerOrderDetails({ order }: CustomerOrderDetailsProps) {
                         <MapPinned className="mt-0.5 h-4 w-4 text-primary" />
                         <div>
                            <p className="font-medium text-foreground">
-                              {getOrderAreaName(order)}
+                              {areaName}
                            </p>
                            <p className="mt-1 leading-7 text-muted-foreground">
                               {order.address.detailed_address ||

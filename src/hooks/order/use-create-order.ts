@@ -1,7 +1,11 @@
 'use client';
 
 import { useCallback } from 'react';
-import { useMutation } from '@/hooks/admin/shared';
+import {
+   clearCachedData,
+   generateRequestKey,
+   useMutation,
+} from '@/hooks/admin/shared';
 import { ordersApi } from '@/api/orders';
 import type {
    CreateOrderRequest,
@@ -30,6 +34,9 @@ export function useCreateOrder(): UseCreateOrderReturn {
    >(mutationFn, {
       successMessage: 'تم إرسال الطلب بنجاح',
       errorMessage: 'تعذر إرسال الطلب',
+      onSuccess: () => {
+         clearCachedData(generateRequestKey('customer-orders-list'));
+      },
    });
 
    return {

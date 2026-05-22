@@ -1,7 +1,12 @@
 'use client';
 
 import { ClipboardList } from 'lucide-react';
-import { useAuthToken, useCustomerOrders } from '@/hooks';
+import {
+   useAuthToken,
+   useCustomerOrders,
+   usePublicAreas,
+   usePublicCareers,
+} from '@/hooks';
 import { EmptyState } from '@/components/ui';
 import {
    AuthDashboardListSection,
@@ -15,6 +20,8 @@ export function CustomerOrdersPageContent() {
    useAuthToken();
 
    const { orders, isLoading } = useCustomerOrders();
+   const { careers } = usePublicCareers();
+   const { areas } = usePublicAreas();
 
    return (
       <AuthDashboardPageShell theme="customer">
@@ -39,7 +46,12 @@ export function CustomerOrdersPageContent() {
                ) : (
                   <div className="space-y-4">
                      {orders.map((order) => (
-                        <CustomerOrderListItem key={order.id} order={order} />
+                        <CustomerOrderListItem
+                           key={order.id}
+                           order={order}
+                           careers={careers}
+                           areas={areas}
+                        />
                      ))}
                   </div>
                )}

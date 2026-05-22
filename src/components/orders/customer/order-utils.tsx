@@ -8,6 +8,8 @@ import {
    XCircle,
 } from 'lucide-react';
 import type { CustomerOrder, OrderStatus } from '@/types/entities/order';
+import type { PublicCareer } from '@/types/public/careers';
+import type { PublicArea } from '@/types/public/areas';
 
 export interface CustomerOrderStatusMeta {
    label: string;
@@ -73,12 +75,26 @@ export function formatOrderDate(value?: string) {
    }).format(new Date(value));
 }
 
-export function getOrderAreaName(order: CustomerOrder) {
-   return order.address.area_address?.name ?? 'منطقة غير محددة';
+export function getOrderAreaName(
+   order: CustomerOrder,
+   areas: PublicArea[] = []
+) {
+   const fromOrder = order.address.area_address?.name;
+   if (fromOrder) return fromOrder;
+   const match = areas.find(
+      (area) => area.id === order.address.area_address_id
+   );
+   return match?.area_name ?? 'منطقة غير محددة';
 }
 
-export function getOrderCareerName(order: CustomerOrder) {
-   return order.career?.name ?? 'خدمة غير محددة';
+export function getOrderCareerName(
+   order: CustomerOrder,
+   careers: PublicCareer[] = []
+) {
+   const fromOrder = order.career?.name;
+   if (fromOrder) return fromOrder;
+   const match = careers.find((career) => career.id === order.career_id);
+   return match?.name ?? 'خدمة غير محددة';
 }
 
 export function getOrderPriorityLabel(priority?: number) {

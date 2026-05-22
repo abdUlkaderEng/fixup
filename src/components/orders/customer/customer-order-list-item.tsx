@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { CalendarDays, ChevronLeft, MapPin, Zap, Wrench } from 'lucide-react';
+import { CalendarDays, ChevronLeft, MapPin, Wrench, Zap } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
    AuthDashboardActionPill,
@@ -11,6 +11,8 @@ import {
    AuthDashboardOrderCard,
 } from '@/components/AuthDashboard';
 import type { CustomerOrder } from '@/types/entities/order';
+import type { PublicCareer } from '@/types/public/careers';
+import type { PublicArea } from '@/types/public/areas';
 import {
    formatOrderDate,
    getCustomerOrderStatusMeta,
@@ -20,11 +22,19 @@ import {
 
 interface CustomerOrderListItemProps {
    order: CustomerOrder;
+   careers?: PublicCareer[];
+   areas?: PublicArea[];
 }
 
-export function CustomerOrderListItem({ order }: CustomerOrderListItemProps) {
+export function CustomerOrderListItem({
+   order,
+   careers = [],
+   areas = [],
+}: CustomerOrderListItemProps) {
    const statusMeta = getCustomerOrderStatusMeta(order.status);
    const StatusIcon = statusMeta.icon;
+   const careerName = getOrderCareerName(order, careers);
+   const areaName = getOrderAreaName(order, areas);
 
    return (
       <Link
@@ -61,7 +71,7 @@ export function CustomerOrderListItem({ order }: CustomerOrderListItemProps) {
 
                      <div>
                         <h2 className="text-lg font-semibold text-foreground">
-                           {getOrderCareerName(order)}
+                           {careerName}
                         </h2>
                         <p className="mt-1 line-clamp-2 text-sm leading-7 text-muted-foreground">
                            {order.description}
@@ -77,19 +87,19 @@ export function CustomerOrderListItem({ order }: CustomerOrderListItemProps) {
 
                <AuthDashboardMetaGrid>
                   <AuthDashboardMetaItem
-                     icon={<StatusIcon className="h-4 w-4" />}
-                     label="الحالة"
-                     value={statusMeta.label}
-                  />
-                  <AuthDashboardMetaItem
                      icon={<Wrench className="h-4 w-4" />}
                      label="التصنيف"
-                     value={getOrderCareerName(order)}
+                     value={careerName}
                   />
                   <AuthDashboardMetaItem
                      icon={<MapPin className="h-4 w-4" />}
                      label="المنطقة"
-                     value={getOrderAreaName(order)}
+                     value={areaName}
+                  />
+                  <AuthDashboardMetaItem
+                     icon={<CalendarDays className="h-4 w-4" />}
+                     label="موعد الخدمة"
+                     value={formatOrderDate(order.scheduled_at)}
                   />
                </AuthDashboardMetaGrid>
 
@@ -110,7 +120,7 @@ export function CustomerOrderListItem({ order }: CustomerOrderListItemProps) {
                   <div className="flex flex-col items-end gap-1 text-xs text-muted-foreground">
                      <span className="inline-flex items-center gap-1.5">
                         <CalendarDays className="h-3.5 w-3.5" />
-                        موعد: {formatOrderDate(order.scheduled_at)}
+                        عدد العروض: {order.offers.length}
                      </span>
                      <span className="text-muted-foreground/60">
                         أُنشئ: {formatOrderDate(order.created_at)}

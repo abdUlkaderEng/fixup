@@ -3,9 +3,15 @@
 import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { useAuthToken, useCustomerOrders } from '@/hooks';
+import {
+   useAuthToken,
+   useCustomerOrders,
+   usePublicAreas,
+   usePublicCareers,
+} from '@/hooks';
 import { AppModal } from '@/components/ui';
-import { CustomerOrderDetailsModal } from './customer-order-details-modal';
+import { CustomerOrderDetails } from './customer-order-details';
+import { getCustomerOrderStatusMeta } from './order-utils';
 
 interface CustomerOrderDetailsModalViewProps {
    orderId: number;
@@ -19,6 +25,8 @@ export function CustomerOrderDetailsModalView({
    const router = useRouter();
    const { status: sessionStatus } = useSession();
    const { orders, isLoading } = useCustomerOrders();
+   const { careers } = usePublicCareers();
+   const { areas } = usePublicAreas();
    const order = orders.find((item) => item.id === orderId);
 
    const handleClose = () => router.back();
@@ -65,7 +73,21 @@ export function CustomerOrderDetailsModalView({
       );
    }
 
-   return <CustomerOrderDetailsModal order={order} open />;
+   const statusMeta = getCustomerOrderStatusMeta(order.status);
+
+   return (
+      <AppModal
+         open
+         title={`تفاصيل الطلب #${order.id}`}
+         description={statusMeta.description}
+         size="xl"
+         theme="customer"
+         onClose={handleClose}
+         closeButtonText="إغلاق"
+      >
+         <CustomerOrderDetails order={order} careers={careers} areas={areas} />
+      </AppModal>
+   );
 }
 
 export default CustomerOrderDetailsModalView;

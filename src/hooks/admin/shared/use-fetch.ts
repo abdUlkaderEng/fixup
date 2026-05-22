@@ -26,10 +26,11 @@ export interface UseFetchReturn<T> {
 }
 
 // ============================================
-// Request Deduplication
+// Request Deduplication & Cache
 // ============================================
 
 const pendingRequests = new Set<string>();
+const dataCache = new Map<string, unknown>();
 
 export function generateRequestKey(
    ...params: (string | number | undefined)[]
@@ -47,6 +48,22 @@ export function markRequestPending(key: string): void {
 
 export function markRequestComplete(key: string): void {
    pendingRequests.delete(key);
+}
+
+export function getCachedData<T>(key: string): T | null {
+   return (dataCache.get(key) as T | undefined) ?? null;
+}
+
+export function setCachedData<T>(key: string, value: T | null): void {
+   if (value === null) {
+      dataCache.delete(key);
+   } else {
+      dataCache.set(key, value);
+   }
+}
+
+export function clearCachedData(key: string): void {
+   dataCache.delete(key);
 }
 
 // ============================================
@@ -77,21 +94,26 @@ export function useFetch<T>(
       sessionStatusRef.current = sessionStatus;
    }, [sessionStatus]);
 
-   const [data, setDataState] = useState<T | null>(null);
+   const [data, setDataState] = useState<T | null>(() =>
+      getCachedData<T>(requestKey)
+   );
    const [isLoading, setIsLoading] = useState(false);
    const [error, setError] = useState<Error | null>(null);
 
    const setData = useCallback(
       (value: T | null | ((prev: T | null) => T | null)) => {
          if (typeof value === 'function') {
-            setDataState((prev) =>
-               (value as (prev: T | null) => T | null)(prev)
-            );
+            setDataState((prev) => {
+               const next = (value as (prev: T | null) => T | null)(prev);
+               setCachedData(requestKey, next);
+               return next;
+            });
          } else {
+            setCachedData(requestKey, value);
             setDataState(value);
          }
       },
-      [setDataState]
+      [requestKey]
    );
 
    const config = useMemo(
