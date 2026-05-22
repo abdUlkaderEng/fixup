@@ -7,7 +7,7 @@ const NOTIFICATIONS_ENDPOINTS = {
 
 export interface RegisterDeviceRequest {
    fcm_token: string;
-   device_type?: 'android' | 'ios' | null;
+   device_type?: 'android' | 'ios' | 'web' | null;
 }
 
 export interface RegisterDeviceResponse {

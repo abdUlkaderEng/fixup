@@ -140,7 +140,7 @@ export function AppModal({
       <Dialog open={open} onOpenChange={handleOpenChange}>
          <DialogContent
             className={cn(
-               'max-h-[95vh] gap-0 border p-0',
+               'flex h-[85vh] flex-col gap-0 border p-0',
                'data-[state=open]:animate-in data-[state=closed]:animate-out',
                'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
                'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
@@ -151,7 +151,7 @@ export function AppModal({
          >
             <DialogHeader
                className={cn(
-                  'border-b p-6 pb-4',
+                  'shrink-0 border-b p-6 pb-4',
                   themeClasses.header,
                   headerClassName
                )}
@@ -179,7 +179,7 @@ export function AppModal({
             </DialogHeader>
             <div
                className={cn(
-                  'overflow-y-auto px-6 py-4 max-h-[calc(95vh-120px)]',
+                  'flex-1 min-h-0 overflow-y-auto px-6 py-4',
                   contentClassName
                )}
             >
@@ -188,7 +188,7 @@ export function AppModal({
             {showCloseButton && (
                <div
                   className={cn(
-                     'flex items-center justify-end gap-2 border-t px-6 pb-6 ',
+                     'shrink-0 flex items-center justify-end gap-2 border-t px-6 pb-6 ',
                      themeClasses.footer
                   )}
                >

@@ -67,3 +67,14 @@ export {
    useWorkerMutations,
    type UseWorkerMutationsReturn,
 } from './use-worker-mutations';
+
+export {
+   useMessageTopics,
+   type UseMessageTopicsReturn,
+   type UseMessageTopicsOptions,
+} from './use-message-topics';
+export {
+   useMessageTemplates,
+   type UseMessageTemplatesReturn,
+   type UseMessageTemplatesOptions,
+} from './use-message-templates';

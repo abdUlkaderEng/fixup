@@ -21,6 +21,7 @@ import type {
 import { servicesApi } from './services';
 import { careersApi } from './careers';
 import { addressesApi } from './addresses';
+import { adminMessageTopicsApi, adminMessageTemplatesApi } from './messages';
 import {
    AdminApiError,
    handleApiError,
@@ -41,7 +42,14 @@ import {
 // Re-exports for individual domain access
 // ============================================
 
-export { workersApi, servicesApi, careersApi, addressesApi };
+export {
+   workersApi,
+   servicesApi,
+   careersApi,
+   addressesApi,
+   adminMessageTopicsApi,
+   adminMessageTemplatesApi,
+};
 
 // ============================================
 // Shared utilities export
