@@ -1,6 +1,6 @@
 'use client';
 
-import { Loader2, MessageCircle } from 'lucide-react';
+import { Loader2, MessageCircle, Tag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
    Sheet,
@@ -9,6 +9,7 @@ import {
    SheetTitle,
 } from '@/components/ui/sheet';
 import { useConversation } from '@/hooks/chat';
+import { cn } from '@/lib/utils';
 import { ChatWindow } from './chat-window';
 
 interface CustomerChatSheetProps {
@@ -28,8 +29,17 @@ export function CustomerChatSheet({
    conversationId,
    onConversationCreated,
 }: CustomerChatSheetProps) {
-   const { chatReady, isStarting, startConversation, chat, templates } =
-      useConversation(workerId, conversationId);
+   const {
+      chatReady,
+      isStarting,
+      startConversation,
+      chat,
+      templates,
+      topicState,
+   } = useConversation(workerId, conversationId);
+
+   const hasTopics = topicState.topics.length > 0;
+   const canStart = !!topicState.selectedTopicId && !isStarting;
 
    return (
       <Sheet open={open} onOpenChange={onOpenChange}>
@@ -56,6 +66,7 @@ export function CustomerChatSheet({
                      error={chat.error}
                      pendingIds={chat.pendingIds}
                      failedIds={chat.failedIds}
+                     topicState={topicState}
                   />
                ) : (
                   <div
@@ -68,20 +79,61 @@ export function CustomerChatSheet({
                            ابدأ محادثة مع الفني
                         </p>
                         <p className="mt-1 text-sm text-muted-foreground">
-                           اضغط على الزر أدناه لبدء محادثة حول عرض السعر
+                           اختر موضوع المحادثة لبدء التواصل
                         </p>
                      </div>
+
+                     <div className="w-full max-w-xs">
+                        <div className="mb-2 flex items-center justify-center gap-1 text-xs text-muted-foreground">
+                           <Tag className="h-3 w-3" />
+                           <span>المواضيع المتاحة</span>
+                        </div>
+                        {topicState.isLoading && !hasTopics ? (
+                           <div className="flex items-center justify-center gap-2 py-3 text-sm text-muted-foreground">
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                              جاري تحميل المواضيع...
+                           </div>
+                        ) : !hasTopics ? (
+                           <p className="py-3 text-center text-sm text-muted-foreground">
+                              لا توجد مواضيع متاحة حالياً
+                           </p>
+                        ) : (
+                           <div className="flex flex-wrap justify-center gap-2">
+                              {topicState.topics.map((t) => {
+                                 const isActive =
+                                    t.id === topicState.selectedTopicId;
+                                 return (
+                                    <button
+                                       key={t.id}
+                                       type="button"
+                                       onClick={() =>
+                                          topicState.onChangeTopic(t.id)
+                                       }
+                                       disabled={isStarting}
+                                       className={cn(
+                                          'rounded-full border px-3 py-1.5 text-xs font-medium transition-colors',
+                                          'disabled:cursor-not-allowed disabled:opacity-50',
+                                          isActive
+                                             ? 'border-primary bg-primary text-primary-foreground'
+                                             : 'border-border bg-background text-foreground hover:bg-muted'
+                                       )}
+                                    >
+                                       {t.topic}
+                                    </button>
+                                 );
+                              })}
+                           </div>
+                        )}
+                     </div>
+
                      <Button
                         onClick={async () => {
                            const res = await startConversation();
-
                            if (res?.conversation?.id) {
-                              console.log(res);
                               onConversationCreated?.(res.conversation.id);
-                              console.log(conversationId);
                            }
                         }}
-                        disabled={isStarting}
+                        disabled={!canStart}
                         className="mt-2"
                      >
                         {isStarting ? (

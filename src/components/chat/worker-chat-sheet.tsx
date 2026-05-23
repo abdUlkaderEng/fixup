@@ -24,7 +24,8 @@ export function WorkerChatSheet({
    conversationId,
    orderId,
 }: WorkerChatSheetProps) {
-   const { chat, templates } = useWorkerConversation(conversationId);
+   const { chat, templates, topicState } =
+      useWorkerConversation(conversationId);
 
    return (
       <Sheet open={open} onOpenChange={onOpenChange}>
@@ -51,6 +52,7 @@ export function WorkerChatSheet({
                   error={chat.error}
                   pendingIds={chat.pendingIds}
                   failedIds={chat.failedIds}
+                  topicState={topicState}
                />
             </div>
          </SheetContent>

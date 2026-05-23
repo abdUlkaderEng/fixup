@@ -8,11 +8,13 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { LoadingState, EmptyState } from '@/components/ui';
 import type {
    ChatMessage,
+   ChatTopicState,
    MessageSenderRole,
    MessageTemplate,
 } from '@/types/chat';
 import { MessageBubble } from './message-bubble';
 import { TemplateSelector } from './template-selector';
+import { TopicSwitcher } from './topic-switcher';
 
 interface ChatWindowProps {
    messages: ChatMessage[];
@@ -25,6 +27,7 @@ interface ChatWindowProps {
    error?: Error | null;
    pendingIds?: Set<number>;
    failedIds?: Set<number>;
+   topicState?: ChatTopicState;
 }
 
 // Threshold (px) within which we consider the user "at the bottom" and
@@ -42,6 +45,7 @@ export function ChatWindow({
    error,
    pendingIds,
    failedIds,
+   topicState,
 }: ChatWindowProps) {
    const { data: session } = useSession();
    const currentUserId = Number(session?.user?.id ?? 0);
@@ -120,6 +124,14 @@ export function ChatWindow({
 
          <div className="flex-none">
             <Separator />
+            {topicState && topicState.topics.length > 0 && (
+               <TopicSwitcher
+                  topics={topicState.topics}
+                  selectedTopicId={topicState.selectedTopicId}
+                  onChangeTopic={topicState.onChangeTopic}
+                  disabled={isSending || topicState.isLoading}
+               />
+            )}
             <TemplateSelector
                templates={templates}
                onSelect={onSend}

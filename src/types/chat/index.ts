@@ -9,7 +9,7 @@ export interface Conversation {
    id: number;
    customer_id: number;
    worker_id: number;
-   topic: string;
+   topic_id: number;
    status: ConversationStatus;
    // order_id: number; // add later when wired to the API
    created_at: string;
@@ -39,7 +39,7 @@ export interface ChatMessage {
 
 export interface StartConversationRequest {
    worker_id: number;
-   topic: string;
+   topic_id: number;
    // order_id: number; // add later when wired to the API
 }
 
@@ -104,6 +104,14 @@ export interface ChatConfig {
    templates: MessageTemplate[];
 }
 
+// Topic exposed to ChatWindow for the in-chat topic switcher.
+export interface ChatTopicState {
+   topics: { id: number; topic: string }[];
+   selectedTopicId: number | null;
+   onChangeTopic: (topicId: number) => void;
+   isLoading: boolean;
+}
+
 export interface UseChatReturn {
    messages: ChatMessage[];
    isLoadingMessages: boolean;
@@ -123,64 +131,11 @@ export interface UseConversationReturn {
    startConversation: () => Promise<StartConversationResponse | null>;
    chat: UseChatReturn;
    templates: MessageTemplate[];
+   topicState: ChatTopicState;
 }
 
 export interface UseWorkerConversationReturn {
    chat: UseChatReturn;
    templates: MessageTemplate[];
+   topicState: ChatTopicState;
 }
-
-// ============================================
-// Hardcoded Templates — backend will replace later
-// ============================================
-
-export const PRICE_TOPIC_TEMPLATES: MessageTemplate[] = [
-   {
-      id: 1,
-      text: 'هل يمكنك تخفيض السعر قليلاً؟',
-      topic: 'السعر',
-      forRole: 'customer',
-   },
-   {
-      id: 2,
-      text: 'هذا السعر مرتفع جداً بالنسبة لي',
-      topic: 'السعر',
-      forRole: 'customer',
-   },
-   {
-      id: 3,
-      text: 'ما هو أفضل سعر يمكنك تقديمه؟',
-      topic: 'السعر',
-      forRole: 'customer',
-   },
-   {
-      id: 4,
-      text: 'هل يوجد خصم لو تم التعاقد الآن؟',
-      topic: 'السعر',
-      forRole: 'customer',
-   },
-   {
-      id: 5,
-      text: 'السعر نهائي ولا يقبل التعديل',
-      topic: 'السعر',
-      forRole: 'worker',
-   },
-   {
-      id: 6,
-      text: 'يمكنني تخفيض السعر بمقدار بسيط',
-      topic: 'السعر',
-      forRole: 'worker',
-   },
-   {
-      id: 7,
-      text: 'السعر مناسب جداً مقارنة بالجودة',
-      topic: 'السعر',
-      forRole: 'worker',
-   },
-   {
-      id: 8,
-      text: 'سأراجع الأمر وأعود إليك',
-      topic: 'السعر',
-      forRole: 'worker',
-   },
-];

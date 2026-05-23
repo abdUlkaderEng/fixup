@@ -13,7 +13,7 @@ export const AXIOS_CONFIG = {
    headers: {
       'Content-Type': 'application/json',
    },
-   timeout: 10000, // 10 seconds
+   timeout: 30000, // 30 seconds
    withCredentials: true,
 } as const;
 
