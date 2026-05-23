@@ -36,6 +36,5 @@ export function onFcmMessage(
    };
 
    window.addEventListener(FCM_MESSAGE_EVENT, listener);
-   console.log('LISTNER TO NOTIFICATIONS');
    return () => window.removeEventListener(FCM_MESSAGE_EVENT, listener);
 }

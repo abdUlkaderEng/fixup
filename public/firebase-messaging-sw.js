@@ -1,14 +1,3 @@
-// =============================================================
-// Firebase Messaging Service Worker — Background Notifications
-// =============================================================
-// NOTE: Service workers MUST be plain .js files.
-// Browsers execute them directly — no TypeScript/webpack transpilation.
-// This is a browser platform constraint, not a project choice.
-// =============================================================
-// هذا الملف يعمل خارج webpack ولا يمكنه قراءة process.env
-// استبدل قيم TODO أدناه بقيمك الفعلية من Firebase Console
-// =============================================================
-
 importScripts(
    'https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js'
 );
@@ -16,8 +5,6 @@ importScripts(
    'https://www.gstatic.com/firebasejs/10.14.0/firebase-messaging-compat.js'
 );
 
-// TODO: استبدل هذه القيم بالقيم الفعلية من Firebase Console
-// (هي متغيرات NEXT_PUBLIC_ عامة — لا خطر أمني في تضمينها هنا)
 const firebaseConfig = {
    apiKey: 'AIzaSyACXfzTll68-rbX7Q0qd7UCf96RroDJqyU',
    authDomain: 'fixup-c687c.firebaseapp.com',
@@ -28,52 +15,72 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
-
 const messaging = firebase.messaging();
 
-// الإشعارات في الخلفية — عندما تكون الصفحة مغلقة أو غير نشطة
+// استقبال الإشعارات في الخلفية (عندما يكون الموقع مغلقاً أو التبويب ليس في الواجهة)
 messaging.onBackgroundMessage(function (payload) {
    console.log(
-      '[firebase-messaging-sw.js] Background message received:',
+      '[firebase-messaging-sw.js] Received background message ',
       payload
    );
 
-   const notificationTitle =
-      payload.notification?.title ?? 'إشعار جديد من FIXUP';
+   // نقرأ دائماً من كائن data الموحد والمضمون النقل
+   const notificationTitle = payload.data?.title ?? 'إشعار جديد من FIXUP';
+
    const notificationOptions = {
-      body: payload.notification?.body ?? '',
-      icon: payload.notification?.icon ?? '/LOGO.svg',
-      badge: '/LOGO.svg',
-      tag: payload.data?.tag ?? 'fixup-notification',
-      data: payload.data ?? {},
+      body: payload.data?.body ?? '',
+      icon: '/logo.png',
+      badge: '/logo.png',
+      tag: payload.data?.tag ?? 'fixup-notification', // يمنع تكرار نفس الإشعار
+      data: {
+         url: payload.data?.url ?? '/',
+         type: payload.data?.type ?? 'general',
+      },
    };
 
+   // أمر إجباري للمتصفح لإظهار الإشعار على الشاشة فوراً
    return self.registration.showNotification(
       notificationTitle,
       notificationOptions
    );
 });
 
-// توجيه المستخدم عند النقر على الإشعار
+// التعامل مع الضغط على الإشعار للتوجيه للرابط الصحيح
 self.addEventListener('notificationclick', function (event) {
    event.notification.close();
 
    const urlToOpen = event.notification.data?.url ?? '/';
+   const targetOrigin = self.location.origin;
 
    event.waitUntil(
       clients
          .matchAll({ type: 'window', includeUncontrolled: true })
          .then(function (clientList) {
-            for (const client of clientList) {
-               if (
-                  client.url.includes(self.location.origin) &&
-                  'focus' in client
-               ) {
-                  client.focus();
-                  client.navigate(urlToOpen);
-                  return;
+            const sameOriginClients = clientList.filter(function (c) {
+               try {
+                  return new URL(c.url).origin === targetOrigin;
+               } catch {
+                  return false;
                }
+            });
+
+            const exactMatch = sameOriginClients.find(function (c) {
+               try {
+                  return new URL(c.url).pathname === urlToOpen;
+               } catch {
+                  return false;
+               }
+            });
+
+            const chosen = exactMatch ?? sameOriginClients[0];
+            if (chosen && 'focus' in chosen) {
+               return chosen.focus().then(function () {
+                  if (!exactMatch && 'navigate' in chosen) {
+                     return chosen.navigate(urlToOpen);
+                  }
+               });
             }
+
             if (clients.openWindow) {
                return clients.openWindow(urlToOpen);
             }

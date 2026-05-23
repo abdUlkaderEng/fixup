@@ -29,6 +29,9 @@ export function useWorkerNotifications(
    const seenIds = useRef<Set<number> | null>(null);
    // When FCM triggers the refetch, useFCM already toasted — skip the duplicate
    const fcmTriggeredRef = useRef(false);
+   // // When the tab becomes visible, the user likely already saw an OS-level push
+   // // from the service worker — skip the in-app toast for new ids in that fetch
+   // const visibilityTriggeredRef = useRef(false);
 
    const handleSuccess = useCallback((incoming: WorkerNotification[]) => {
       // First fetch: seed the set, no toasts
@@ -37,9 +40,10 @@ export function useWorkerNotifications(
          return;
       }
 
-      // FCM already showed a toast for this message — skip duplicate
-      const skipToast = fcmTriggeredRef.current;
-      fcmTriggeredRef.current = false;
+      const skipToast =
+         // fcmTriggeredRef.current || visibilityTriggeredRef.current;
+         (fcmTriggeredRef.current = false);
+      // visibilityTriggeredRef.current = false;
 
       // Subsequent fetches: toast only genuinely new unread notifications
       incoming.forEach((notification) => {
@@ -74,7 +78,10 @@ export function useWorkerNotifications(
    // Re-fetch when the tab becomes visible — catches notifications received while backgrounded
    useEffect(() => {
       const handleVisibility = () => {
-         if (document.visibilityState === 'visible') refetch();
+         if (document.visibilityState === 'visible') {
+            // visibilityTriggeredRef.current = true;
+            refetch();
+         }
       };
       document.addEventListener('visibilitychange', handleVisibility);
       return () =>

@@ -192,8 +192,15 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
                }
             );
 
-            // If user not found or token revoked, clear cookies and redirect
-            if (!profileRes.ok) {
+            // Only clear session for explicit auth failures from the backend.
+            // Other non-OK statuses (5xx, etc.) are treated as transient and
+            // the request is allowed through to avoid logging the user out
+            // on backend hiccups.
+            if (
+               profileRes.status === 401 ||
+               profileRes.status === 403 ||
+               profileRes.status === 404
+            ) {
                const resp = redirectTo(req, ROUTES.LOGIN);
                try {
                   resp.cookies.delete('next-auth.session-token');
@@ -204,25 +211,14 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
                   resp.cookies.delete('__Host-next-auth.csrf-token');
                   resp.cookies.delete('next-auth.callback-url');
                } catch (e) {
-                  /* ignore */
+                  // ignore cookie deletion errors in middleware
                }
                return resp;
             }
          } catch (error) {
-            // Network/backend errors: treat as invalid session to avoid loops
-            const resp = redirectTo(req, ROUTES.LOGIN);
-            try {
-               resp.cookies.delete('next-auth.session-token');
-               resp.cookies.delete('__Secure-next-auth.session-token');
-               resp.cookies.delete('__Host-next-auth.session-token');
-               resp.cookies.delete('next-auth.csrf-token');
-               resp.cookies.delete('__Secure-next-auth.csrf-token');
-               resp.cookies.delete('__Host-next-auth.csrf-token');
-               resp.cookies.delete('next-auth.callback-url');
-            } catch (e) {
-               /* ignore */
-            }
-            return resp;
+            // Network/backend errors are transient — let the request through
+            // rather than tearing down the session, which causes NextAuth
+            // client fetches to receive HTML redirects instead of JSON.
          }
       }
    }

@@ -1,14 +1,21 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { getToken, onMessage, type MessagePayload } from 'firebase/messaging';
+import {
+   deleteToken,
+   getToken,
+   onMessage,
+   type MessagePayload,
+} from 'firebase/messaging';
 import { toast } from 'sonner';
 import { getFirebaseMessaging } from '@/lib/firebase';
 import { notificationsApi } from '@/api/notifications';
 import { dispatchFcmMessage } from '@/lib/notification-events';
 import { useSession } from 'next-auth/react';
+import { setAuthToken } from '@/lib/axios';
 
 const VAPID_KEY = process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY;
+const DENIED_TOAST_KEY = 'fcm-denied-toasted';
 
 // Module-level singleton: the onMessage listener must outlive component re-renders
 // and React Strict Mode double-mounts. Once registered it stays alive for the session.
@@ -23,7 +30,7 @@ export interface UseFCMReturn {
 async function sendTokenToServer(fcmToken: string): Promise<void> {
    await notificationsApi.registerDevice({
       fcm_token: fcmToken,
-      device_type: null,
+      device_type: 'web',
    });
 }
 
@@ -33,21 +40,37 @@ export function useFCM(): UseFCMReturn {
       useState<NotificationPermission | null>(null);
    const [error, setError] = useState<Error | null>(null);
 
-   const { status } = useSession();
+   const { data: session, status } = useSession();
+   const accessToken = session?.user?.accessToken ?? null;
 
-   const hasRegistered = useRef(false);
+   // Track the token we last successfully registered with the backend.
+   // null = never registered yet. If sendTokenToServer fails, this stays null
+   // and the next effect run retries automatically.
+   const registeredTokenRef = useRef<string | null>(null);
+   const prevStatusRef = useRef(status);
 
+   // Token-acquisition + registration effect
    useEffect(() => {
       if (status !== 'authenticated') return;
+      // Wait for the session's access token to be available. Without this,
+      // the device-register POST can race ahead of useAuthToken's sync to
+      // the axios client and go out without a Bearer header → 401.
+      if (!accessToken) return;
       if (typeof window === 'undefined') return;
+
+      // FCMProvider lives in the root layout, but useAuthToken is only mounted
+      // in nested layouts. Sync here so the device-register POST always has a
+      // Bearer header, even on pages (e.g., landing) that don't mount it.
+      setAuthToken(accessToken);
       if (!('Notification' in window)) {
          console.warn('[useFCM] هذا المتصفح لا يدعم الإشعارات.');
          return;
       }
       if (!VAPID_KEY) {
          console.warn(
-            '[useFCM] NEXT_PUBLIC_FIREBASE_VAPID_KEY غير محدد في ملف البيئة.'
+            '[useFCM] NEXT_PUBLIC_FIREBASE_VAPID_KEY غير محدد. تخطي تهيئة FCM.'
          );
+         return;
       }
 
       let cancelled = false;
@@ -58,7 +81,20 @@ export function useFCM(): UseFCMReturn {
             if (cancelled) return;
             setPermissionStatus(permission);
 
-            if (permission !== 'granted') return;
+            if (permission !== 'granted') {
+               if (
+                  permission === 'denied' &&
+                  typeof sessionStorage !== 'undefined' &&
+                  !sessionStorage.getItem(DENIED_TOAST_KEY)
+               ) {
+                  toast.warning('الإشعارات معطلة', {
+                     description:
+                        'لن تتلقى إشعارات جديدة. يمكنك تفعيلها من إعدادات المتصفح.',
+                  });
+                  sessionStorage.setItem(DENIED_TOAST_KEY, '1');
+               }
+               return;
+            }
 
             const messaging = getFirebaseMessaging();
             if (!messaging) {
@@ -113,15 +149,11 @@ export function useFCM(): UseFCMReturn {
 
             setToken(fcmToken);
 
-            if (!hasRegistered.current) {
-               hasRegistered.current = true;
-               await sendTokenToServer(fcmToken);
-            }
-            if (cancelled) return;
-
-            // Register the foreground message listener only once (module-level singleton).
-            // This prevents Strict Mode double-mount from destroying and re-creating the listener,
-            // which would leave a window where FCM messages are silently dropped.
+            // Register the foreground message listener BEFORE the backend POST.
+            // If sendTokenToServer throws (e.g., transient 401/network), we still
+            // want foreground toasts to work for tokens already registered on
+            // earlier sessions. Module-level singleton guards against Strict Mode
+            // double-mount destroying and re-creating the listener.
             if (!foregroundListenerUnsubscribe) {
                foregroundListenerUnsubscribe = onMessage(
                   messaging,
@@ -139,6 +171,14 @@ export function useFCM(): UseFCMReturn {
                   }
                );
             }
+
+            // Register only if this token is new to the backend.
+            // If the POST fails, registeredTokenRef stays at its previous value
+            // so the next effect run (e.g., next sign-in, re-mount) will retry.
+            if (registeredTokenRef.current !== fcmToken) {
+               await sendTokenToServer(fcmToken);
+               registeredTokenRef.current = fcmToken;
+            }
          } catch (err) {
             if (cancelled) return;
             const caught =
@@ -153,9 +193,38 @@ export function useFCM(): UseFCMReturn {
       initFCM();
 
       return () => {
-         // Only cancel state updates — do NOT unsubscribe the singleton onMessage listener
          cancelled = true;
       };
+   }, [status, accessToken]);
+
+   // Logout cleanup: when the session transitions away from authenticated,
+   // delete the FCM token client-side so future pushes for this user stop.
+   // TODO(backend): also call an unregister-device endpoint to drop the row server-side.
+   useEffect(() => {
+      const prev = prevStatusRef.current;
+      prevStatusRef.current = status;
+
+      if (prev !== 'authenticated' || status === 'authenticated') return;
+
+      const messaging = getFirebaseMessaging();
+      if (messaging) {
+         deleteToken(messaging).catch((err) => {
+            console.warn('[useFCM] فشل حذف توكن FCM:', err);
+         });
+      }
+
+      if (foregroundListenerUnsubscribe) {
+         foregroundListenerUnsubscribe();
+         foregroundListenerUnsubscribe = null;
+      }
+
+      registeredTokenRef.current = null;
+      setToken(null);
+      setError(null);
+
+      if (typeof sessionStorage !== 'undefined') {
+         sessionStorage.removeItem(DENIED_TOAST_KEY);
+      }
    }, [status]);
 
    return { token, permissionStatus, error };

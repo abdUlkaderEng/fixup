@@ -26,7 +26,7 @@ export interface NotificationPanelProps {
 const defaultResolveHref = (n: WorkerNotification): string => {
    switch (n.type) {
       case 'order':
-         return `/worker/orders/${n.data?.order_id ?? ''}`;
+         return '/worker/dashboard';
       default:
          return '/worker/dashboard';
    }

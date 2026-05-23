@@ -28,9 +28,10 @@ export interface NotificationBellProps {
 }
 
 const defaultResolveHref = (n: WorkerNotification): string => {
+   const orderId = n.data?.order_id;
    switch (n.type) {
       case 'order':
-         return `/customer/orders`;
+         return orderId ? `/customer/orders/${orderId}` : '/customer/orders';
       default:
          return '/';
    }

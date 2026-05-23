@@ -38,12 +38,10 @@ export function Navbar({ className = '' }: NavbarProps) {
    const { notifications, unreadCount, isLoading, refetch, markRead } =
       useCustomerNotifications({ autoFetch: isAuthenticated });
    const profileImage = session?.user.profile_image;
-   console.log('PROFILE IMAGE _______' + profileImage);
    const resolvedStoredImage = useMemo(
       () => resolveImageUrl(profileImage),
       [profileImage]
    );
-   console.log('RESOLVEDIMAGE _______' + resolvedStoredImage);
 
    return (
       <nav
