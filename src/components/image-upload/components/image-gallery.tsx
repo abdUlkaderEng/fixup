@@ -1,8 +1,8 @@
 'use client';
 
 import type { ExistingImage, ImageUploadThemeTokens } from '../types';
-import { ExistingImageCard } from './ExistingImageCard';
-import { NewImagePreview } from './NewImagePreview';
+import { ExistingImageCard } from './existing-image-card';
+import { NewImagePreview } from './new-image-preview';
 
 interface ImageGalleryProps {
    existingImages: ExistingImage[];

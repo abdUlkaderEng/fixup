@@ -13,7 +13,7 @@ import type { UseFormReturn } from 'react-hook-form';
 import type { BaseProfileFormData } from '@/components/profile/schemas';
 import type { User } from 'next-auth';
 import { MapPicker } from '@/components/map-picker';
-import AreaSelect from '@/components/publicComponents/area-select';
+import AreaSelect from '@/components/form-pickers/area-select';
 import usePublicDataStore from '@/stores/public-data';
 import { use } from 'react';
 

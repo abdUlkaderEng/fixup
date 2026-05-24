@@ -1,8 +1,8 @@
 'use client';
 
 import { useImageUploadLogic } from './hooks';
-import { ImageGallery } from './components/ImageGallery';
-import { UploadZone } from './components/UploadZone';
+import { ImageGallery } from './components/image-gallery';
+import { UploadZone } from './components/upload-zone';
 import { IMAGE_UPLOAD_THEMES } from './types';
 import type { ImageUploadProps } from './types';
 

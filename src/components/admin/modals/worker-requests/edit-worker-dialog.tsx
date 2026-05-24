@@ -14,7 +14,7 @@ import {
    SelectValue,
 } from '@/components/ui/select';
 import { AppModal } from '@/components/ui/app-modal';
-import { ServicesPicker } from '@/components/publicComponents/services-picker';
+import { ServicesPicker } from '@/components/form-pickers/services-picker';
 import { ImageUploadField } from '@/components/image-upload';
 import type { ImageUploadState } from '@/components/image-upload';
 import { workersApi } from '@/api/admin';

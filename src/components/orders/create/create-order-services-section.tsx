@@ -2,8 +2,8 @@
 
 import { Sparkles } from 'lucide-react';
 
-import { CareerSelect } from '@/components/publicComponents/career-select';
-import { ServicesPicker } from '@/components/publicComponents/services-picker';
+import { CareerSelect } from '@/components/form-pickers/career-select';
+import { ServicesPicker } from '@/components/form-pickers/services-picker';
 import { SectionPanel } from '@/components/ui/section-panel';
 
 interface CreateOrderServicesSectionProps {

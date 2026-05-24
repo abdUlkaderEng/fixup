@@ -6,7 +6,7 @@ import { Form } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { useAuthToken, useLogout } from '@/hooks/auth';
 import { useProfileForm, useProfileSubmit } from './hooks';
-import { useProfileMode } from './ProfileModeProvider';
+import { useProfileMode } from './profile-mode-provider';
 import {
    LoadingState,
    UnauthenticatedState,

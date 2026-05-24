@@ -39,7 +39,7 @@ import { toast } from 'sonner';
 import { authApi } from '@/api/auth';
 import { MapPicker } from '@/components/map-picker';
 import { usePublicAreas } from '@/hooks/public/use-public-areas';
-import AreaSelect from '@/components/publicComponents/area-select';
+import AreaSelect from '@/components/form-pickers/area-select';
 
 type SignupFormValues = z.input<typeof signupSchema>;
 

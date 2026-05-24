@@ -28,8 +28,8 @@ import {
    FormLabel,
    FormMessage,
 } from '@/components/ui/form';
-import CareerSelect from '@/components/publicComponents/career-select';
-import ServicesPicker from '@/components/publicComponents/services-picker';
+import CareerSelect from '@/components/form-pickers/career-select';
+import ServicesPicker from '@/components/form-pickers/services-picker';
 import { ImageUploadField } from '@/components/image-upload';
 import { getWorkerSignupDraft, type WorkerSignupDraft } from '../signup-flow';
 import { workerInfoSchema, type WorkerInfoInput } from '../schemas';

@@ -1,5 +1,5 @@
-export { LoadingState, UnauthenticatedState } from './ProfileStates';
-export { ProfileHeader, BackLink } from './ProfileHeader';
+export { LoadingState, UnauthenticatedState } from './profile-states';
+export { ProfileHeader, BackLink } from './profile-header';
 export {
    EmailField,
    PhoneField,
@@ -7,14 +7,13 @@ export {
    BirthDateField,
    RoleField,
    CreatedAtField,
-} from './BaseFields';
+} from './base-fields';
 export {
    AboutField,
-   NearlyDateField,
    YearsExperienceField,
    AccountStatusField,
    CareerField,
    ServicesField,
    WorkerImagesField,
-} from './WorkerFields';
-export { ActionButtons } from './ActionButtons';
+} from './worker-fields';
+export { ActionButtons } from './action-buttons';

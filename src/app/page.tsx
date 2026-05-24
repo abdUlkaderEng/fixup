@@ -1,6 +1,6 @@
-import { Hero } from '@/components/sections/Hero';
-import { ServiceCategories } from '@/components/sections/ServiceCategories';
-import { Footer } from '@/components/sections/Footer';
+import { Hero } from '@/components/sections/hero';
+import { ServiceCategories } from '@/components/sections/service-categories';
+import { Footer } from '@/components/sections/footer';
 
 export default function Home() {
    return (

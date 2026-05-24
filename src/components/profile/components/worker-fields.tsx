@@ -10,7 +10,7 @@ import {
    FormMessage,
 } from '@/components/ui/form';
 import { InfoField } from '@/components/sections/info-field';
-import { ServicesPicker } from '@/components/publicComponents/services-picker';
+import { ServicesPicker } from '@/components/form-pickers/services-picker';
 import { ImageUploadField } from '@/components/image-upload';
 import type { UseFormReturn } from 'react-hook-form';
 import type { WorkerInfoFormData } from '@/components/profile/schemas';
