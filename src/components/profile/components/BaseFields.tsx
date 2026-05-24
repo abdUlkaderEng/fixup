@@ -85,8 +85,8 @@ export function AddressField({ form, isEditing, user }: FieldProps) {
    // Resolve area name: prefer session nested object, fall back to store cache
    const areaNameFromStore = usePublicDataStore((state) => {
       if (!areaId) return null;
-      for (const entry of Object.values(state.areaCache)) {
-         const match = entry.areas.find((a) => a.id === areaId);
+      for (const entry of Object.values(state.paginated.areas)) {
+         const match = entry.rows.find((a) => a.id === areaId);
          if (match) return match.area_name;
       }
       return null;

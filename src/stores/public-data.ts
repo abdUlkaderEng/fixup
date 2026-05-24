@@ -7,16 +7,38 @@ import type { PublicArea } from '@/types/public/areas';
 
 /**
  * Public Data Store
- * Centralized cache for public reference data (services, careers, areas)
- * Prevents duplicate API calls across components
+ *
+ * Centralized cache for unauthenticated reference data (services, careers,
+ * areas). Each resource has either a paginated cache (keyed by query params)
+ * or a single-list cache, plus shared loading/error flags. Cross-component
+ * cache means a careers list fetched on the landing page is reused by the
+ * profile dropdown without a second request.
  */
 
 // ============================================
-// Cache Entry Types
+// Resource registry
+// ============================================
+// To add a new public resource, extend ONE of these enums and add its row
+// type. The store + hooks pick it up automatically.
+
+export type PaginatedResource = 'services' | 'areas';
+export type SingleResource = 'careers';
+
+export interface PaginatedRowMap {
+   services: Service;
+   areas: PublicArea;
+}
+
+export interface SingleRowMap {
+   careers: PublicCareer;
+}
+
+// ============================================
+// Cache entry shapes
 // ============================================
 
-interface ServiceCacheEntry {
-   services: Service[];
+export interface PaginatedCacheEntry<TRow> {
+   rows: TRow[];
    currentPage: number;
    lastPage: number;
    total: number;
@@ -24,96 +46,20 @@ interface ServiceCacheEntry {
    fetchedAt: number;
 }
 
-interface CareerCacheEntry {
-   careers: PublicCareer[];
+export interface SingleCacheEntry<TRow> {
+   rows: TRow[];
    fetchedAt: number;
 }
 
-interface AreaCacheEntry {
-   areas: PublicArea[];
-   currentPage: number;
-   lastPage: number;
-   total: number;
-   perPage: number;
-   fetchedAt: number;
-}
+type PaginatedCache<R extends PaginatedResource> = Record<
+   string,
+   PaginatedCacheEntry<PaginatedRowMap[R]>
+>;
 
-interface ServiceCache {
-   [cacheKey: string]: ServiceCacheEntry;
-}
-
-interface AreaCache {
-   [cacheKey: string]: AreaCacheEntry;
-}
+type AnyResource = PaginatedResource | SingleResource;
 
 // ============================================
-// Store State Interface
-// ============================================
-
-interface PublicDataState {
-   // Service cache keyed by "careerId:page:perPage"
-   serviceCache: ServiceCache;
-   // Career cache (no pagination - single list)
-   careerCache: CareerCacheEntry | undefined;
-   // Area cache keyed by "page:perPage"
-   areaCache: AreaCache;
-
-   // Global loading states
-   isLoadingServices: boolean;
-   isLoadingCareers: boolean;
-   isLoadingAreas: boolean;
-
-   // Error states
-   servicesError: Error | null;
-   careersError: Error | null;
-   areasError: Error | null;
-
-   // Actions - Services
-   setServiceCache: (
-      cacheKey: string,
-      entry: Omit<ServiceCacheEntry, 'fetchedAt'>
-   ) => void;
-   getServiceCache: (cacheKey: string) => ServiceCacheEntry | undefined;
-   setServicesLoading: (loading: boolean) => void;
-   setServicesError: (error: Error | null) => void;
-   clearServiceCache: () => void;
-
-   // Actions - Careers
-   setCareerCache: (entry: Omit<CareerCacheEntry, 'fetchedAt'>) => void;
-   getCareerCache: () => CareerCacheEntry | undefined;
-   setCareersLoading: (loading: boolean) => void;
-   setCareersError: (error: Error | null) => void;
-   clearCareerCache: () => void;
-
-   // Actions - Areas
-   setAreaCache: (
-      cacheKey: string,
-      entry: Omit<AreaCacheEntry, 'fetchedAt'>
-   ) => void;
-   getAreaCache: (cacheKey: string) => AreaCacheEntry | undefined;
-   setAreasLoading: (loading: boolean) => void;
-   setAreasError: (error: Error | null) => void;
-   clearAreaCache: () => void;
-}
-
-// ============================================
-// Cache Key Generators
-// ============================================
-
-export function generateServiceCacheKey(
-   careerId: number | undefined,
-   page: number,
-   perPage: number
-): string {
-   return `${careerId ?? 'all'}:${page}:${perPage}`;
-}
-
-export function generateAreaCacheKey(page: number, perPage: number): string {
-   return `${page}:${perPage}`;
-}
-
-// ============================================
-// Cache TTL (5 minutes)
+// Cache TTL & validity
 // ============================================
 
 const CACHE_TTL_MS = 5 * 60 * 1000;
@@ -126,113 +72,116 @@ export function isCacheValid<T extends { fetchedAt: number }>(
 }
 
 // ============================================
-// Zustand Store
+// Cache key generation
+// ============================================
+
+/**
+ * Stable key for paginated resource caches. Pass any filters that affect the
+ * query (e.g., career_id for services).
+ */
+export function generatePublicCacheKey(
+   filters: Record<string, string | number | undefined | null>
+): string {
+   return Object.entries(filters)
+      .map(([k, v]) => `${k}:${v ?? 'all'}`)
+      .join('|');
+}
+
+// ============================================
+// Store state
+// ============================================
+
+interface PublicDataState {
+   paginated: {
+      [R in PaginatedResource]: PaginatedCache<R>;
+   };
+   single: {
+      [R in SingleResource]: SingleCacheEntry<SingleRowMap[R]> | undefined;
+   };
+
+   loading: Record<AnyResource, boolean>;
+   errors: Record<AnyResource, Error | null>;
+
+   // Paginated actions
+   setPaginatedEntry: <R extends PaginatedResource>(
+      resource: R,
+      cacheKey: string,
+      entry: Omit<PaginatedCacheEntry<PaginatedRowMap[R]>, 'fetchedAt'>
+   ) => void;
+   getPaginatedEntry: <R extends PaginatedResource>(
+      resource: R,
+      cacheKey: string
+   ) => PaginatedCacheEntry<PaginatedRowMap[R]> | undefined;
+   clearPaginated: (resource: PaginatedResource) => void;
+
+   // Single actions
+   setSingleEntry: <R extends SingleResource>(
+      resource: R,
+      entry: Omit<SingleCacheEntry<SingleRowMap[R]>, 'fetchedAt'>
+   ) => void;
+   getSingleEntry: <R extends SingleResource>(
+      resource: R
+   ) => SingleCacheEntry<SingleRowMap[R]> | undefined;
+   clearSingle: (resource: SingleResource) => void;
+
+   // Loading / error
+   setLoading: (resource: AnyResource, loading: boolean) => void;
+   setError: (resource: AnyResource, error: Error | null) => void;
+}
+
+// ============================================
+// Store
 // ============================================
 
 export const usePublicDataStore = create<PublicDataState>((set, get) => ({
-   // ============================================
-   // Initial state
-   // ============================================
-   serviceCache: {},
-   careerCache: undefined,
-   areaCache: {},
+   paginated: { services: {}, areas: {} },
+   single: { careers: undefined },
 
-   isLoadingServices: false,
-   isLoadingCareers: false,
-   isLoadingAreas: false,
+   loading: { services: false, careers: false, areas: false },
+   errors: { services: null, careers: null, areas: null },
 
-   servicesError: null,
-   careersError: null,
-   areasError: null,
-
-   // ============================================
-   // Service Actions
-   // ============================================
-   setServiceCache: (cacheKey, entry) => {
+   setPaginatedEntry: (resource, cacheKey, entry) => {
       set((state) => ({
-         serviceCache: {
-            ...state.serviceCache,
-            [cacheKey]: {
-               ...entry,
-               fetchedAt: Date.now(),
+         paginated: {
+            ...state.paginated,
+            [resource]: {
+               ...state.paginated[resource],
+               [cacheKey]: { ...entry, fetchedAt: Date.now() },
             },
          },
       }));
    },
 
-   getServiceCache: (cacheKey) => {
-      return get().serviceCache[cacheKey];
-   },
+   getPaginatedEntry: (resource, cacheKey) =>
+      get().paginated[resource][cacheKey],
 
-   setServicesLoading: (loading) => {
-      set({ isLoadingServices: loading });
-   },
-
-   setServicesError: (error) => {
-      set({ servicesError: error });
-   },
-
-   clearServiceCache: () => {
-      set({ serviceCache: {} });
-   },
-
-   // ============================================
-   // Career Actions
-   // ============================================
-   setCareerCache: (entry) => {
-      set({
-         careerCache: {
-            ...entry,
-            fetchedAt: Date.now(),
-         },
-      });
-   },
-
-   getCareerCache: () => {
-      return get().careerCache;
-   },
-
-   setCareersLoading: (loading) => {
-      set({ isLoadingCareers: loading });
-   },
-
-   setCareersError: (error) => {
-      set({ careersError: error });
-   },
-
-   clearCareerCache: () => {
-      set({ careerCache: undefined });
-   },
-
-   // ============================================
-   // Area Actions
-   // ============================================
-   setAreaCache: (cacheKey, entry) => {
+   clearPaginated: (resource) => {
       set((state) => ({
-         areaCache: {
-            ...state.areaCache,
-            [cacheKey]: {
-               ...entry,
-               fetchedAt: Date.now(),
-            },
+         paginated: { ...state.paginated, [resource]: {} },
+      }));
+   },
+
+   setSingleEntry: (resource, entry) => {
+      set((state) => ({
+         single: {
+            ...state.single,
+            [resource]: { ...entry, fetchedAt: Date.now() },
          },
       }));
    },
 
-   getAreaCache: (cacheKey) => {
-      return get().areaCache[cacheKey];
+   getSingleEntry: (resource) => get().single[resource],
+
+   clearSingle: (resource) => {
+      set((state) => ({ single: { ...state.single, [resource]: undefined } }));
    },
 
-   setAreasLoading: (loading) => {
-      set({ isLoadingAreas: loading });
+   setLoading: (resource, loading) => {
+      set((state) => ({ loading: { ...state.loading, [resource]: loading } }));
    },
 
-   setAreasError: (error) => {
-      set({ areasError: error });
-   },
-
-   clearAreaCache: () => {
-      set({ areaCache: {} });
+   setError: (resource, error) => {
+      set((state) => ({ errors: { ...state.errors, [resource]: error } }));
    },
 }));
 

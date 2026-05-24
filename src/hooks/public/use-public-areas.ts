@@ -1,14 +1,9 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import { publicAreasApi } from '@/api/public/areas';
-import {
-   usePublicDataStore,
-   generateAreaCacheKey,
-   isCacheValid,
-} from '@/stores/public-data';
-import { usePagination } from '@/hooks/admin';
 import type { PublicArea } from '@/types/public/areas';
+import { usePaginatedPublicResource } from './shared';
 
 // ============================================
 // Types
@@ -67,159 +62,35 @@ export interface UsePublicAreasReturn {
 export function usePublicAreas(
    options: UsePublicAreasOptions = {}
 ): UsePublicAreasReturn {
-   const {
-      initialPage = 1,
-      perPage = 20,
-      autoFetch = true,
-      skipCache = false,
-   } = options;
+   const { perPage = 20, ...rest } = options;
 
-   // Local state for immediate UI updates
-   const [localError, setLocalError] = useState<Error | null>(null);
-
-   // Zustand store
-   const store = usePublicDataStore();
-
-   // Use existing pagination hook
-   const pagination = usePagination(
-      useCallback(
-         (page: number) => {
-            fetchAreas(page);
-         },
-         // eslint-disable-next-line react-hooks/exhaustive-deps
-         [perPage]
-      ),
-      { initialPage, perPage }
+   const fetcher = useCallback(
+      (params: { page: number; perPage: number }) =>
+         publicAreasApi.getAll({ page: params.page, perPage: params.perPage }),
+      []
    );
 
-   // ============================================
-   // Fetch Function
-   // ============================================
-
-   const fetchAreas = useCallback(
-      async (page: number = pagination.currentPage, forceRefresh = false) => {
-         // Check cache first
-         const currentCacheKey = generateAreaCacheKey(page, perPage);
-         const cached = store.getAreaCache(currentCacheKey);
-
-         if (!forceRefresh && cached && isCacheValid(cached)) {
-            // Use cached data
-            pagination.updatePagination({
-               currentPage: cached.currentPage,
-               lastPage: cached.lastPage,
-               total: cached.total,
-               nextPageUrl:
-                  cached.currentPage < cached.lastPage ? 'next' : null,
-               prevPageUrl: cached.currentPage > 1 ? 'prev' : null,
-            });
-            return;
-         }
-
-         store.setAreasLoading(true);
-         store.setAreasError(null);
-         setLocalError(null);
-
-         try {
-            const response = await publicAreasApi.getAll({ page, perPage });
-
-            // Update cache
-            store.setAreaCache(currentCacheKey, {
-               areas: response.data,
-               currentPage: response.meta.current_page,
-               lastPage: response.meta.last_page,
-               total: response.meta.total,
-               perPage: response.meta.per_page,
-            });
-
-            // Update pagination state
-            pagination.updatePagination({
-               currentPage: response.meta.current_page,
-               lastPage: response.meta.last_page,
-               total: response.meta.total,
-               nextPageUrl: response.links.next,
-               prevPageUrl: response.links.prev,
-            });
-         } catch (err) {
-            const error = err instanceof Error ? err : new Error(String(err));
-            store.setAreasError(error);
-            setLocalError(error);
-         } finally {
-            store.setAreasLoading(false);
-         }
-      },
-      [perPage, pagination, store]
+   const result = usePaginatedPublicResource(
+      { resource: 'areas', fetcher },
+      { ...rest, perPage }
    );
-
-   // ============================================
-   // Auto-fetch on mount
-   // ============================================
-
-   useEffect(() => {
-      if (!autoFetch) return;
-      fetchAreas(initialPage, skipCache);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-   }, [autoFetch, initialPage, skipCache, perPage]);
-
-   // ============================================
-   // Navigation handlers
-   // ============================================
-
-   const goToPage = useCallback(
-      (page: number) => {
-         if (
-            page < 1 ||
-            page > pagination.totalPages ||
-            page === pagination.currentPage
-         ) {
-            return;
-         }
-         pagination.setPage(page);
-         fetchAreas(page);
-      },
-      [pagination, fetchAreas]
-   );
-
-   const refresh = useCallback(async () => {
-      await fetchAreas(pagination.currentPage, true);
-   }, [fetchAreas, pagination.currentPage]);
-
-   const refetch = useCallback(async () => {
-      await fetchAreas(pagination.currentPage, true);
-   }, [fetchAreas, pagination.currentPage]);
-
-   // ============================================
-   // Derived data
-   // ============================================
-
-   const currentCacheKey = generateAreaCacheKey(
-      pagination.currentPage,
-      perPage
-   );
-   const currentEntry = store.getAreaCache(currentCacheKey);
-   const areas = currentEntry?.areas ?? [];
-
-   // ============================================
-   // Return
-   // ============================================
 
    return {
-      areas,
-      isLoading: store.isLoadingAreas,
-      error: localError ?? store.areasError,
-      currentPage: pagination.currentPage,
-      totalPages: pagination.totalPages,
-      totalAreas: pagination.totalItems,
-      perPage,
-      hasNextPage: pagination.hasNextPage,
-      hasPrevPage: pagination.hasPrevPage,
-      goToPage,
-      nextPage: pagination.nextPage,
-      prevPage: pagination.prevPage,
-      firstPage: pagination.firstPage,
-      lastPage: pagination.lastPage,
-      refresh,
-      refetch,
+      areas: result.rows,
+      isLoading: result.isLoading,
+      error: result.error,
+      currentPage: result.currentPage,
+      totalPages: result.totalPages,
+      totalAreas: result.totalItems,
+      perPage: result.perPage,
+      hasNextPage: result.hasNextPage,
+      hasPrevPage: result.hasPrevPage,
+      goToPage: result.goToPage,
+      nextPage: result.nextPage,
+      prevPage: result.prevPage,
+      firstPage: result.firstPage,
+      lastPage: result.lastPage,
+      refresh: result.refresh,
+      refetch: result.refetch,
    };
 }
-
-export default usePublicAreas;

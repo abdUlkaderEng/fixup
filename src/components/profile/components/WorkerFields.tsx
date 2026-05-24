@@ -38,7 +38,7 @@ const STATUS_COLORS: Record<string, string> = {
 export function CareerField({ worker }: { worker?: Worker | null }) {
    const careerId = worker?.career_id ?? null;
    const careerName = usePublicDataStore(
-      (state) => state.careerCache?.careers.find((c) => c.id === careerId)?.name
+      (state) => state.single.careers?.rows.find((c) => c.id === careerId)?.name
    );
    return (
       <InfoField

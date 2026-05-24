@@ -1,9 +1,9 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import { publicCareersApi } from '@/api/public/careers';
-import { usePublicDataStore, isCacheValid } from '@/stores/public-data';
 import type { PublicCareer } from '@/types/public/careers';
+import { usePublicResource } from './shared';
 
 // ============================================
 // Types
@@ -36,86 +36,15 @@ export interface UsePublicCareersReturn {
 export function usePublicCareers(
    options: UsePublicCareersOptions = {}
 ): UsePublicCareersReturn {
-   const { autoFetch = true, skipCache = false } = options;
+   const fetcher = useCallback(() => publicCareersApi.getAll(), []);
 
-   // Local state for immediate UI updates
-   const [localError, setLocalError] = useState<Error | null>(null);
-
-   // Zustand store
-   const store = usePublicDataStore();
-
-   // Get cached data
-   const cachedEntry = store.getCareerCache();
-   const careers = cachedEntry?.careers ?? [];
-
-   // ============================================
-   // Fetch Function
-   // ============================================
-
-   const fetchCareers = useCallback(
-      async (forceRefresh = false) => {
-         // Check cache first
-         const cached = store.getCareerCache();
-
-         if (!forceRefresh && cached && isCacheValid(cached)) {
-            return;
-         }
-
-         store.setCareersLoading(true);
-         store.setCareersError(null);
-         setLocalError(null);
-
-         try {
-            const response = await publicCareersApi.getAll();
-
-            // Update cache
-            store.setCareerCache({
-               careers: response.data,
-            });
-         } catch (err) {
-            const error = err instanceof Error ? err : new Error(String(err));
-            store.setCareersError(error);
-            setLocalError(error);
-         } finally {
-            store.setCareersLoading(false);
-         }
-      },
-      [store]
-   );
-
-   // ============================================
-   // Auto-fetch on mount
-   // ============================================
-
-   useEffect(() => {
-      if (!autoFetch) return;
-      fetchCareers(skipCache);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-   }, [autoFetch, skipCache]);
-
-   // ============================================
-   // Refresh handlers
-   // ============================================
-
-   const refresh = useCallback(async () => {
-      await fetchCareers(true);
-   }, [fetchCareers]);
-
-   const refetch = useCallback(async () => {
-      await fetchCareers(true);
-   }, [fetchCareers]);
-
-   // ============================================
-   // Return
-   // ============================================
+   const result = usePublicResource({ resource: 'careers', fetcher }, options);
 
    return {
-      careers,
-      isLoading: store.isLoadingCareers,
-      error: localError ?? store.careersError,
-      refresh,
-      refetch,
+      careers: result.rows,
+      isLoading: result.isLoading,
+      error: result.error,
+      refresh: result.refresh,
+      refetch: result.refetch,
    };
 }
-
-export default usePublicCareers;
