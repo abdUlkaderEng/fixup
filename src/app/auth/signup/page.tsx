@@ -37,7 +37,7 @@ import { signupSchema, type SignupInput } from '../schemas';
 import { clearWorkerSignupDraft, saveWorkerSignupDraft } from '../signup-flow';
 import { toast } from 'sonner';
 import { authApi } from '@/api/auth';
-import { MapPicker } from '@/components/map-picker';
+import { MapPicker } from '@/components/map/map-picker';
 import { usePublicAreas } from '@/hooks/public/use-public-areas';
 import AreaSelect from '@/components/form-pickers/area-select';
 

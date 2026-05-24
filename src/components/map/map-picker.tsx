@@ -7,7 +7,7 @@ import { MapPin, Crosshair } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { usePhotonSearch } from '@/hooks/shared';
-import { SearchControl } from '@/components/search-control';
+import { SearchControl } from './search-control';
 import { MapPickerProps, Location } from '@/types/map';
 import { SearchResult } from '@/types/map';
 

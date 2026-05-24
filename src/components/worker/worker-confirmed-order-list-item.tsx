@@ -14,7 +14,7 @@ import {
    AuthDashboardMetaItem,
    AuthDashboardOrderCard,
 } from '@/components/AuthDashboard';
-import { MapPicker } from '@/components/map-picker';
+import { MapPicker } from '@/components/map/map-picker';
 import type { WorkerConfirmedOrder } from '@/types/worker/orders-workflow';
 
 interface WorkerConfirmedOrderListItemProps {

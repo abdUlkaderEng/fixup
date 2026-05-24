@@ -3,7 +3,7 @@
 import { MapPin, TriangleAlert } from 'lucide-react';
 import type { Control, UseFormSetValue } from 'react-hook-form';
 
-import { MapPicker } from '@/components/map-picker';
+import { MapPicker } from '@/components/map/map-picker';
 import { SectionPanel } from '@/components/ui/section-panel';
 import {
    FormControl,
