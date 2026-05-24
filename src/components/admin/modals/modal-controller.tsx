@@ -5,9 +5,9 @@ import { ServicesModal } from './services-modal';
 import { CareersModal } from './careers-modal';
 import { CustomersModal } from './customers-modal';
 import { AddressesModal } from './addresses-modal';
-import { MessagesModal } from './messages-modal';
+import { MessagesModal } from './messages';
 import { ReviewsModal } from './reviews-modal';
-import { WorkerRequestsModal } from './worker-requests-modal';
+import { WorkerRequestsModal } from './worker-requests';
 
 /**
  * Modal controller component

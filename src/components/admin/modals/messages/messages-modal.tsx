@@ -4,9 +4,9 @@ import { useState } from 'react';
 import { MessageSquare, Tag } from 'lucide-react';
 import { AppModal } from '@/components/ui/app-modal';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { TopicsTab } from './messages/topics-tab';
-import { TemplatesTab } from './messages/templates-tab';
-import type { BaseModalProps } from './base-modal';
+import { TopicsTab } from './topics-tab';
+import { TemplatesTab } from './templates-tab';
+import type { BaseModalProps } from '../base-modal';
 
 type MessagesTabValue = 'topics' | 'templates';
 

@@ -18,11 +18,11 @@ import {
    SelectValue,
 } from '@/components/ui/select';
 import { DeleteConfirmDialog } from '@/components/ui/confirm-dialog';
-import { WorkerCard } from './worker-requests/worker-card';
-import { EditWorkerDialog } from './worker-requests/edit-worker-dialog';
-import { useWorkerRequests } from './worker-requests/use-worker-requests';
+import { WorkerCard } from './worker-card';
+import { EditWorkerDialog } from './edit-worker-dialog';
+import { useWorkerRequests } from './use-worker-requests';
 import type { WorkerStatus } from '@/types/entities/worker';
-import type { BaseModalProps } from './base-modal';
+import type { BaseModalProps } from '../base-modal';
 
 const STATUS_OPTIONS: { value: WorkerStatus; label: string }[] = [
    { value: 'waiting', label: 'قيد الانتظار' },
