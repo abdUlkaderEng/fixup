@@ -22,5 +22,3 @@ export function useAuthToken(): void {
       setAuthToken(token || null);
    }, [session, status]);
 }
-
-export default useAuthToken;

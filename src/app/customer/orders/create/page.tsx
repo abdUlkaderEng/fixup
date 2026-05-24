@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 import { useSession } from 'next-auth/react';
 
 import { createOrderSchema, type CreateOrderFormValues } from './schema';
-import { useAuthToken } from '@/hooks/use-auth-token';
+import { useAuthToken } from '@/hooks/auth';
 import { CreateOrderDetailsSection } from '@/components/orders/create/create-order-details-section';
 import { CreateOrderHeader } from '@/components/orders/create/create-order-header';
 import { CreateOrderLocationSection } from '@/components/orders/create/create-order-location-section';

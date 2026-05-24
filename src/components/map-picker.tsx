@@ -6,7 +6,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { MapPin, Crosshair } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { usePhotonSearch } from '@/hooks/use-photon-search';
+import { usePhotonSearch } from '@/hooks/shared';
 import { SearchControl } from '@/components/search-control';
 import { MapPickerProps, Location } from '@/types/map';
 import { SearchResult } from '@/types/map';

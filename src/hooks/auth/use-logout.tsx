@@ -54,5 +54,3 @@ export function useLogout(): UseLogoutReturn {
 
    return { handleLogout, dialog };
 }
-
-export default useLogout;

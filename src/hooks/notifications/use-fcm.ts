@@ -229,5 +229,3 @@ export function useFCM(): UseFCMReturn {
 
    return { token, permissionStatus, error };
 }
-
-export default useFCM;

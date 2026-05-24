@@ -1,6 +1,6 @@
 'use client';
 
-import { useFCM } from '@/hooks/use-fcm';
+import { useFCM } from '@/hooks';
 
 /**
  * Client Component boundary for FCM.

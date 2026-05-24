@@ -8,8 +8,8 @@ import {
    useFetch,
    useMutation,
 } from '@/hooks/admin/shared';
-import { useWebSocket } from '@/hooks/use-websocket';
 import type { ChatConfig, ChatMessage, UseChatReturn } from '@/types/chat';
+import { useWebSocket } from '../shared';
 
 // Client-only optimistic message. Lives alongside server messages in the UI list.
 // Negative ids guarantee no collision with backend ids.

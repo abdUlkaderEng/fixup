@@ -3,7 +3,10 @@ export {
    type UseWorkerOrdersReturn,
    type UseWorkerOrdersOptions,
 } from './use-worker-orders';
-export { usePriceOffer, type UsePriceOfferReturn } from './use-price-offer';
+export {
+   useWorkerPriceOffer,
+   type UseWorkerPriceOfferReturn,
+} from './use-worker-price-offer';
 export {
    useWorkerNotifications,
    type UseWorkerNotificationsReturn,

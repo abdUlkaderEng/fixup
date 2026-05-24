@@ -6,7 +6,7 @@ import {
    SidebarProvider,
    useSidebar,
 } from '@/components/worker/sidebar-context';
-import { useAuthToken } from '@/hooks/use-auth-token';
+import { useAuthToken } from '@/hooks/auth';
 import { cn } from '@/lib/utils';
 
 function WorkerLayoutInner({ children }: { children: React.ReactNode }) {

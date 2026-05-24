@@ -98,7 +98,7 @@ export function useWorkerRegister(
             setIsSubmitting(false);
          }
       },
-      [signupDraft, router]
+      [signupDraft, router, user?.id]
    );
 
    return {
@@ -106,5 +106,3 @@ export function useWorkerRegister(
       onSubmit,
    };
 }
-
-export default useWorkerRegister;

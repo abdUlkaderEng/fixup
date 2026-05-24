@@ -6,8 +6,8 @@ import { LogOut } from 'lucide-react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { AdminHeader, SidebarNav } from '@/components/admin';
-import { useAuthToken } from '@/hooks/use-auth-token';
 import { resolveImageUrl } from '@/lib/resolve-image-url';
+import { useAuthToken } from '@/hooks';
 
 /**
  * Admin layout component

@@ -5,7 +5,7 @@ import { useSession } from 'next-auth/react';
 import { BriefcaseBusiness } from 'lucide-react';
 import { useAuthToken } from '@/hooks';
 import {
-   usePriceOffer,
+   useWorkerPriceOffer,
    useWorkerOrders,
    useWorkerPendingOffers,
 } from '@/hooks/worker';
@@ -32,7 +32,7 @@ export function WorkerDashboardPageContent() {
       markOrderAsOffered,
       refetch: refetchOffers,
    } = useWorkerPendingOffers();
-   const { submitPriceOffer, isSubmittingPriceOffer } = usePriceOffer();
+   const { submitPriceOffer, isSubmittingPriceOffer } = useWorkerPriceOffer();
    const [selectedOrder, setSelectedOrder] = useState<WorkerOrder | null>(null);
    const [isOfferModalOpen, setIsOfferModalOpen] = useState(false);
    const [chatState, setChatState] = useState<{

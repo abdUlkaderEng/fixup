@@ -1,64 +1,12 @@
 /**
- * Hooks - Main Entry Point
- * All application hooks exported from here
+ * Hooks — Main Entry Point
+ * Re-exports every domain's hooks via its barrel.
  */
-
-// ============================================
-// Public Data Hooks (Unauthenticated)
-// ============================================
-export {
-   usePublicServices,
-   type UsePublicServicesOptions,
-   type UsePublicServicesReturn,
-} from './public/use-public-services';
-export {
-   usePublicCareers,
-   type UsePublicCareersOptions,
-   type UsePublicCareersReturn,
-} from './public/use-public-careers';
-export {
-   usePublicAreas,
-   type UsePublicAreasOptions,
-   type UsePublicAreasReturn,
-} from './public/use-public-areas';
-
-// ============================================
-// Auth Hooks
-// ============================================
-export { useAuthToken } from './use-auth-token';
-export { useLogout } from './use-logout';
-
-// ============================================
-// Profile & Worker Hooks
-// ============================================
-export { useProfileForm } from './use-profile-form';
-export { useProfileSubmit } from './use-profile-submit';
-export { useWorkerRegister } from './use-worker-register';
-
-// ============================================
-// Search Hooks
-// ============================================
-export { usePhotonSearch } from './use-photon-search';
-
-// ============================================
-// Order Hooks
-// ============================================
-export { useCreateOrder } from './order';
-export { useCustomerOrders } from './order';
-export type { UseCreateOrderReturn, UseCustomerOrdersReturn } from './order';
-
-// ============================================
-// Notification Hooks
-// ============================================
-export { useFCM } from './use-fcm';
-export type { UseFCMReturn } from './use-fcm';
-
-// ============================================
-// Customer Hooks
-// ============================================
-export * from './customer';
-
-// ============================================
-// Admin Hooks (re-exported)
-// ============================================
+export * from './auth';
+export * from './public';
 export * from './admin';
+export * from './customer';
+export * from './worker';
+export * from './chat';
+export * from './notifications';
+export * from './shared';

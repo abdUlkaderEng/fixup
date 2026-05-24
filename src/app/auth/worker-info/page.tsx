@@ -33,8 +33,8 @@ import ServicesPicker from '@/components/publicComponents/services-picker';
 import { ImageUploadField } from '@/components/image-upload';
 import { getWorkerSignupDraft, type WorkerSignupDraft } from '../signup-flow';
 import { workerInfoSchema, type WorkerInfoInput } from '../schemas';
-import { useWorkerRegister } from '@/hooks/use-worker-register';
-import { usePublicCareers } from '@/hooks/public/use-public-careers';
+import { useWorkerRegister } from '@/hooks/auth';
+import { usePublicCareers } from '@/hooks/public';
 
 export default function WorkerInfoPage() {
    const router = useRouter();

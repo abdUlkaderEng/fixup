@@ -7,7 +7,7 @@ import type {
    WorkerPriceOfferDraft,
 } from '@/types/entities';
 
-export interface UsePriceOfferReturn {
+export interface UseWorkerPriceOfferReturn {
    submitPriceOffer: (
       draft: WorkerPriceOfferDraft
    ) => Promise<CreateWorkerPriceOfferResponse>;
@@ -16,7 +16,7 @@ export interface UsePriceOfferReturn {
    resetPriceOffer: () => void;
 }
 
-export function usePriceOffer(): UsePriceOfferReturn {
+export function useWorkerPriceOffer(): UseWorkerPriceOfferReturn {
    const mutation = useMutation<
       CreateWorkerPriceOfferResponse,
       WorkerPriceOfferDraft
@@ -40,5 +40,3 @@ export function usePriceOffer(): UsePriceOfferReturn {
       resetPriceOffer: mutation.reset,
    };
 }
-
-export default usePriceOffer;

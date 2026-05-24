@@ -4,8 +4,7 @@ import { useSession } from 'next-auth/react';
 import { Pencil, LogOut, X, Check, Loader2, Wrench } from 'lucide-react';
 import { Form } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
-import { useAuthToken } from '@/hooks/use-auth-token';
-import { useLogout } from '@/hooks/use-logout';
+import { useAuthToken, useLogout } from '@/hooks/auth';
 import { useProfileForm, useProfileSubmit } from './hooks';
 import { useProfileMode } from './ProfileModeProvider';
 import {
