@@ -1,6 +1,8 @@
-export { updateWorkerProfile } from './updateProfile';
-export { workerOrdersApi } from './orders';
-export { workerPriceOffersApi } from './priceOffer';
+export { updateWorkerProfile } from './profile';
 export { workerNotificationsApi } from './notifications';
-export { workerOffersApi } from './offers';
-export { workerConfirmedOrdersApi } from './confirmed-orders';
+export {
+   workerPendingOrdersApi,
+   workerPendingOffersApi,
+   workerConfirmedOrdersApi,
+   workerPriceOffersApi,
+} from './orders';

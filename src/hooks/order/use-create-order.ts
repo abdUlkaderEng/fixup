@@ -6,12 +6,12 @@ import {
    generateRequestKey,
    useMutation,
 } from '@/hooks/admin/shared';
-import { ordersApi } from '@/api/orders';
 import type {
    CreateOrderRequest,
    CreateOrderResponse,
 } from '@/types/entities/order';
 import type { UseMutationReturn } from '@/hooks/admin/shared';
+import { customerOrdersApi } from '@/api/customer';
 
 export interface UseCreateOrderReturn extends UseMutationReturn<
    CreateOrderResponse,
@@ -24,7 +24,7 @@ export interface UseCreateOrderReturn extends UseMutationReturn<
 
 export function useCreateOrder(): UseCreateOrderReturn {
    const mutationFn = useCallback(
-      (data: CreateOrderRequest) => ordersApi.create(data),
+      (data: CreateOrderRequest) => customerOrdersApi.create(data),
       []
    );
 

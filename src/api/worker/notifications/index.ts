@@ -1,14 +1,13 @@
 import { get, patch } from '@/api/admin/shared';
 import type { WorkerNotification } from '@/types/entities/notification';
-
-const ENDPOINT = '/notifications_orders' as const;
+import { WORKER_ENDPOINTS } from '../shared/endpoints';
 
 export const workerNotificationsApi = {
    async getAll(): Promise<WorkerNotification[]> {
-      return get<WorkerNotification[]>(ENDPOINT);
+      return get<WorkerNotification[]>(WORKER_ENDPOINTS.NOTIFICATIONS);
    },
 
    async markRead(id: number): Promise<void> {
-      return patch<void>(`/notifications/${id}/mark-read`);
+      return patch<void>(WORKER_ENDPOINTS.NOTIFICATION_MARK_READ(id));
    },
-};
+} as const;

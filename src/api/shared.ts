@@ -12,3 +12,10 @@ export const handleApiError = (error: unknown): never => {
          'حدث خطأ غير متوقع'
    );
 };
+
+/** Normalize either `{ data: [...] }` or a bare `[...]` payload into an array. */
+export function unwrapList<T>(payload: unknown): T[] {
+   if (Array.isArray(payload)) return payload as T[];
+   const wrapped = (payload as { data?: unknown })?.data;
+   return Array.isArray(wrapped) ? (wrapped as T[]) : [];
+}

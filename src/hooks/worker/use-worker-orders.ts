@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback } from 'react';
-import { workerOrdersApi } from '@/api/worker';
+import { workerPendingOrdersApi } from '@/api/worker';
 import { useFetch, generateRequestKey } from '@/hooks/admin/shared';
 import type { WorkerOrder } from '@/types/entities/order';
 
@@ -23,7 +23,7 @@ export function useWorkerOrders(
 ): UseWorkerOrdersReturn {
    const { autoFetch = true } = options;
 
-   const fetcher = useCallback(() => workerOrdersApi.getAll(), []);
+   const fetcher = useCallback(() => workerPendingOrdersApi.getAll(), []);
 
    const { data, isLoading, error, refetch, setData } = useFetch<WorkerOrder[]>(
       fetcher,

@@ -4,8 +4,7 @@ import type {
    WorkerOffersApiResponse,
    WorkerPendingOffer,
 } from '@/types/worker/orders-workflow';
-
-const ENDPOINT = '/worker/offers' as const;
+import { WORKER_ENDPOINTS } from '../shared/endpoints';
 
 function mapPendingOffer(offer: WorkerOfferBackend): WorkerPendingOffer {
    return {
@@ -26,9 +25,11 @@ function mapPendingOffer(offer: WorkerOfferBackend): WorkerPendingOffer {
    };
 }
 
-export const workerOffersApi = {
-   async getPending(): Promise<WorkerPendingOffer[]> {
-      const response = await get<WorkerOffersApiResponse>(ENDPOINT);
+export const workerPendingOffersApi = {
+   async getAll(): Promise<WorkerPendingOffer[]> {
+      const response = await get<WorkerOffersApiResponse>(
+         WORKER_ENDPOINTS.PENDING_OFFERS
+      );
       return response.data.map(mapPendingOffer);
    },
-};
+} as const;

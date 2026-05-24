@@ -3,8 +3,7 @@ import type {
    CreateWorkerPriceOfferRequest,
    CreateWorkerPriceOfferResponse,
 } from '@/types/entities';
-
-const ENDPOINT = '/price-offers' as const;
+import { WORKER_ENDPOINTS } from '../shared/endpoints';
 
 export const workerPriceOffersApi = {
    async create(
@@ -13,6 +12,6 @@ export const workerPriceOffersApi = {
       return post<
          CreateWorkerPriceOfferResponse,
          CreateWorkerPriceOfferRequest
-      >(ENDPOINT, payload);
+      >(WORKER_ENDPOINTS.PRICE_OFFERS, payload);
    },
-};
+} as const;

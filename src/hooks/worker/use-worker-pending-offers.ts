@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useMemo, useState } from 'react';
-import { workerOffersApi } from '@/api/worker';
+import { workerPendingOffersApi } from '@/api/worker';
 import { useFetch, generateRequestKey } from '@/hooks/admin/shared';
 import type { WorkerPendingOffer } from '@/types/worker/orders-workflow';
 import { mockWorkerPendingOffers } from './mock-workflow-orders';
@@ -20,7 +20,7 @@ export interface UseWorkerPendingOffersReturn {
 export function useWorkerPendingOffers(): UseWorkerPendingOffersReturn {
    const fetcher = useCallback(async () => {
       try {
-         return await workerOffersApi.getPending();
+         return await workerPendingOffersApi.getAll();
       } catch {
          return mockWorkerPendingOffers;
       }

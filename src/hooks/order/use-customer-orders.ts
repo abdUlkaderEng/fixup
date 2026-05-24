@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback } from 'react';
-import { ordersApi } from '@/api/orders';
+import { customerOrdersApi } from '@/api/customer';
 import { useFetch, generateRequestKey } from '@/hooks/admin/shared';
 import type { CustomerOrder } from '@/types/entities/order';
 
@@ -21,7 +21,7 @@ export function useCustomerOrders(
 ): UseCustomerOrdersReturn {
    const { autoFetch = true } = options;
 
-   const fetcher = useCallback(() => ordersApi.getAll(), []);
+   const fetcher = useCallback(() => customerOrdersApi.getAll(), []);
 
    const { data, isLoading, error, refetch } = useFetch<CustomerOrder[]>(
       fetcher,
