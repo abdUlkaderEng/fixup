@@ -17,10 +17,10 @@ import {
 import { onFcmMessage } from '@/lib/notification-events';
 import { WorkerChatSheet } from '@/components/chat';
 import type { WorkerPriceOfferDraft, WorkerOrder } from '@/types/entities';
-import { PriceOfferModal } from './price-offer-modal';
+import { PriceOfferModal } from '../orders/price-offer-modal';
+import { WorkerOrderListItem } from '../orders/worker-order-list-item';
 import { WorkerDashboardHeader } from './worker-dashboard-header';
 import { WorkerDashboardOverview } from './worker-dashboard-overview';
-import { WorkerOrderListItem } from './worker-order-list-item';
 
 export function WorkerDashboardPageContent() {
    useAuthToken();

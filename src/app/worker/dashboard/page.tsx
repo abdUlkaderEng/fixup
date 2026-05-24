@@ -1,4 +1,4 @@
-import { WorkerDashboardPageContent } from '@/components/worker/worker-dashboard-page-content';
+import { WorkerDashboardPageContent } from '@/components/worker/dashboard';
 
 export default function WorkerDashboardPage() {
    return <WorkerDashboardPageContent />;

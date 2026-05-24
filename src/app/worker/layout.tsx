@@ -1,11 +1,11 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
-import { WorkerSidebar } from '@/components/worker/sidebar';
 import {
+   WorkerSidebar,
    SidebarProvider,
    useSidebar,
-} from '@/components/worker/sidebar-context';
+} from '@/components/worker/sidebar';
 import { useAuthToken } from '@/hooks/auth';
 import { cn } from '@/lib/utils';
 

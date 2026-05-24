@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { CheckCircle2, Clock3, LayoutDashboard, User } from 'lucide-react';
 import { useWorkerNotifications } from '@/hooks/worker';
-import { useSidebar } from '../sidebar-context';
+import { useSidebar } from './sidebar-context';
 import type { ResolvedNavLink } from './types';
 
 const NAV_LINKS = [

@@ -1,3 +1,5 @@
+export { WorkerSidebar } from './sidebar';
+export { SidebarProvider, useSidebar } from './sidebar-context';
 export { SidebarHeader } from './sidebar-header';
 export { SidebarIdentityCard } from './sidebar-identity-card';
 export { SidebarNav } from './sidebar-nav';

@@ -2,15 +2,13 @@
 
 import { Menu } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import {
-   SidebarHeader,
-   SidebarIdentityCard,
-   SidebarNav,
-   SidebarFooter,
-   NotificationFlyout,
-   MobileNotificationFAB,
-   useWorkerSidebarState,
-} from './sidebar/index';
+import { SidebarHeader } from './sidebar-header';
+import { SidebarIdentityCard } from './sidebar-identity-card';
+import { SidebarNav } from './sidebar-nav';
+import { SidebarFooter } from './sidebar-footer';
+import { NotificationFlyout } from './notification-flyout';
+import { MobileNotificationFAB } from './mobile-notification-fab';
+import { useWorkerSidebarState } from './use-worker-sidebar-state';
 
 export function WorkerSidebar({ workerName }: { workerName: string }) {
    const {

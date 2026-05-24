@@ -1,4 +1,4 @@
-import { WorkerPendingOffersPageContent } from '@/components/worker/worker-pending-offers-page-content';
+import { WorkerPendingOffersPageContent } from '@/components/worker/offers';
 
 export default function WorkerOffersPage() {
    return <WorkerPendingOffersPageContent />;
