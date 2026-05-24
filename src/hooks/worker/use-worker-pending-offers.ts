@@ -2,9 +2,8 @@
 
 import { useCallback, useMemo, useState } from 'react';
 import { workerPendingOffersApi } from '@/api/worker';
-import { useFetch, generateRequestKey } from '@/hooks/admin/shared';
 import type { WorkerPendingOffer } from '@/types/worker/orders-workflow';
-import { mockWorkerPendingOffers } from './mock-workflow-orders';
+import { useWorkerList } from './shared';
 
 export interface UseWorkerPendingOffersReturn {
    offers: WorkerPendingOffer[];
@@ -18,32 +17,30 @@ export interface UseWorkerPendingOffersReturn {
 }
 
 export function useWorkerPendingOffers(): UseWorkerPendingOffersReturn {
-   const fetcher = useCallback(async () => {
-      try {
-         return await workerPendingOffersApi.getAll();
-      } catch {
-         return mockWorkerPendingOffers;
-      }
-   }, []);
+   const fetcher = useCallback(() => workerPendingOffersApi.getAll(), []);
 
-   const { data, isLoading, error, refetch } = useFetch<WorkerPendingOffer[]>(
+   const {
+      items: offers,
+      isLoading,
+      error,
+      refetch,
+   } = useWorkerList<WorkerPendingOffer>({
+      cacheKey: 'worker-pending-offers-list',
       fetcher,
-      generateRequestKey('worker-pending-offers-list'),
-      { errorMessage: 'حدث خطأ أثناء جلب عروض الأسعار المرسلة' }
-   );
+      errorMessage: 'حدث خطأ أثناء جلب عروض الأسعار المرسلة',
+   });
 
-   const offers = useMemo(() => data ?? [], [data]);
-
-   // Locally-tracked ids for offers just submitted in this session, so the dashboard
-   // can hide them immediately without waiting for the canonical refetch to complete.
+   // Locally-tracked ids for offers just submitted in this session, so the
+   // dashboard can hide them immediately without waiting for the canonical
+   // refetch to complete.
    const [optimisticIds, setOptimisticIds] = useState<Set<number>>(
       () => new Set()
    );
 
    const offeredOrderIds = useMemo(() => {
-      const s = new Set<number>(offers.map((o) => o.order_id));
-      optimisticIds.forEach((id) => s.add(id));
-      return s;
+      const set = new Set<number>(offers.map((o) => o.order_id));
+      optimisticIds.forEach((id) => set.add(id));
+      return set;
    }, [offers, optimisticIds]);
 
    const markOrderAsOffered = useCallback((orderId: number) => {

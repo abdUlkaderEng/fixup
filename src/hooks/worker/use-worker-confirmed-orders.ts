@@ -2,9 +2,8 @@
 
 import { useCallback } from 'react';
 import { workerConfirmedOrdersApi } from '@/api/worker';
-import { useFetch, generateRequestKey } from '@/hooks/admin/shared';
 import type { WorkerConfirmedOrder } from '@/types/worker/orders-workflow';
-import { mockWorkerConfirmedOrders } from './mock-workflow-orders';
+import { useWorkerList } from './shared';
 
 export interface UseWorkerConfirmedOrdersReturn {
    orders: WorkerConfirmedOrder[];
@@ -14,26 +13,18 @@ export interface UseWorkerConfirmedOrdersReturn {
 }
 
 export function useWorkerConfirmedOrders(): UseWorkerConfirmedOrdersReturn {
-   const fetcher = useCallback(async () => {
-      try {
-         return await workerConfirmedOrdersApi.getAll();
-      } catch {
-         return mockWorkerConfirmedOrders;
-      }
-   }, []);
+   const fetcher = useCallback(() => workerConfirmedOrdersApi.getAll(), []);
 
-   const { data, isLoading, error, refetch } = useFetch<WorkerConfirmedOrder[]>(
-      fetcher,
-      generateRequestKey('worker-confirmed-orders-list'),
-      {
-         errorMessage: 'حدث خطأ أثناء جلب الطلبات المؤكدة',
-      }
-   );
-
-   return {
-      orders: data ?? [],
+   const {
+      items: orders,
       isLoading,
       error,
       refetch,
-   };
+   } = useWorkerList<WorkerConfirmedOrder>({
+      cacheKey: 'worker-confirmed-orders-list',
+      fetcher,
+      errorMessage: 'حدث خطأ أثناء جلب الطلبات المؤكدة',
+   });
+
+   return { orders, isLoading, error, refetch };
 }

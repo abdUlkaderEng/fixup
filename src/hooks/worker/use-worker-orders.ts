@@ -2,8 +2,8 @@
 
 import { useCallback } from 'react';
 import { workerPendingOrdersApi } from '@/api/worker';
-import { useFetch, generateRequestKey } from '@/hooks/admin/shared';
 import type { WorkerOrder } from '@/types/entities/order';
+import { useWorkerList } from './shared';
 
 export interface UseWorkerOrdersReturn {
    orders: WorkerOrder[];
@@ -21,22 +21,20 @@ export interface UseWorkerOrdersOptions {
 export function useWorkerOrders(
    options: UseWorkerOrdersOptions = {}
 ): UseWorkerOrdersReturn {
-   const { autoFetch = true } = options;
-
    const fetcher = useCallback(() => workerPendingOrdersApi.getAll(), []);
 
-   const { data, isLoading, error, refetch, setData } = useFetch<WorkerOrder[]>(
-      fetcher,
-      generateRequestKey('worker-orders-list'),
-      {
-         autoFetch,
-         errorMessage: 'حدث خطأ أثناء جلب الطلبات',
-      }
-   );
+   const { items, isLoading, error, refetch, setData } =
+      useWorkerList<WorkerOrder>(
+         {
+            cacheKey: 'worker-orders-list',
+            fetcher,
+            errorMessage: 'حدث خطأ أثناء جلب الطلبات',
+         },
+         options
+      );
 
    const now = new Date();
-   const validOrders =
-      data?.filter((order) => new Date(order.expires_at) > now) ?? [];
+   const orders = items.filter((order) => new Date(order.expires_at) > now);
 
    const removeOrder = useCallback(
       (orderId: number) => {
@@ -47,11 +45,5 @@ export function useWorkerOrders(
       [setData]
    );
 
-   return {
-      orders: validOrders,
-      isLoading,
-      error,
-      refetch,
-      removeOrder,
-   };
+   return { orders, isLoading, error, refetch, removeOrder };
 }
