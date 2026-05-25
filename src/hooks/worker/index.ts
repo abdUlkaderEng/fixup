@@ -20,3 +20,15 @@ export {
    useWorkerConfirmedOrders,
    type UseWorkerConfirmedOrdersReturn,
 } from './use-worker-confirmed-orders';
+
+// ============================================
+// Wallet Hooks
+// ============================================
+export {
+   useWorkerWallet,
+   type UseWorkerWalletReturn,
+   type UseWorkerWalletOptions,
+   useWorkerWalletTransactions,
+   type UseWorkerWalletTransactionsReturn,
+   type UseWorkerWalletTransactionsOptions,
+} from './wallet';

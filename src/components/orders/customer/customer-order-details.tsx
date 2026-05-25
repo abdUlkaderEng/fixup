@@ -32,12 +32,15 @@ interface CustomerOrderDetailsProps {
    order: CustomerOrder;
    careers?: PublicCareer[];
    areas?: PublicArea[];
+   /** Fired after a successful "accept offer" so the parent can refetch. */
+   onOfferAccepted?: () => void;
 }
 
 export function CustomerOrderDetails({
    order,
    careers = [],
    areas = [],
+   onOfferAccepted,
 }: CustomerOrderDetailsProps) {
    const statusMeta = getCustomerOrderStatusMeta(order.status);
    const StatusIcon = statusMeta.icon;
@@ -206,7 +209,11 @@ export function CustomerOrderDetails({
                   </SectionPanel>
                )}
 
-               <OffersPanel offers={order.offers} />
+               <OffersPanel
+                  offers={order.offers}
+                  orderStatus={order.status}
+                  onOfferAccepted={onOfferAccepted}
+               />
             </div>
 
             <div className="space-y-4">

@@ -9,3 +9,8 @@ export {
    type UseCustomerOrdersOptions,
    type UseCustomerOrdersReturn,
 } from './use-customer-orders';
+export {
+   useAcceptOffer,
+   type UseAcceptOfferReturn,
+   type UseAcceptOfferOptions,
+} from './use-accept-offer';

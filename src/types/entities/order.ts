@@ -231,3 +231,12 @@ export interface CreateOrderResponse {
    message: string;
    data: Order;
 }
+
+// ============================================
+// Accept Offer
+// ============================================
+
+export interface AcceptOfferResponse {
+   message: string;
+   order: Order;
+}

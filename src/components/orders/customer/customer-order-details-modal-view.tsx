@@ -24,12 +24,17 @@ export function CustomerOrderDetailsModalView({
 
    const router = useRouter();
    const { status: sessionStatus } = useSession();
-   const { orders, isLoading } = useCustomerOrders();
+   const { orders, isLoading, refetch } = useCustomerOrders();
    const { careers } = usePublicCareers();
    const { areas } = usePublicAreas();
    const order = orders.find((item) => item.id === orderId);
 
    const handleClose = () => router.back();
+
+   // When the backend ships a customer "confirmed orders" view, swap this
+   // for: router.replace('/customer/confirmed-orders'). For now, just
+   // re-fetch so the modal reflects the new accepted state.
+   const handleOfferAccepted = () => refetch();
 
    if (sessionStatus === 'loading' || isLoading) {
       return (
@@ -85,7 +90,12 @@ export function CustomerOrderDetailsModalView({
          onClose={handleClose}
          closeButtonText="إغلاق"
       >
-         <CustomerOrderDetails order={order} careers={careers} areas={areas} />
+         <CustomerOrderDetails
+            order={order}
+            careers={careers}
+            areas={areas}
+            onOfferAccepted={handleOfferAccepted}
+         />
       </AppModal>
    );
 }

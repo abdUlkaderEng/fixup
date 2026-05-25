@@ -13,6 +13,10 @@ export { SectionPanel } from './section-panel';
 export { StatusBadge, useStatusBadge } from './status-badge';
 export type { StatusVariant, StatusConfig } from './status-badge';
 
+// Pagination
+export { PaginationControls } from './pagination-controls';
+export type { PaginationControlsProps } from './pagination-controls';
+
 // Loading & Empty States
 export { LoadingState } from './loading-state';
 export { EmptyState } from './empty-state';

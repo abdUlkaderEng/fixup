@@ -6,3 +6,4 @@ export {
    workerConfirmedOrdersApi,
    workerPriceOffersApi,
 } from './orders';
+export { workerWalletApi, type WalletTransactionsParams } from './wallet';

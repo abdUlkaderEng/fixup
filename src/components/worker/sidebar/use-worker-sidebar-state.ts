@@ -2,7 +2,13 @@
 
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { CheckCircle2, Clock3, LayoutDashboard, User } from 'lucide-react';
+import {
+   CheckCircle2,
+   Clock3,
+   LayoutDashboard,
+   User,
+   Wallet,
+} from 'lucide-react';
 import { useWorkerNotifications } from '@/hooks/worker';
 import { useSidebar } from './sidebar-context';
 import type { ResolvedNavLink } from './types';
@@ -15,6 +21,7 @@ const NAV_LINKS = [
       label: 'الطلبات المؤكدة',
       icon: CheckCircle2,
    },
+   { href: '/worker/wallet', label: 'محفظتي', icon: Wallet },
    { href: '/worker/profile', label: 'الملف الشخصي', icon: User },
 ] as const;
 
