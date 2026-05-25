@@ -17,9 +17,9 @@ import { AppModal } from '@/components/ui/app-modal';
 import { ServicesPicker } from '@/components/form-pickers/services-picker';
 import { ImageUploadField } from '@/components/image-upload';
 import type { ImageUploadState } from '@/components/image-upload';
-import { workersApi } from '@/api/admin';
 import type { Worker, WorkerStatus } from '@/types/entities/worker';
 import type { UpdateWorkerRequest } from '@/types/admin/workers';
+import { useEditWorkerSave } from './use-edit-worker-save';
 
 const STATUS_OPTIONS: { value: WorkerStatus; label: string }[] = [
    { value: 'waiting', label: 'قيد الانتظار' },
@@ -59,42 +59,27 @@ function EditWorkerForm({
       newFiles: [],
       deletedIds: [],
    });
-   const [isUploadingImages, setIsUploadingImages] = useState(false);
+
+   const { isUploadingImages, save } = useEditWorkerSave({
+      workerId: worker.id,
+      onSave,
+      onSuccess: onClose,
+   });
 
    const isBusy = isUpdating || isUploadingImages;
 
-   const handleSave = async () => {
-      // 1. Delete marked images
-      if (imageState.deletedIds.length > 0) {
-         await Promise.all(
-            imageState.deletedIds.map((id) => workersApi.deleteImage(id))
-         );
-      }
-
-      // 2. Upload new images
-      if (imageState.newFiles.length > 0) {
-         setIsUploadingImages(true);
-         try {
-            await workersApi.uploadImages(worker.id, imageState.newFiles);
-         } catch {
-            setIsUploadingImages(false);
-            return;
-         }
-         setIsUploadingImages(false);
-      }
-
-      // 3. Save worker fields
-      const success = await onSave(worker.id, {
-         status,
-         service_ids: serviceIds,
-         years_experience: yearsExperience
-            ? Number(yearsExperience)
-            : undefined,
-         about: about || undefined,
+   const handleSave = () =>
+      save({
+         imageState,
+         fields: {
+            status,
+            service_ids: serviceIds,
+            years_experience: yearsExperience
+               ? Number(yearsExperience)
+               : undefined,
+            about: about || undefined,
+         },
       });
-
-      if (success) onClose();
-   };
 
    return (
       <div className="space-y-5">

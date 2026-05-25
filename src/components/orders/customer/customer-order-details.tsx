@@ -1,27 +1,20 @@
 'use client';
 
-import { useState } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import {
-   BadgeDollarSign,
    CalendarDays,
    Clock3,
    Images,
    MapPinned,
-   MessageCircle,
    RefreshCcw,
    Sparkles,
    Star,
    TimerOff,
    UserRound,
    Wrench,
-   Zap,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { SectionPanel } from '@/components/ui';
-import { CustomerChatSheet } from '@/components/chat';
-import type { CustomerOrder, OrderOffer } from '@/types/entities/order';
+import type { CustomerOrder } from '@/types/entities/order';
 import type { PublicCareer } from '@/types/public/careers';
 import type { PublicArea } from '@/types/public/areas';
 import {
@@ -32,157 +25,13 @@ import {
    getOrderPrimaryImage,
    getOrderPriorityLabel,
 } from './order-utils';
+import { OffersPanel } from './details/offers-panel';
+import { OrderStatusActions } from './details/order-status-actions';
 
 interface CustomerOrderDetailsProps {
    order: CustomerOrder;
    careers?: PublicCareer[];
    areas?: PublicArea[];
-}
-
-function OfferStatusBadge({ status }: { status: string }) {
-   const map: Record<string, string> = {
-      pending: 'قيد المراجعة',
-      accepted: 'مقبول',
-      rejected: 'مرفوض',
-   };
-   const colorMap: Record<string, string> = {
-      pending: 'bg-amber-50 text-amber-700 border-amber-200',
-      accepted: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-      rejected: 'bg-rose-50 text-rose-700 border-rose-200',
-   };
-   return (
-      <span
-         className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${colorMap[status] ?? 'bg-muted text-muted-foreground border-border'}`}
-      >
-         {map[status] ?? status}
-      </span>
-   );
-}
-
-function ChatTrigger({ offer }: { offer: OrderOffer }) {
-   const [open, setOpen] = useState(false);
-   const [conversationId, setConversationId] = useState<number | undefined>(
-      offer.conversation_id ?? undefined
-   );
-   return (
-      <>
-         <Button
-            size="sm"
-            variant="outline"
-            onClick={() => setOpen(true)}
-            className="gap-1.5"
-         >
-            <MessageCircle className="h-4 w-4" />
-            تواصل
-         </Button>
-         <CustomerChatSheet
-            open={open}
-            onOpenChange={setOpen}
-            workerId={offer.worker_id}
-            conversationId={conversationId}
-            onConversationCreated={setConversationId}
-         />
-      </>
-   );
-}
-
-function OffersPanel({ offers }: { offers: OrderOffer[] }) {
-   if (offers.length === 0) {
-      return (
-         <SectionPanel
-            title="عروض الأسعار"
-            icon={<BadgeDollarSign className="h-5 w-5" />}
-            className="border-border/60"
-         >
-            <p className="py-4 text-center text-sm text-muted-foreground">
-               لم يصل أي عرض سعر بعد
-            </p>
-         </SectionPanel>
-      );
-   }
-
-   return (
-      <SectionPanel
-         title={`عروض الأسعار (${offers.length})`}
-         icon={<BadgeDollarSign className="h-5 w-5" />}
-         className="border-border/60"
-      >
-         <div className="space-y-3">
-            {offers.map((offer) => (
-               <div
-                  key={offer.id}
-                  className="flex flex-col gap-2 rounded-2xl border border-border/60 bg-muted/30 p-4 sm:flex-row sm:items-center sm:justify-between"
-               >
-                  <div className="space-y-1">
-                     <p className="text-lg font-bold text-foreground">
-                        {offer.price} ر.س
-                     </p>
-                     <p className="text-xs text-muted-foreground">
-                        {offer.time_range}
-                     </p>
-                  </div>
-                  <div className="flex flex-col items-start gap-2 sm:items-end">
-                     <OfferStatusBadge status={offer.status} />
-                     <p className="text-xs text-muted-foreground">
-                        {formatOrderDate(offer.created_at)}
-                     </p>
-                     <ChatTrigger offer={offer} />
-                  </div>
-               </div>
-            ))}
-         </div>
-      </SectionPanel>
-   );
-}
-
-function OrderStatusActions({ order }: { order: CustomerOrder }) {
-   const mapHref =
-      order.address.latitude && order.address.longitude
-         ? `https://www.google.com/maps?q=${order.address.latitude},${order.address.longitude}`
-         : null;
-
-   if (order.status === 'accepted' && mapHref) {
-      return (
-         <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
-            <Button asChild variant="outline" className="h-11 rounded-xl">
-               <Link href="/customer/orders/create">إنشاء طلب آخر</Link>
-            </Button>
-            <Button asChild className="h-11 rounded-xl">
-               <a href={mapHref} target="_blank" rel="noreferrer">
-                  عرض الموقع على الخريطة
-               </a>
-            </Button>
-         </div>
-      );
-   }
-
-   if (order.status === 'completed' || order.status === 'cancelled') {
-      return (
-         <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
-            <Button asChild variant="outline" className="h-11 rounded-xl">
-               <Link href="/customer/orders">العودة إلى الطلبات</Link>
-            </Button>
-            <Button asChild className="h-11 rounded-xl">
-               <Link href="/customer/orders/create">
-                  <RefreshCcw className="h-4 w-4" />
-                  إنشاء طلب مشابه
-               </Link>
-            </Button>
-         </div>
-      );
-   }
-
-   return (
-      <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
-         <Button asChild variant="outline" className="h-11 rounded-xl">
-            <Link href="/customer/orders/create">تعديل طلب جديد</Link>
-         </Button>
-         <Button disabled className="h-11 rounded-xl">
-            <Clock3 className="h-4 w-4" />
-            بانتظار تحديث الحالة
-         </Button>
-      </div>
-   );
 }
 
 export function CustomerOrderDetails({
