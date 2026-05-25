@@ -8,6 +8,7 @@ import { AddressesModal } from './addresses-modal';
 import { MessagesModal } from './messages';
 import { ReviewsModal } from './reviews-modal';
 import { WorkerRequestsModal } from './worker-requests';
+import { WalletModal } from './wallet';
 
 /**
  * Modal controller component
@@ -27,6 +28,7 @@ export function ModalController() {
          <MessagesModal open={modal === 'messages'} />
          <ReviewsModal open={modal === 'reviews'} />
          <WorkerRequestsModal open={modal === 'worker-requests'} />
+         <WalletModal open={modal === 'wallet'} />
       </>
    );
 }

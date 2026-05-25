@@ -13,15 +13,13 @@
 //   import { adminApi } from '@/api/admin';
 
 import { workersApi } from './workers';
-import type {
-   UpdateWorkerRequest,
-   UpdateWorkerResponse,
-   DeleteWorkerResponse,
-} from './workers';
+import { UpdateWorkerRequest } from './../../types/admin/workers';
+import type { UpdateWorkerResponse, DeleteWorkerResponse } from './workers';
 import { servicesApi } from './services';
 import { careersApi } from './careers';
 import { addressesApi } from './addresses';
 import { adminMessageTopicsApi, adminMessageTemplatesApi } from './messages';
+import { walletApi, jobFeesApi, topupApi } from './wallet';
 import {
    AdminApiError,
    handleApiError,
@@ -49,6 +47,9 @@ export {
    addressesApi,
    adminMessageTopicsApi,
    adminMessageTemplatesApi,
+   walletApi,
+   jobFeesApi,
+   topupApi,
 };
 
 // ============================================

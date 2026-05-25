@@ -11,6 +11,7 @@ import {
    Star,
    UserPlus,
    Wrench,
+   Wallet,
 } from 'lucide-react';
 import type { NavItem } from '@/types/admin';
 
@@ -62,9 +63,16 @@ export const ADMIN_NAVIGATION: NavItem[] = [
    },
    {
       id: 'worker-requests',
-      label: 'طلبات العمال',
+      label: 'إدارة أصحاب المهن',
       href: '/admin/dashboard?modal=worker-requests',
       icon: UserPlus,
-      description: 'إدارة طلبات التسجيل',
+      description: 'إدارة أصحاب الورشات ومعلوماتهم',
+   },
+   {
+      id: 'wallet',
+      label: 'إدارة المحفظة',
+      href: '/admin/dashboard?modal=wallet',
+      icon: Wallet,
+      description: 'رسوم المهن وشحن محافظ العمال',
    },
 ];

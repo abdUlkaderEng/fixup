@@ -488,4 +488,9 @@ export const QUICK_ACTIONS: QuickActionProps[] = [
       modal: 'worker-requests',
       description: 'إدارة طلبات التسجيل',
    },
+   {
+      label: 'إدارة المحفظة',
+      modal: 'wallet',
+      description: 'رسوم المهن وشحن محافظ العمال',
+   },
 ];

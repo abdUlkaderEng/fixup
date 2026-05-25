@@ -78,3 +78,15 @@ export {
    type UseMessageTemplatesReturn,
    type UseMessageTemplatesOptions,
 } from './use-message-templates';
+
+// ============================================
+// Wallet Hooks
+// ============================================
+export {
+   useJobFees,
+   type UseJobFeesReturn,
+   type UseJobFeesOptions,
+   useWalletTopup,
+   type UseWalletTopupReturn,
+   type UseWalletTopupOptions,
+} from './wallet';

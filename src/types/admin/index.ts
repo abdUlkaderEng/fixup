@@ -65,3 +65,16 @@ export type {
    UpdateWorkerResponse,
    DeleteWorkerResponse,
 } from './workers';
+
+// ============================================
+// Wallet Types
+// ============================================
+export type {
+   JobFee,
+   CreateJobFeeRequest,
+   UpdateJobFeeRequest,
+   JobFeeResponse,
+   WalletTopupRequest,
+   WalletTransaction,
+   WalletTopupResponse,
+} from './wallet';

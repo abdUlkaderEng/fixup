@@ -7,3 +7,4 @@ export { StatCard } from './stat-card';
 export { QuickActionCard } from './quick-action-card';
 export { ListItemRow, type ListItemRowProps } from './list-item-row';
 export { InlineAddRow, type InlineAddRowProps } from './inline-add-row';
+export { WorkerPicker, type WorkerPickerProps } from './worker-picker';
