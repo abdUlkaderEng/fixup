@@ -313,6 +313,72 @@
 }
 
 /* ============================================
+   HERO — orbit chip animations
+   ============================================ */
+
+@keyframes hero-orbit-cw {
+   0%,
+   100% {
+      transform: translate(0, -10px);
+   }
+   25% {
+      transform: translate(10px, 0);
+   }
+   50% {
+      transform: translate(0, 10px);
+   }
+   75% {
+      transform: translate(-10px, 0);
+   }
+}
+
+@keyframes hero-orbit-ccw {
+   0%,
+   100% {
+      transform: translate(0, 10px);
+   }
+   25% {
+      transform: translate(-10px, 0);
+   }
+   50% {
+      transform: translate(0, -10px);
+   }
+   75% {
+      transform: translate(10px, 0);
+   }
+}
+
+@keyframes hero-float {
+   0%,
+   100% {
+      transform: translateY(0);
+   }
+   50% {
+      transform: translateY(-14px);
+   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+   .hero-orbit-cw,
+   .hero-orbit-ccw,
+   .hero-float {
+      animation: none !important;
+   }
+}
+
+.hero-orbit-cw {
+   animation: hero-orbit-cw 9s ease-in-out infinite;
+}
+
+.hero-orbit-ccw {
+   animation: hero-orbit-ccw 11s ease-in-out infinite;
+}
+
+.hero-float {
+   animation: hero-float 6s ease-in-out infinite;
+}
+
+/* ============================================
    APP SURFACES - shared sections/cards
    ============================================ */
 
