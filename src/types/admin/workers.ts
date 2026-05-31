@@ -21,6 +21,13 @@ export type { Worker, WorkerStatus };
 
 export interface WorkerFilters extends PaginationParams {
    status?: WorkerStatus;
+   /** Filter by (partial) phone number. */
+   phone_number?: string;
+   /** Filter by (partial) worker name. */
+   name?: string;
+   // Filtering by career is disabled for now — re-enable when needed.
+   // /** Filter by the worker's career id. */
+   // career_id?: number;
 }
 
 // ============================================

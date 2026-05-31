@@ -62,6 +62,7 @@ export {
    useWorkers,
    type UseWorkersReturn,
    type UseWorkersOptions,
+   type WorkerFilterPatch,
 } from './use-workers';
 export {
    useWorkerMutations,

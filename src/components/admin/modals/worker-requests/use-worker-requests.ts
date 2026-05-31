@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useSession } from 'next-auth/react';
-import { useWorkers, useWorkerMutations } from '@/hooks';
+import { useWorkers, useWorkerMutations, useDebouncedValue } from '@/hooks';
 import type { Worker } from '@/types/entities/worker';
 
 export function useWorkerRequests(open: boolean) {
@@ -24,6 +24,8 @@ export function useWorkerRequests(open: boolean) {
       totalWorkers,
       statusFilter,
       setStatusFilter,
+      setNameFilter,
+      setPhoneFilter,
       nextPage,
       prevPage,
       refetch,
@@ -33,6 +35,22 @@ export function useWorkerRequests(open: boolean) {
    } = workersQuery;
 
    const mutations = useWorkerMutations(refetch);
+
+   // Name / phone search inputs (debounced → server-side filter).
+   const [nameInput, setNameInput] = useState('');
+   const [phoneInput, setPhoneInput] = useState('');
+   const debouncedName = useDebouncedValue(nameInput, 350);
+   const debouncedPhone = useDebouncedValue(phoneInput, 350);
+
+   useEffect(() => {
+      setNameFilter(debouncedName.trim());
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, [debouncedName]);
+
+   useEffect(() => {
+      setPhoneFilter(debouncedPhone.trim());
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, [debouncedPhone]);
 
    // Reset fetch gate when filter changes
    useEffect(() => {
@@ -79,6 +97,11 @@ export function useWorkerRequests(open: boolean) {
       refetch,
       hasNextPage,
       hasPrevPage,
+      // Search inputs
+      nameInput,
+      setNameInput,
+      phoneInput,
+      setPhoneInput,
       // Mutations
       isUpdating: mutations.isUpdating,
       isDeleting: mutations.isDeleting,

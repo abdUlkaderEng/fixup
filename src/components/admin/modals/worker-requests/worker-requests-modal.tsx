@@ -4,12 +4,15 @@ import {
    AlertCircle,
    ChevronLeft,
    ChevronRight,
+   Phone,
    RefreshCw,
+   Search,
 } from 'lucide-react';
 import { AppModal } from '@/components/ui/app-modal';
 import { LoadingState } from '@/components/ui/loading-state';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
    Select,
    SelectContent,
@@ -40,6 +43,10 @@ export function WorkerRequestsModal({ open }: BaseModalProps) {
       totalWorkers,
       statusFilter,
       setStatusFilter,
+      nameInput,
+      setNameInput,
+      phoneInput,
+      setPhoneInput,
       nextPage,
       prevPage,
       refetch,
@@ -67,29 +74,57 @@ export function WorkerRequestsModal({ open }: BaseModalProps) {
             closeButtonText="إغلاق"
          >
             <div className="space-y-4">
-               {/* Status Filter */}
-               <div className="flex items-center gap-4 pb-2 border-b border-gray-200">
-                  <label className="text-sm text-gray-600">حالة الحساب:</label>
-                  <Select
-                     value={statusFilter}
-                     onValueChange={(value) =>
-                        setStatusFilter(value as WorkerStatus)
-                     }
-                  >
-                     <SelectTrigger className="w-40 admin-input">
-                        <SelectValue />
-                     </SelectTrigger>
-                     <SelectContent>
-                        {STATUS_OPTIONS.map((opt) => (
-                           <SelectItem key={opt.value} value={opt.value}>
-                              {opt.label}
-                           </SelectItem>
-                        ))}
-                     </SelectContent>
-                  </Select>
-                  <span className="text-sm text-gray-500 mr-auto">
-                     {totalWorkers} عامل
-                  </span>
+               {/* Filters */}
+               <div className="space-y-3 pb-3 border-b border-gray-200">
+                  {/* Status + count */}
+                  <div className="flex items-center gap-4">
+                     <label className="text-sm text-gray-600">
+                        حالة الحساب:
+                     </label>
+                     <Select
+                        value={statusFilter}
+                        onValueChange={(value) =>
+                           setStatusFilter(value as WorkerStatus)
+                        }
+                     >
+                        <SelectTrigger className="w-40 admin-input">
+                           <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                           {STATUS_OPTIONS.map((opt) => (
+                              <SelectItem key={opt.value} value={opt.value}>
+                                 {opt.label}
+                              </SelectItem>
+                           ))}
+                        </SelectContent>
+                     </Select>
+                     <span className="text-sm text-gray-500 mr-auto">
+                        {totalWorkers} عامل
+                     </span>
+                  </div>
+
+                  {/* Name + phone search */}
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                     <div className="relative">
+                        <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                        <Input
+                           value={nameInput}
+                           onChange={(e) => setNameInput(e.target.value)}
+                           placeholder="بحث بالاسم..."
+                           className="admin-input h-10 pr-10"
+                        />
+                     </div>
+                     <div className="relative">
+                        <Phone className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                        <Input
+                           value={phoneInput}
+                           onChange={(e) => setPhoneInput(e.target.value)}
+                           placeholder="بحث برقم الهاتف..."
+                           inputMode="tel"
+                           className="admin-input h-10 pr-10"
+                        />
+                     </div>
+                  </div>
                </div>
 
                {/* Loading */}

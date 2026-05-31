@@ -42,6 +42,10 @@ export interface PaginationParams {
 
 export interface WorkerFilters extends PaginationParams {
    status?: string;
+   phone_number?: string;
+   name?: string;
+   // Filtering by career is disabled for now — re-enable when needed.
+   // career_id?: number;
 }
 
 export interface ServiceFilters extends PaginationParams {
@@ -66,6 +70,9 @@ export function buildQueryString(
 export function buildWorkerQuery(filters: WorkerFilters): string {
    return buildQueryString({
       status: filters.status,
+      phone_number: filters.phone_number,
+      name: filters.name,
+      // career_id: filters.career_id, // career filtering disabled for now
       page: filters.page && filters.page > 1 ? filters.page : undefined,
       per_page: filters.perPage,
    });
@@ -135,6 +142,7 @@ export async function del<T>(url: string): Promise<T> {
 export const ENDPOINTS = {
    WORKERS: {
       BASE: '/admin/worker',
+      FILTERS: '/admin/workers/filters',
    },
    SERVICES: {
       BASE: '/admin/services',

@@ -1,26 +1,13 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-   Briefcase,
-   ChevronDown,
-   Loader2,
-   Search,
-   User as UserIcon,
-   Wrench,
-   X,
-} from 'lucide-react';
-import {
-   Select,
-   SelectContent,
-   SelectItem,
-   SelectTrigger,
-} from '@/components/ui/select';
+import { useCallback, useEffect, useState } from 'react';
+import { ChevronDown, Phone, Search, User as UserIcon, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { LoadingState } from '@/components/ui/loading-state';
 import { EmptyState } from '@/components/ui/empty-state';
-import { useCareers, useWorkers } from '@/hooks/admin';
+import { useWorkers } from '@/hooks/admin';
+import { useDebouncedValue } from '@/hooks/shared';
 import { cn } from '@/lib/utils';
 import type { Worker } from '@/types/entities/worker';
 
@@ -37,13 +24,14 @@ export interface WorkerPickerProps {
    label?: string;
    /** Disable while parent is busy (e.g. submitting). */
    disabled?: boolean;
-   /** Initial career filter id (optional). */
-   defaultCareerId?: number;
    /** Show only active workers (default true). */
    activeOnly?: boolean;
    /** Per-page count for the worker list (default 50). */
    perPage?: number;
    className?: string;
+   // Career filtering is disabled for now, so `defaultCareerId` is omitted.
+   // To restore it, re-add the prop here, a career <Select> below, and the
+   // matching `careerId` filter in useWorkers.
 }
 
 // ============================================
@@ -51,11 +39,11 @@ export interface WorkerPickerProps {
 // ============================================
 
 /**
- * Reusable worker picker with career filter + name/phone search.
+ * Reusable worker picker with name + phone search.
  *
  * Composition:
- *  - Career <Select> filters the worker list server-side via useWorkers.
- *  - Search <Input> filters the visible workers client-side by name/phone.
+ *  - Two <Input>s filter the worker list server-side (via useWorkers →
+ *    `/admin/workers/filters`) by name and phone number, debounced.
  *  - Clicking a row commits the selection and collapses the panel.
  *
  * Once a worker is selected, the picker shows a compact summary card with a
@@ -66,63 +54,41 @@ export function WorkerPicker({
    onChange,
    label,
    disabled = false,
-   defaultCareerId,
    activeOnly = true,
    perPage = 50,
    className,
 }: WorkerPickerProps) {
    const [isOpen, setIsOpen] = useState(false);
-   const [careerId, setCareerId] = useState<number | undefined>(
-      defaultCareerId
-   );
-   const [search, setSearch] = useState('');
+   const [nameInput, setNameInput] = useState('');
+   const [phoneInput, setPhoneInput] = useState('');
+   const debouncedName = useDebouncedValue(nameInput, 350);
+   const debouncedPhone = useDebouncedValue(phoneInput, 350);
 
-   const { careers, isLoading: isLoadingCareers } = useCareers({
-      autoFetch: true,
-   });
-
-   const {
-      workers,
-      isLoading: isLoadingWorkers,
-      fetch: fetchWorkers,
-   } = useWorkers({
+   const { workers, isLoading, setNameFilter, setPhoneFilter } = useWorkers({
       status: activeOnly ? 'active' : undefined,
       perPage,
       autoFetch: true,
    });
 
-   // Refetch when filters change.
+   // Push the debounced inputs into the server-side filters.
    useEffect(() => {
-      fetchWorkers(1);
+      setNameFilter(debouncedName.trim());
       // eslint-disable-next-line react-hooks/exhaustive-deps
-   }, [careerId]);
+   }, [debouncedName]);
 
-   const filteredWorkers = useMemo(() => {
-      const term = search.trim().toLowerCase();
-      return workers.filter((w) => {
-         if (careerId && w.career_id !== careerId) return false;
-         if (!term) return true;
-         const haystack = [
-            w.user?.name ?? '',
-            w.user?.phone_number ?? '',
-            w.user?.email ?? '',
-         ]
-            .join(' ')
-            .toLowerCase();
-         return haystack.includes(term);
-      });
-   }, [workers, search, careerId]);
+   useEffect(() => {
+      setPhoneFilter(debouncedPhone.trim());
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, [debouncedPhone]);
 
-   const selectedCareer = useMemo(
-      () => careers.find((c) => c.id === careerId),
-      [careers, careerId]
-   );
+   const hasSearch = nameInput.trim() !== '' || phoneInput.trim() !== '';
 
    const handleSelect = useCallback(
       (worker: Worker) => {
          onChange(worker);
          setIsOpen(false);
-         setSearch('');
+         setNameInput('');
+         setPhoneInput('');
       },
       [onChange]
    );
@@ -193,84 +159,50 @@ export function WorkerPicker({
 
          {/* Filters */}
          <div className="admin-panel p-3 space-y-3">
-            {/* Career filter */}
-            <div>
-               <span className="block text-xs font-medium text-gray-600 mb-1.5">
-                  تصفية حسب المهنة
-               </span>
-               <Select
-                  value={careerId?.toString() ?? 'all'}
-                  onValueChange={(v) =>
-                     setCareerId(v === 'all' ? undefined : Number(v))
-                  }
-                  disabled={disabled || isLoadingCareers}
-               >
-                  <SelectTrigger className="w-full admin-input h-10">
-                     <div className="flex items-center justify-center gap-2 w-full">
-                        {isLoadingCareers ? (
-                           <Loader2 className="h-4 w-4 animate-spin text-gray-500" />
-                        ) : (
-                           <Briefcase className="h-4 w-4 text-gray-500" />
-                        )}
-                        <span>
-                           {isLoadingCareers
-                              ? 'جاري التحميل...'
-                              : (selectedCareer?.name ?? 'كل المهن')}
-                        </span>
-                     </div>
-                  </SelectTrigger>
-                  <SelectContent position="popper" sideOffset={4}>
-                     <SelectItem value="all" className="cursor-pointer">
-                        <div className="flex items-center gap-2">
-                           <Wrench className="h-4 w-4 text-gray-500" />
-                           <span>كل المهن</span>
-                        </div>
-                     </SelectItem>
-                     {careers.map((career) => (
-                        <SelectItem
-                           key={career.id}
-                           value={career.id.toString()}
-                           className="cursor-pointer"
-                        >
-                           <div className="flex items-center gap-2">
-                              <Briefcase className="h-4 w-4 text-gray-500" />
-                              <span>{career.name}</span>
-                           </div>
-                        </SelectItem>
-                     ))}
-                  </SelectContent>
-               </Select>
-            </div>
+            {/* Career filter is disabled for now — see WorkerPickerProps note. */}
 
-            {/* Search */}
-            <div className="relative">
-               <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-               <Input
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="بحث بالاسم أو رقم الهاتف..."
-                  disabled={disabled || isLoadingWorkers}
-                  className="admin-input h-10 pr-10"
-               />
+            {/* Name + phone search */}
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+               <div className="relative">
+                  <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                  <Input
+                     value={nameInput}
+                     onChange={(e) => setNameInput(e.target.value)}
+                     placeholder="بحث بالاسم..."
+                     disabled={disabled}
+                     className="admin-input h-10 pr-10"
+                  />
+               </div>
+               <div className="relative">
+                  <Phone className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                  <Input
+                     value={phoneInput}
+                     onChange={(e) => setPhoneInput(e.target.value)}
+                     placeholder="بحث برقم الهاتف..."
+                     inputMode="tel"
+                     disabled={disabled}
+                     className="admin-input h-10 pr-10"
+                  />
+               </div>
             </div>
          </div>
 
          {/* Workers list */}
          <div className="space-y-2 max-h-80 overflow-y-auto scrollbar-modern pl-1">
-            {isLoadingWorkers ? (
+            {isLoading ? (
                <LoadingState message="جاري تحميل العمال..." size="md" />
-            ) : filteredWorkers.length === 0 ? (
+            ) : workers.length === 0 ? (
                <EmptyState
                   icon={<UserIcon className="h-10 w-10" />}
                   title="لا يوجد عمال"
                   description={
-                     search
+                     hasSearch
                         ? 'لا توجد نتائج تطابق البحث.'
-                        : 'لا يوجد عمال نشطون في هذه المهنة.'
+                        : 'لا يوجد عمال نشطون حالياً.'
                   }
                />
             ) : (
-               filteredWorkers.map((worker) => {
+               workers.map((worker) => {
                   const isSelected = value?.id === worker.id;
                   return (
                      <button

@@ -39,12 +39,16 @@ export const workersApi = {
       );
    },
 
+   /**
+    * Fetch workers matching the given filters (status, name, phone number).
+    * Hits `/admin/workers/filters` with the built query string.
+    */
    async getFiltered(
       filters: WorkerFilters = {}
    ): Promise<PaginatedWorkersResponse> {
       const queryString = buildWorkerQuery(filters);
       return await get<PaginatedWorkersResponse>(
-         `/admin/workers/filters${queryString}`
+         `${ENDPOINTS.WORKERS.FILTERS}${queryString}`
       );
    },
 
