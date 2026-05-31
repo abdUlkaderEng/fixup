@@ -30,7 +30,6 @@ export function useChatTemplates({
    const { templates: adminTemplates, isLoading: isLoadingTemplates } =
       useMessageTemplates({
          topicId,
-         topicName,
          senderType: role,
       });
 

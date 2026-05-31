@@ -20,7 +20,6 @@ export interface UseMessageTemplatesReturn {
 }
 
 export interface UseMessageTemplatesOptions {
-   topicName?: string;
    topicId?: number;
    senderType?: SenderType;
 }
@@ -28,17 +27,16 @@ export interface UseMessageTemplatesOptions {
 /**
  * Combined fetch + mutations for message templates.
  *
- * Templates are filtered server-side by topic NAME and sender_type, so this
+ * Templates are filtered server-side by topic id and sender_type, so this
  * hook re-fetches whenever either filter changes. Skips fetching entirely
  * until both filters are provided (no "all templates" view).
  *
- * Topic id is required to create new templates (the POST endpoint uses id,
- * while the GET filter uses name — quirk of the backend).
+ * The same topic id is used for both the GET filter and creating templates.
  */
 export function useMessageTemplates(
    options: UseMessageTemplatesOptions = {}
 ): UseMessageTemplatesReturn {
-   const { topicName, topicId, senderType } = options;
+   const { topicId, senderType } = options;
    const { status: sessionStatus } = useSession();
 
    const [templates, setTemplates] = useState<MessageTemplate[]>([]);
@@ -56,7 +54,7 @@ export function useMessageTemplates(
    }, []);
 
    const fetchTemplates = useCallback(async () => {
-      if (!topicName || !senderType) {
+      if (!topicId || !senderType) {
          setTemplates([]);
          return;
       }
@@ -69,7 +67,7 @@ export function useMessageTemplates(
 
       try {
          const list = await messageTemplatesApi.getAll({
-            topic: topicName,
+            topic_id: topicId,
             sender_type: senderType,
          });
          if (mountedRef.current) {
@@ -89,18 +87,18 @@ export function useMessageTemplates(
          }
          isFetchingRef.current = false;
       }
-   }, [topicName, senderType, sessionStatus]);
+   }, [topicId, senderType, sessionStatus]);
 
    // Refetch when filters change
    useEffect(() => {
       const key = generateRequestKey(
          'message-templates',
-         topicName ?? '-',
+         topicId != null ? String(topicId) : '-',
          senderType ?? '-'
       );
       markRequestComplete(key);
       fetchTemplates();
-   }, [fetchTemplates, topicName, senderType]);
+   }, [fetchTemplates, topicId, senderType]);
 
    const addMutation = useMutation(
       async (text: string) => {

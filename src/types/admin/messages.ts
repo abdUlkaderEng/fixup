@@ -62,7 +62,8 @@ export interface CreateMessageTemplateRequest {
 }
 
 export interface MessageTemplateFilters {
-   topic: string;
+   /** Filter templates by topic id (the GET filter now uses id, not name). */
+   topic_id: number;
    sender_type: SenderType;
 }
 

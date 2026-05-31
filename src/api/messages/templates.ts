@@ -9,7 +9,7 @@ import { MESSAGE_ENDPOINTS } from './endpoints';
 
 function buildTemplatesQuery(filters: MessageTemplateFilters): string {
    const params = new URLSearchParams({
-      topic: filters.topic,
+      topic: String(filters.topic_id),
       sender_type: filters.sender_type,
    });
    return `?${params.toString()}`;

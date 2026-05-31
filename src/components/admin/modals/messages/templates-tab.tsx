@@ -94,7 +94,6 @@ export function TemplatesTab() {
       addTemplate,
       deleteTemplate,
    } = useMessageTemplates({
-      topicName: selectedTopic?.topic,
       topicId: selectedTopic?.id,
       senderType,
    });
