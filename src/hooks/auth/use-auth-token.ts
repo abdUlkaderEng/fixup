@@ -13,12 +13,6 @@ export function useAuthToken(): void {
 
    useEffect(() => {
       const token = session?.user?.accessToken;
-      console.log(
-         '[useAuthToken] Session status:',
-         status,
-         'Token exists:',
-         !!token
-      );
       setAuthToken(token || null);
    }, [session, status]);
 }

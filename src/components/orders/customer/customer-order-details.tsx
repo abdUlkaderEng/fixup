@@ -116,6 +116,7 @@ export function CustomerOrderDetails({
                            fill
                            className="object-cover"
                            sizes="(max-width: 1024px) 100vw, 340px"
+                           unoptimized
                         />
                      </div>
                   ) : (

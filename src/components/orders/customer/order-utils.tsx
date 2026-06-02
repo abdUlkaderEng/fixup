@@ -2,12 +2,17 @@
 
 import {
    AlertCircle,
+   Ban,
    CheckCircle2,
    Clock3,
+   Hourglass,
    type LucideIcon,
    XCircle,
 } from 'lucide-react';
-import type { CustomerOrder, OrderStatus } from '@/types/entities/order';
+import type {
+   CustomerOrder,
+   CustomerOrderStatus,
+} from '@/types/entities/order';
 import type { PublicCareer } from '@/types/public/careers';
 import type { PublicArea } from '@/types/public/areas';
 
@@ -20,7 +25,7 @@ export interface CustomerOrderStatusMeta {
 }
 
 export const customerOrderStatusMap: Record<
-   OrderStatus,
+   CustomerOrderStatus,
    CustomerOrderStatusMeta
 > = {
    pending: {
@@ -45,16 +50,30 @@ export const customerOrderStatusMap: Record<
       badgeClassName: 'border border-sky-200 bg-sky-50 text-sky-700',
       panelClassName: 'border-sky-200/80 bg-sky-50/70',
    },
+   rejected: {
+      label: 'مرفوض',
+      description: 'تم رفض الطلب من قبل الفنيين.',
+      icon: XCircle,
+      badgeClassName: 'border border-rose-200 bg-rose-50 text-rose-700',
+      panelClassName: 'border-rose-200/80 bg-rose-50/70',
+   },
+   expired: {
+      label: 'منتهي الصلاحية',
+      description: 'انتهت صلاحية الطلب قبل أن يتم قبوله.',
+      icon: Hourglass,
+      badgeClassName: 'border border-slate-200 bg-slate-100 text-slate-600',
+      panelClassName: 'border-slate-200/80 bg-slate-50/70',
+   },
    cancelled: {
       label: 'ملغي',
       description: 'تم إلغاء الطلب ويمكنك إنشاء طلب جديد بديل.',
-      icon: XCircle,
+      icon: Ban,
       badgeClassName: 'border border-rose-200 bg-rose-50 text-rose-700',
       panelClassName: 'border-rose-200/80 bg-rose-50/70',
    },
 };
 
-export function getCustomerOrderStatusMeta(status: OrderStatus) {
+export function getCustomerOrderStatusMeta(status: CustomerOrderStatus) {
    return (
       customerOrderStatusMap[status] ?? {
          label: 'غير معروف',

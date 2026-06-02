@@ -126,7 +126,7 @@ export function useFcmNotifications(
       [setData, refetch, markReadApi]
    );
 
-   const notifications = data ?? [];
+   const notifications = Array.isArray(data) ? data : [];
    const unreadCount = notifications.filter((n) => !n.is_read).length;
 
    return {

@@ -11,7 +11,6 @@ import type {
    AxiosResponse,
    AxiosError,
 } from 'axios';
-import { handleAxiosError } from './errors';
 
 /** Module-level token storage (closure pattern) */
 let authToken: string | null = null;
@@ -36,17 +35,8 @@ export const getAuthToken = (): string | null => authToken;
 const requestInterceptor = (
    config: InternalAxiosRequestConfig
 ): InternalAxiosRequestConfig => {
-   console.log(
-      '[Axios Interceptor] Token exists:',
-      !!authToken,
-      'URL:',
-      config.url
-   );
    if (authToken && config.headers) {
       config.headers.set('Authorization', `Bearer ${authToken}`);
-      console.log('[Axios Interceptor] Added Bearer token to request');
-   } else {
-      console.log('[Axios Interceptor] No token available for request');
    }
    return config;
 };

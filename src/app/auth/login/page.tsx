@@ -123,9 +123,12 @@ export default function LoginPage() {
       toast.success(`أهلاً بك ! ${freshSession?.user?.name || ''}`, {
          description: 'تم تسجيل الدخول بنجاح',
       });
-      console.log(freshSession);
-      router.push(redirectPath);
-      router.refresh();
+
+      // Hard navigation (not router.push) so the destination loads with the
+      // session cookie fully in place. A client-side push here can leave
+      // useSession() stuck on "loading" until the next window-focus refetch,
+      // which left protected pages spinning right after login.
+      window.location.assign(redirectPath);
    };
 
    /**

@@ -82,6 +82,10 @@ const VALIDATION_GRACE_SECONDS = parseInt(
    process.env.NEXTAUTH_VALIDATION_GRACE_SECONDS ?? '5',
    10
 );
+// Hard cap on the backend profile-validation call. If the backend doesn't
+// answer within this window we let the request through (fail-open) so a slow
+// backend can never block navigation.
+const VALIDATION_TIMEOUT_MS = 2500;
 // ============================================
 // Types
 // ============================================
@@ -180,6 +184,13 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
       // Skip the backend call when within the grace window to allow the
       // sign-in flow to complete without immediately failing.
       if (API_BASE_URL && !skipValidation) {
+         // Bound the validation call so a slow/hanging backend can never stall
+         // navigation — this runs in middleware on every protected request.
+         const controller = new AbortController();
+         const validationTimeout = setTimeout(
+            () => controller.abort(),
+            VALIDATION_TIMEOUT_MS
+         );
          try {
             const profileRes = await fetch(
                `${API_BASE_URL.replace(/\/$/, '')}/user`,
@@ -189,6 +200,7 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
                      Authorization: `Bearer ${accessToken}`,
                   },
                   cache: 'no-store',
+                  signal: controller.signal,
                }
             );
 
@@ -215,10 +227,13 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
                }
                return resp;
             }
-         } catch (error) {
-            // Network/backend errors are transient — let the request through
-            // rather than tearing down the session, which causes NextAuth
-            // client fetches to receive HTML redirects instead of JSON.
+         } catch {
+            // Network/backend errors and validation timeouts are transient —
+            // let the request through rather than tearing down the session,
+            // which causes NextAuth client fetches to receive HTML redirects
+            // instead of JSON.
+         } finally {
+            clearTimeout(validationTimeout);
          }
       }
    }

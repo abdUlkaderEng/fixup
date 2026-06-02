@@ -23,6 +23,9 @@ export type {
 // Order entity
 export type {
    OrderStatus,
+   CustomerOrderStatus,
+   CustomerOrderFilterStatus,
+   CustomerOrderFilters,
    OrderAddress,
    OrderAddressRequest,
    OrderImage,

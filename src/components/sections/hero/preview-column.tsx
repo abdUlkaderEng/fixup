@@ -19,17 +19,9 @@ function DecorativeBackdrop() {
 function OrbitChips() {
    return (
       <>
-         {ORBIT_SERVICES.map((service) => (
-            <div
-               key={service.label}
-               className={`absolute z-20 will-change-transform ${service.position} ${service.animation}`}
-               style={{ animationDelay: `${service.delaySeconds}s` }}
-            >
-               <OrbitChip
-                  icon={service.icon}
-                  label={service.label}
-                  tone={service.tone}
-               />
+         {ORBIT_SERVICES.map(({ position, ...service }) => (
+            <div key={service.label} className={`absolute z-20 ${position}`}>
+               <OrbitChip {...service} />
             </div>
          ))}
       </>
@@ -39,14 +31,9 @@ function OrbitChips() {
 function TrustChips() {
    return (
       <>
-         {TRUST_CHIPS.map(({ position, animation, delaySeconds, ...chip }) => (
+         {TRUST_CHIPS.map(({ position, ...chip }) => (
             <div key={chip.smallLabel} className={`absolute z-30 ${position}`}>
-               <div
-                  className={`will-change-transform ${animation}`}
-                  style={{ animationDelay: `${delaySeconds}s` }}
-               >
-                  <TrustChip {...chip} />
-               </div>
+               <TrustChip {...chip} />
             </div>
          ))}
       </>

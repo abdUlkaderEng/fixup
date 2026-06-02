@@ -1,5 +1,6 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { CalendarDays, ChevronLeft, MapPin, Wrench, Zap } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -24,12 +25,15 @@ interface CustomerOrderListItemProps {
    order: CustomerOrder;
    careers?: PublicCareer[];
    areas?: PublicArea[];
+   /** Optional action area rendered below the card, outside the details link. */
+   action?: ReactNode;
 }
 
 export function CustomerOrderListItem({
    order,
    careers = [],
    areas = [],
+   action,
 }: CustomerOrderListItemProps) {
    const statusMeta = getCustomerOrderStatusMeta(order.status);
    const StatusIcon = statusMeta.icon;
@@ -37,13 +41,10 @@ export function CustomerOrderListItem({
    const areaName = getOrderAreaName(order, areas);
 
    return (
-      <Link
-         href={`/customer/orders/${order.id}`}
-         className="group block focus-visible:outline-none"
-      >
-         <AuthDashboardOrderCard
-            theme="customer"
-            className="focus-visible:border-primary/25"
+      <AuthDashboardOrderCard theme="customer">
+         <Link
+            href={`/customer/orders/${order.id}`}
+            className="group block focus-visible:outline-none"
          >
             <div className="flex flex-col gap-4">
                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -128,8 +129,14 @@ export function CustomerOrderListItem({
                   </div>
                </div>
             </div>
-         </AuthDashboardOrderCard>
-      </Link>
+         </Link>
+
+         {action ? (
+            <div className="mt-4 flex justify-end border-t border-border/60 pt-4">
+               {action}
+            </div>
+         ) : null}
+      </AuthDashboardOrderCard>
    );
 }
 

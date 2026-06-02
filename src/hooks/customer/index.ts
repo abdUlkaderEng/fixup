@@ -14,3 +14,8 @@ export {
    type UseAcceptOfferReturn,
    type UseAcceptOfferOptions,
 } from './use-accept-offer';
+export {
+   useCancelOrder,
+   type UseCancelOrderReturn,
+   type UseCancelOrderOptions,
+} from './use-cancel-order';

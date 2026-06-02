@@ -54,6 +54,25 @@ export interface OrderUser {
 
 export type OrderStatus = 'pending' | 'accepted' | 'completed' | 'cancelled';
 
+/**
+ * Customer-facing order statuses. Extends the shared {@link OrderStatus} with
+ * the two extra terminal states the customer orders endpoint can return.
+ */
+export type CustomerOrderStatus = OrderStatus | 'rejected' | 'expired';
+
+/** The statuses customers can filter their orders by (one tab each). */
+export type CustomerOrderFilterStatus =
+   | 'pending'
+   | 'accepted'
+   | 'rejected'
+   | 'expired'
+   | 'cancelled';
+
+/** Query filters accepted by the customer orders list endpoint. */
+export interface CustomerOrderFilters {
+   status?: CustomerOrderFilterStatus;
+}
+
 export interface Order {
    id: number;
    user_id: number;
@@ -171,7 +190,7 @@ export interface CustomerOrder {
    id: number;
    user_id: number;
    description: string;
-   status: OrderStatus;
+   status: CustomerOrderStatus;
    priority: number;
    address_id: number;
    career_id: number;
@@ -239,4 +258,12 @@ export interface CreateOrderResponse {
 export interface AcceptOfferResponse {
    message: string;
    order: Order;
+}
+
+// ============================================
+// Cancel Order
+// ============================================
+
+export interface CancelOrderResponse {
+   message: string;
 }
