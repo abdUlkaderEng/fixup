@@ -78,3 +78,8 @@ export type {
    WalletTransaction,
    WalletTopupResponse,
 } from './wallet';
+
+// ============================================
+// Statistics Types
+// ============================================
+export type { AdminStatistics, GetStatisticsResponse } from './statistics';

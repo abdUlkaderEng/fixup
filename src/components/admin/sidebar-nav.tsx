@@ -29,23 +29,33 @@ export function SidebarNav({ className, onNavigate }: SidebarNavProps) {
             const hasModal = item.href.includes('?');
             const isModalActive = pathname === '/admin/dashboard' && hasModal;
 
+            const active = (isActive && !hasModal) || isModalActive;
+
             return (
                <Link
                   key={item.id}
                   href={item.href}
                   onClick={onNavigate}
                   className={cn(
-                     'flex items-center gap-3 px-3 py-2.5 text-sm font-medium transition-all duration-200 rounded-lg',
-                     'bg-transparent hover:bg-[#13377b]/5 group border border-transparent',
-                     (isActive && !hasModal) || isModalActive
-                        ? 'bg-[#13377b]/10 text-[#13377b] border-[#13377b]/20'
-                        : 'text-gray-600 hover:text-[#13377b]'
+                     'group flex items-center gap-3 rounded-xl border border-transparent px-2.5 py-2 text-sm font-medium transition-all duration-200',
+                     active
+                        ? 'border-[#13377b]/15 bg-[#13377b]/[0.07] text-[#13377b]'
+                        : 'text-gray-600 hover:bg-gray-50 hover:text-[#13377b]'
                   )}
                   title={item.description}
                >
-                  <Icon className="h-4.5 w-4.5 shrink-0" />
+                  <span
+                     className={cn(
+                        'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-colors duration-200',
+                        active
+                           ? 'bg-[#13377b] text-white shadow-sm'
+                           : 'bg-[#13377b]/10 text-[#13377b] group-hover:bg-[#13377b]/15'
+                     )}
+                  >
+                     <Icon className="h-4 w-4" />
+                  </span>
                   <span className="flex-1">{item.label}</span>
-                  {(isActive && !hasModal) || isModalActive ? (
+                  {active ? (
                      <ChevronLeft className="h-4 w-4 shrink-0 opacity-60" />
                   ) : null}
                </Link>

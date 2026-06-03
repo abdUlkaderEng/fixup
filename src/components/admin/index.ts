@@ -5,5 +5,5 @@
 
 export { SidebarNav } from './sidebar-nav';
 export { AdminHeader } from './admin-header';
-export { StatCard, QuickActionCard } from './ui';
+export { StatCard, StatCardSkeleton, QuickActionCard } from './ui';
 export { ModalController } from './modals/modal-controller';

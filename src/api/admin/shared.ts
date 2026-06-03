@@ -153,4 +153,7 @@ export const ENDPOINTS = {
    ADDRESSES: {
       BASE: '/admin/areas',
    },
+   STATISTICS: {
+      BASE: '/admin/statistics',
+   },
 } as const;

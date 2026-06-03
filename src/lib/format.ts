@@ -8,6 +8,10 @@ const SAR_FORMATTER = new Intl.NumberFormat('ar-SA', {
    minimumFractionDigits: 0,
 });
 
+const NUMBER_FORMATTER = new Intl.NumberFormat('ar-SA', {
+   maximumFractionDigits: 0,
+});
+
 const DATETIME_FORMATTER = new Intl.DateTimeFormat('ar-SA', {
    dateStyle: 'medium',
    timeStyle: 'short',
@@ -23,6 +27,17 @@ const DATETIME_FORMATTER = new Intl.DateTimeFormat('ar-SA', {
 export function formatSAR(amount: number): string {
    if (!Number.isFinite(amount)) return '٠';
    return SAR_FORMATTER.format(amount);
+}
+
+/**
+ * Format an integer count with Arabic digit grouping.
+ *
+ * @example
+ *   formatNumber(2420)  // → "٢٬٤٢٠"
+ */
+export function formatNumber(value: number): string {
+   if (!Number.isFinite(value)) return '٠';
+   return NUMBER_FORMATTER.format(value);
 }
 
 /**

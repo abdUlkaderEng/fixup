@@ -9,24 +9,13 @@ import type {
    Customer,
    Address,
    StaticMessage,
-   Review,
    WorkerFormData,
    JobStatus,
-   ReviewStatus,
    MessageCategory,
    AddressType,
-   StatCardProps,
    QuickActionProps,
 } from '@/types/admin';
-import {
-   Users,
-   Briefcase,
-   Wrench,
-   MapPin,
-   MessageSquare,
-   Star,
-   TrendingUp,
-} from 'lucide-react';
+import { Wrench, ClipboardList, Users, UserPlus, Wallet } from 'lucide-react';
 
 // ============================================
 // Services Mock Data
@@ -292,65 +281,6 @@ export const MESSAGE_CATEGORY_LABELS: Record<MessageCategory, string> = {
 };
 
 // ============================================
-// Reviews Mock Data
-// ============================================
-export const MOCK_REVIEWS: Review[] = [
-   {
-      id: 'REV-001',
-      workerId: 'WORK-001',
-      workerName: 'خالد حسن',
-      customerName: 'أحمد محمد',
-      jobTitle: 'إصلاح سباكة الحمام',
-      rating: 5,
-      comment: 'عمل ممتاز! محترف جداً وأنجز في الوقت المحدد.',
-      date: '2024-01-15',
-      status: 'approved',
-   },
-   {
-      id: 'REV-002',
-      workerId: 'WORK-002',
-      workerName: 'عمر فاروق',
-      customerName: 'سارة عبدالله',
-      jobTitle: 'صيانة المكيفات',
-      rating: 4,
-      comment: 'خدمة جيدة لكن تأخر قليلاً.',
-      date: '2024-01-14',
-      status: 'approved',
-   },
-   {
-      id: 'REV-003',
-      workerId: 'WORK-003',
-      workerName: 'فاطمة خان',
-      customerName: 'محمد علي',
-      jobTitle: 'تنظيف المنزل بالكامل',
-      rating: 5,
-      comment: 'ممتاز! المنزل يبدو رائعاً.',
-      date: '2024-01-13',
-      status: 'pending',
-   },
-   {
-      id: 'REV-004',
-      workerId: 'WORK-004',
-      workerName: 'علي حسن',
-      customerName: 'نورة سالم',
-      jobTitle: 'تجميع الأثاث',
-      rating: 2,
-      comment: 'غير راضٍ عن الجودة.',
-      date: '2024-01-12',
-      status: 'rejected',
-   },
-];
-
-// ============================================
-// Review Status Labels (Arabic)
-// ============================================
-export const REVIEW_STATUS_LABELS: Record<ReviewStatus, string> = {
-   approved: 'معتمد',
-   pending: 'معلق',
-   rejected: 'مرفوض',
-};
-
-// ============================================
 // Worker Services Options
 // ============================================
 export const WORKER_SERVICES = [
@@ -395,76 +325,6 @@ export const INITIAL_WORKER_FORM: WorkerFormData = {
 };
 
 // ============================================
-// Dashboard Stats Data
-// ============================================
-export const DASHBOARD_STATS: StatCardProps[] = [
-   {
-      title: 'إجمالي العمال',
-      value: '2,420',
-      change: '+12%',
-      trend: 'up',
-      icon: Users,
-      description: 'العمال النشطين في المنصة',
-   },
-   {
-      title: 'الوظائف النشطة',
-      value: '1,845',
-      change: '+8%',
-      trend: 'up',
-      icon: Briefcase,
-      description: 'وظائف قيد التنفيذ',
-   },
-   {
-      title: 'الخدمات',
-      value: '156',
-      change: '+3%',
-      trend: 'up',
-      icon: Wrench,
-      description: 'الخدمات المتاحة',
-   },
-   {
-      title: 'إجمالي العملاء',
-      value: '8,932',
-      change: '+15%',
-      trend: 'up',
-      icon: Users,
-      description: 'العملاء المسجلين',
-   },
-   {
-      title: 'العناوين',
-      value: '12,420',
-      change: '+5%',
-      trend: 'up',
-      icon: MapPin,
-      description: 'العناوين المحفوظة',
-   },
-   {
-      title: 'رسائل الدردشة',
-      value: '45.2K',
-      change: '+22%',
-      trend: 'up',
-      icon: MessageSquare,
-      description: 'الرسائل هذا الشهر',
-   },
-   {
-      title: 'التقييمات',
-      value: '3,240',
-      change: '+18%',
-      trend: 'up',
-      icon: Star,
-      description: 'تقييمات العملاء',
-   },
-   {
-      title: 'معدل الإنجاز',
-      value: '94.2%',
-      change: '+2%',
-      trend: 'up',
-      icon: TrendingUp,
-      description: 'نسبة إنجاز الوظائف',
-   },
-];
-
-// ============================================
 // Quick Actions Configuration
 // ============================================
 export const QUICK_ACTIONS: QuickActionProps[] = [
@@ -472,25 +332,24 @@ export const QUICK_ACTIONS: QuickActionProps[] = [
       label: 'إدارة الخدمات',
       modal: 'services',
       description: 'إضافة، تعديل، أو حذف الخدمات',
+      icon: Wrench,
    },
    {
       label: 'عرض الوظائف',
       modal: 'jobs',
       description: 'متابعة جميع أنشطة الوظائف',
-   },
-   {
-      label: 'قائمة العملاء',
-      modal: 'customers',
-      description: 'إدارة حسابات العملاء',
+      icon: ClipboardList,
    },
    {
       label: 'طلبات العمال',
       modal: 'worker-requests',
       description: 'إدارة طلبات التسجيل',
+      icon: UserPlus,
    },
    {
       label: 'إدارة المحفظة',
       modal: 'wallet',
       description: 'رسوم المهن وشحن محافظ العمال',
+      icon: Wallet,
    },
 ];

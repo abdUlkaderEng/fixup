@@ -91,3 +91,12 @@ export {
    type UseWalletTopupReturn,
    type UseWalletTopupOptions,
 } from './wallet';
+
+// ============================================
+// Statistics Hook
+// ============================================
+export {
+   useStatistics,
+   type UseStatisticsReturn,
+   type UseStatisticsOptions,
+} from './use-statistics';

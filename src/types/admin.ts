@@ -79,23 +79,6 @@ export interface StaticMessage {
 }
 
 // ============================================
-// Reviews
-// ============================================
-export type ReviewStatus = 'approved' | 'pending' | 'rejected';
-
-export interface Review {
-   id: string;
-   workerId: string;
-   workerName: string;
-   customerName: string;
-   jobTitle: string;
-   rating: number;
-   comment: string;
-   date: string;
-   status: ReviewStatus;
-}
-
-// ============================================
 // Worker Form
 // ============================================
 export interface WorkerFormData {
@@ -118,18 +101,18 @@ export interface WorkerFormData {
 // Dashboard Components
 // ============================================
 export interface StatCardProps {
+   /** Arabic metric label */
    title: string;
-   value: string;
-   change: string;
-   trend: 'up' | 'down' | 'neutral';
+   /** Numeric values are formatted with Arabic grouping; strings render as-is */
+   value: string | number;
    icon: React.ElementType;
-   description: string;
 }
 
 export interface QuickActionProps {
    label: string;
    modal: string;
    description: string;
+   icon: React.ElementType;
 }
 
 // ============================================

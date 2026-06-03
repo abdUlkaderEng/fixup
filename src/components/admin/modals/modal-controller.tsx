@@ -6,7 +6,6 @@ import { CareersModal } from './careers-modal';
 import { CustomersModal } from './customers-modal';
 import { AddressesModal } from './addresses-modal';
 import { MessagesModal } from './messages';
-import { ReviewsModal } from './reviews-modal';
 import { WorkerRequestsModal } from './worker-requests';
 import { WalletModal } from './wallet';
 
@@ -26,7 +25,6 @@ export function ModalController() {
          <CustomersModal open={modal === 'customers'} />
          <AddressesModal open={modal === 'addresses'} />
          <MessagesModal open={modal === 'messages'} />
-         <ReviewsModal open={modal === 'reviews'} />
          <WorkerRequestsModal open={modal === 'worker-requests'} />
          <WalletModal open={modal === 'wallet'} />
       </>

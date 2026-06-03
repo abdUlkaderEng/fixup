@@ -8,7 +8,6 @@ import {
    Users,
    MapPin,
    MessageSquare,
-   Star,
    UserPlus,
    Wrench,
    Wallet,
@@ -53,13 +52,6 @@ export const ADMIN_NAVIGATION: NavItem[] = [
       href: '/admin/dashboard?modal=messages',
       icon: MessageSquare,
       description: 'رسائل الدردشة الثابتة',
-   },
-   {
-      id: 'reviews',
-      label: 'التقييمات',
-      href: '/admin/dashboard?modal=reviews',
-      icon: Star,
-      description: 'تقييمات العمال',
    },
    {
       id: 'worker-requests',

@@ -4,7 +4,13 @@ import Link from 'next/link';
 import { signOut, useSession } from 'next-auth/react';
 import { Menu, LogOut, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import {
+   Sheet,
+   SheetContent,
+   SheetTrigger,
+   SheetTitle,
+   SheetDescription,
+} from '@/components/ui/sheet';
 import { SidebarNav } from './sidebar-nav';
 import Image from 'next/image';
 import { resolveImageUrl } from '@/lib/resolve-image-url';
@@ -46,15 +52,18 @@ export function AdminHeader() {
                               F
                            </div>
                            <div>
-                              <span className="text-sm font-bold tracking-tight text-gray-900">
+                              <SheetTitle className="text-sm font-bold tracking-tight text-gray-900">
                                  FIXUP
-                              </span>
+                              </SheetTitle>
                               <p className="text-[10px] text-[#13377b]/60 leading-tight font-medium">
                                  لوحة الإدارة
                               </p>
                            </div>
                         </div>
                      </div>
+                     <SheetDescription className="sr-only">
+                        قائمة التنقل في لوحة إدارة فيكس أب
+                     </SheetDescription>
                      <div className="flex-1 overflow-auto py-3">
                         <SidebarNav />
                      </div>
