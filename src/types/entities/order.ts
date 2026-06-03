@@ -64,6 +64,7 @@ export type CustomerOrderStatus = OrderStatus | 'rejected' | 'expired';
 export type CustomerOrderFilterStatus =
    | 'pending'
    | 'accepted'
+   | 'completed'
    | 'rejected'
    | 'expired'
    | 'cancelled';
@@ -265,5 +266,19 @@ export interface AcceptOfferResponse {
 // ============================================
 
 export interface CancelOrderResponse {
+   message: string;
+}
+
+// ============================================
+// Rate Order
+// ============================================
+
+export interface RateOrderRequest {
+   order_id: number;
+   /** Integer star rating, 1–5. */
+   rate: number;
+}
+
+export interface RateOrderResponse {
    message: string;
 }

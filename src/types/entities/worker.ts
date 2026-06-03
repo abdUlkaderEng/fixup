@@ -89,3 +89,17 @@ export interface Worker {
    services: WorkerService[];
    images: WorkerImage[];
 }
+
+// ============================================
+// Worker Rating
+// ============================================
+
+/** Aggregate rating for a worker, returned by GET /workers/{id}/rating. */
+export interface WorkerRating {
+   average_rating: number;
+   ratings_count: number;
+}
+
+export interface WorkerRatingResponse {
+   data: WorkerRating;
+}

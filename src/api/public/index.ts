@@ -12,6 +12,9 @@ export { publicCareersApi, getCareers } from './careers';
 // Areas
 export { publicAreasApi, getAreas } from './areas';
 
+// Worker rating
+export { workerRatingApi, getWorkerRating } from './worker-rating';
+
 // Types
 export type {
    PublicServicesResponse,

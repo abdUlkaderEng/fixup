@@ -12,6 +12,7 @@ import type { PublicCareer } from '@/types/public/careers';
 import type { PublicArea } from '@/types/public/areas';
 import { CustomerOrderListItem } from './customer-order-list-item';
 import { CancelOrderButton } from './cancel-order-button';
+import { RateWorkerButton } from './rate-worker-button';
 
 interface CustomerOrdersStatusPanelProps {
    status: CustomerOrderFilterStatus;
@@ -23,6 +24,8 @@ interface CustomerOrdersStatusPanelProps {
    filter?: (orders: CustomerOrder[]) => CustomerOrder[];
    /** Render a cancel button on each order (only used for offer-less orders). */
    cancellable?: boolean;
+   /** Render a "rate worker" button on each order (only used for completed orders). */
+   rateable?: boolean;
 }
 
 /**
@@ -37,6 +40,7 @@ export function CustomerOrdersStatusPanel({
    areas = [],
    filter,
    cancellable = false,
+   rateable = false,
 }: CustomerOrdersStatusPanelProps) {
    const { orders, isLoading, refetch } = useCustomerOrders({ status });
 
@@ -69,6 +73,11 @@ export function CustomerOrdersStatusPanel({
                            <CancelOrderButton
                               orderId={order.id}
                               onCancelled={refetch}
+                           />
+                        ) : rateable ? (
+                           <RateWorkerButton
+                              orderId={order.id}
+                              onRated={refetch}
                            />
                         ) : undefined
                      }

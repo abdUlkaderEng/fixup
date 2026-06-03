@@ -19,3 +19,8 @@ export {
    type UseCancelOrderReturn,
    type UseCancelOrderOptions,
 } from './use-cancel-order';
+export {
+   useRateOrder,
+   type UseRateOrderReturn,
+   type UseRateOrderOptions,
+} from './use-rate-order';

@@ -7,6 +7,7 @@ import { formatOrderDate } from '../order-utils';
 import { OfferStatusBadge } from './offer-status-badge';
 import { ChatTrigger } from './chat-trigger';
 import { AcceptOfferButton } from './accept-offer-button';
+import { WorkerRating } from './worker-rating';
 
 interface OffersPanelProps {
    offers: OrderOffer[];
@@ -63,6 +64,7 @@ export function OffersPanel({
                         <p className="text-xs text-muted-foreground">
                            {offer.time_range}
                         </p>
+                        <WorkerRating workerId={offer.worker_id} />
                      </div>
                      <div className="flex flex-col items-start gap-2 sm:items-end">
                         <OfferStatusBadge status={offer.status} />

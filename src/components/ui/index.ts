@@ -12,6 +12,7 @@ export { SectionPanel } from './section-panel';
 // Status & Feedback Components
 export { StatusBadge, useStatusBadge } from './status-badge';
 export type { StatusVariant, StatusConfig } from './status-badge';
+export { StarRating } from './star-rating';
 
 // Pagination
 export { PaginationControls } from './pagination-controls';

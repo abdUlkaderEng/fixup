@@ -155,6 +155,7 @@ export function ProfileView({
                         profileImage={user.profile_image}
                         form={baseForm}
                         isEditing={isEditingBase}
+                        workerId={isWorker ? user.worker?.id : undefined}
                      />
                   </div>
 

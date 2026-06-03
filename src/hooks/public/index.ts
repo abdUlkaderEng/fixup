@@ -13,3 +13,7 @@ export {
    type UsePublicAreasOptions,
    type UsePublicAreasReturn,
 } from './use-public-areas';
+export {
+   useWorkerRating,
+   type UseWorkerRatingReturn,
+} from './use-worker-rating';

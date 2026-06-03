@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import {
+   BadgeCheck,
    Ban,
    Banknote,
    CheckCircle2,
@@ -31,6 +32,8 @@ interface OrderTab {
    filter?: (orders: CustomerOrder[]) => CustomerOrder[];
    /** Show a cancel button on each order in this tab. */
    cancellable?: boolean;
+   /** Show a "rate worker" button on each order in this tab. */
+   rateable?: boolean;
 }
 
 const hasOffers = (order: CustomerOrder) => order.offers.length > 0;
@@ -67,6 +70,14 @@ const ORDER_TABS: OrderTab[] = [
       label: 'مقبولة',
       icon: CheckCircle2,
       emptyDescription: 'لا توجد طلبات مقبولة حالياً.',
+   },
+   {
+      value: 'completed',
+      status: 'completed',
+      label: 'مكتملة',
+      icon: BadgeCheck,
+      emptyDescription: 'لا توجد طلبات مكتملة.',
+      rateable: true,
    },
    {
       value: 'rejected',
@@ -123,13 +134,21 @@ export function CustomerOrdersStatusTabs({
          </TabsList>
 
          {ORDER_TABS.map(
-            ({ value, status, emptyDescription, filter, cancellable }) => (
+            ({
+               value,
+               status,
+               emptyDescription,
+               filter,
+               cancellable,
+               rateable,
+            }) => (
                <TabsContent key={value} value={value} className="mt-4">
                   <CustomerOrdersStatusPanel
                      status={status}
                      emptyDescription={emptyDescription}
                      filter={filter}
                      cancellable={cancellable}
+                     rateable={rateable}
                      careers={careers}
                      areas={areas}
                   />

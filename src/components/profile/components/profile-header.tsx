@@ -2,12 +2,14 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowLeft, User, Camera } from 'lucide-react';
+import { ArrowLeft, User, Camera, Star } from 'lucide-react';
 import { useEffect, useMemo, useRef } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
 import type { BaseProfileFormData } from '@/components/profile/schemas';
 import { FormField, FormItem } from '@/components/ui/form';
 import { resolveImageUrl } from '@/lib/resolve-image-url';
+import { cn } from '@/lib/utils';
+import { useWorkerRating } from '@/hooks';
 
 interface ProfileHeaderProps {
    name?: string | null;
@@ -15,6 +17,63 @@ interface ProfileHeaderProps {
    profileImage?: string | null;
    form?: UseFormReturn<BaseProfileFormData>;
    isEditing?: boolean;
+   /** When set (worker profiles), shows the worker's rating under the avatar. */
+   workerId?: number | null;
+}
+
+/**
+ * Worker rating pill shown under the avatar: five stars filled to the average,
+ * the numeric average, and the total count. Pulses while loading and shows a
+ * muted "no ratings yet" state when the worker has none.
+ */
+function WorkerRatingBadge({ workerId }: { workerId: number }) {
+   const { rating, isLoading } = useWorkerRating(workerId);
+
+   if (isLoading) {
+      return (
+         <div className="mt-4 h-8 w-40 animate-pulse rounded-full bg-muted" />
+      );
+   }
+
+   const average = rating?.average_rating ?? 0;
+   const count = rating?.ratings_count ?? 0;
+   const hasRatings = count > 0;
+
+   return (
+      <div
+         className={cn(
+            'mt-4 inline-flex items-center gap-2 rounded-full  px-4 py-1.5 '
+         )}
+      >
+         <div className="flex items-center gap-0.5">
+            {[1, 2, 3, 4, 5].map((star) => (
+               <Star
+                  key={star}
+                  className={cn(
+                     'h-4 w-4',
+                     hasRatings && star <= Math.round(average)
+                        ? 'fill-amber-400 text-amber-400'
+                        : 'fill-muted-foreground/15 text-muted-foreground/30'
+                  )}
+               />
+            ))}
+         </div>
+         {hasRatings ? (
+            <>
+               <span className="text-sm font-bold text-amber-700">
+                  {average.toFixed(1)}
+               </span>
+               <span className="text-xs text-amber-600/70">
+                  ({count} تقييم)
+               </span>
+            </>
+         ) : (
+            <span className="text-xs font-medium text-muted-foreground">
+               لا توجد تقييمات بعد
+            </span>
+         )}
+      </div>
+   );
 }
 
 export function ProfileHeader({
@@ -23,6 +82,7 @@ export function ProfileHeader({
    profileImage,
    form,
    isEditing,
+   workerId,
 }: ProfileHeaderProps) {
    const inputRef = useRef<HTMLInputElement>(null);
    const selectedFile = form?.watch('profile_image');
@@ -106,6 +166,8 @@ export function ProfileHeader({
 
          <h1 className="text-3xl font-bold tracking-tight">{name}</h1>
          <p className="text-sm text-muted-foreground mt-1">{email}</p>
+
+         {workerId != null && <WorkerRatingBadge workerId={workerId} />}
       </div>
    );
 }

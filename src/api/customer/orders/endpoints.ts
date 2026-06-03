@@ -4,6 +4,7 @@ export const CUSTOMER_ORDER_ENDPOINTS = {
    ACCEPT_OFFER: (orderId: number, offerId: number) =>
       `/orders/${orderId}/offers/${offerId}/accept`,
    CANCEL: (orderId: number) => `/orders/${orderId}/cancel`,
+   RATE: '/orders/Rate',
 } as const;
 
 export const CREATE_ORDER_TIMEOUT_MS = 60_000;
