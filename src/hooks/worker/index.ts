@@ -37,3 +37,9 @@ export {
    type UseWorkerWalletTransactionsReturn,
    type UseWorkerWalletTransactionsOptions,
 } from './wallet';
+
+export {
+   useCareerFee,
+   type UseCareerFeeReturn,
+   type UseCareerFeeOptions,
+} from './wallet';

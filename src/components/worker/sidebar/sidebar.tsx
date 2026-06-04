@@ -9,6 +9,7 @@ import { SidebarFooter } from './sidebar-footer';
 import { NotificationFlyout } from './notification-flyout';
 import { MobileNotificationFAB } from './mobile-notification-fab';
 import { useWorkerSidebarState } from './use-worker-sidebar-state';
+import { useWorkerWalletCheckSync } from '@/stores/worker-wallet-check';
 
 export function WorkerSidebar({ workerName }: { workerName: string }) {
    const {
@@ -28,6 +29,9 @@ export function WorkerSidebar({ workerName }: { workerName: string }) {
       },
    } = useWorkerSidebarState();
 
+   // Keep global worker wallet/fee values in sync for components that rely on them.
+   useWorkerWalletCheckSync();
+
    return (
       <>
          {/* Desktop sidebar */}
@@ -46,7 +50,6 @@ export function WorkerSidebar({ workerName }: { workerName: string }) {
                onNotificationOpen={openNotif}
             />
          </aside>
-
          {/* Mobile top bar */}
          <div className="fixed left-0 right-0 top-0 z-50 flex h-14 items-center justify-end px-4 xl:hidden">
             <button
@@ -58,7 +61,6 @@ export function WorkerSidebar({ workerName }: { workerName: string }) {
                <Menu className="h-4 w-4 text-white" />
             </button>
          </div>
-
          {/* Mobile drawer */}
          {open && (
             <>
@@ -86,10 +88,8 @@ export function WorkerSidebar({ workerName }: { workerName: string }) {
                </aside>
             </>
          )}
-
          {/* Global overlays */}
          <MobileNotificationFAB unreadCount={unreadCount} onClick={openNotif} />
-
          <NotificationFlyout
             open={notifOpen}
             onClose={closeNotif}
@@ -100,6 +100,8 @@ export function WorkerSidebar({ workerName }: { workerName: string }) {
             refetch={refetch}
             markRead={markRead}
          />
+         // Keep global worker wallet/fee values in sync for components that
+         rely on them. useWorkerWalletCheckSync();
       </>
    );
 }

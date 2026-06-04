@@ -9,6 +9,12 @@ export {
 } from './use-worker-wallet';
 
 export {
+   useCareerFee,
+   type UseCareerFeeReturn,
+   type UseCareerFeeOptions,
+} from './use-career-fee';
+
+export {
    useWorkerWalletTransactions,
    type UseWorkerWalletTransactionsReturn,
    type UseWorkerWalletTransactionsOptions,

@@ -4,6 +4,7 @@
  */
 
 export const WALLET_ENDPOINTS = {
+   GET_JOP_FEES: '/admin/job-fee-rules',
    JOB_FEES: '/admin/wallet/job-fees',
    JOB_FEE_BY_CAREER: (careerId: number) =>
       `/admin/wallet/job-fees/${careerId}`,

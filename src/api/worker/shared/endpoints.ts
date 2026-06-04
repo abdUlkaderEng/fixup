@@ -10,4 +10,5 @@ export const WORKER_ENDPOINTS = {
    NOTIFICATION_MARK_READ: (id: number) => `/notifications/${id}/mark-read`,
    WALLET: '/worker/wallet',
    WALLET_TRANSACTIONS: '/worker/wallet/transactions',
+   CARRER_FEE: '/workers/fee',
 } as const;

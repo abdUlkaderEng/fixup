@@ -20,6 +20,12 @@ export interface JobFee {
    is_active: boolean;
    created_at: string;
    updated_at: string;
+   career?: {
+      id: number;
+      name: string;
+      created_at: string;
+      updated_at: string;
+   } | null;
 }
 
 // ============================================
@@ -39,10 +45,49 @@ export interface UpdateJobFeeRequest {
 }
 
 /**
+ * Response for fetching the list of job fee rules (admin GET).
+ * Matches the backend shape:
+ * {
+ *   message: string,
+ *   data: JobFee[]
+ * }
+ */
+export interface JobFeesListResponse extends MessageResponse {
+   data: JobFee[];
+}
+
+/**
+ * Create/Update response — backend returns the JobFee shape directly on
+ * create/update (no `data` wrapper). Keep a single-item response type
+ * for existing create/update codepaths if needed.
+ */
+// export interface JobFeeResponse extends MessageResponse {
+//    data: JobFee;
+// }
+// {
+//     "message": "Job fee rules retrieved successfully",
+//     "data": [
+//         {
+//             "id": 1,
+//             "career_id": 2,
+//             "fee": 25,
+//             "is_active": 1,
+//             "created_at": "2026-06-03T14:42:07.000000Z",
+//             "updated_at": "2026-06-03T14:42:07.000000Z",
+//             "career": {
+//                 "id": 2,
+//                 "name": "تكييف",
+//                 "created_at": "2026-06-03T14:35:32.000000Z",
+//                 "updated_at": "2026-06-03T14:35:32.000000Z"
+//             }
+//         }
+//     ]
+// }
+
+/**
  * Backend returns the JobFee shape directly on create/update
  * (no `data` wrapper).
  */
-export type JobFeeResponse = JobFee;
 
 // ============================================
 // Wallet Top-up — Requests / Responses

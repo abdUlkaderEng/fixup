@@ -74,6 +74,7 @@ export type {
    CreateJobFeeRequest,
    UpdateJobFeeRequest,
    JobFeeResponse,
+   JobFeesListResponse,
    WalletTopupRequest,
    WalletTransaction,
    WalletTopupResponse,

@@ -10,6 +10,7 @@ import {
    ModalPrimaryButton,
    ModalSecondaryButton,
 } from '@/components/ui';
+import useWorkerWalletCheckStore from '@/stores/worker-wallet-check';
 import type { WorkerPriceOfferDraft, WorkerOrder } from '@/types/entities';
 
 interface PriceOfferModalProps {
@@ -70,6 +71,16 @@ function PriceOfferFormContent({
       Number(draft.price) <= 0 ||
       !draft.time_range.trim();
 
+   // Wallet/fee checks
+   const balance = useWorkerWalletCheckStore((s) => s.balance);
+   const fee = useWorkerWalletCheckStore((s) => s.fee);
+
+   // const priceNumber = Number(draft.price || 0);
+   // const feeAmount = fee != null && priceNumber > 0 ? (priceNumber * fee) / 100 : 0;
+   const hasEnoughForFee = fee == null || (balance ?? 0) >= fee;
+
+   const finalSubmitDisabled = isSubmitDisabled || !hasEnoughForFee;
+
    const handleSubmit = async () => {
       if (isSubmitDisabled) return;
       await onSubmit(draft);
@@ -127,6 +138,11 @@ function PriceOfferFormContent({
                <p className="text-xs text-muted-foreground">
                   أدخل قيمة العرض كما تريد أن تظهر لاحقاً للعميل.
                </p>
+               {fee != null && !hasEnoughForFee && (
+                  <p className="mt-2 text-sm text-destructive">
+                     {`لا يمكن إرسال العرض لأن رصيد المحفظة (${(balance ?? 0).toLocaleString()} ) أقل من قيمة رسوم المهنة .`}
+                  </p>
+               )}
             </div>
 
             <div className="space-y-2">
@@ -160,7 +176,7 @@ function PriceOfferFormContent({
             <ModalPrimaryButton
                theme="worker"
                onClick={handleSubmit}
-               disabled={isSubmitDisabled || isSubmitting}
+               disabled={finalSubmitDisabled || isSubmitting}
                className="rounded-xl"
             >
                {isSubmitting ? 'جاري إرسال العرض...' : 'إرسال العرض'}

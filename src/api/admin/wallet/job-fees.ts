@@ -4,8 +4,8 @@ import { WALLET_ENDPOINTS } from './endpoints';
 import type {
    CreateJobFeeRequest,
    UpdateJobFeeRequest,
-   JobFeeResponse,
    JobFee,
+   JobFeesListResponse,
 } from '@/types/admin/wallet';
 
 /**
@@ -25,12 +25,11 @@ export const jobFeesApi = {
     */
    async getAll(): Promise<JobFee[]> {
       try {
-         const response = await apiClient.get<{ data?: JobFee[] } | JobFee[]>(
-            WALLET_ENDPOINTS.JOB_FEES
+         const response = await apiClient.get<JobFeesListResponse>(
+            WALLET_ENDPOINTS.GET_JOP_FEES
          );
-         const payload = response.data;
-         if (Array.isArray(payload)) return payload;
-         return payload?.data ?? [];
+         // Backend returns { message: string, data: JobFee[] }
+         return response.data.data ?? [];
       } catch (error) {
          return handleApiError(error);
       }
@@ -39,8 +38,8 @@ export const jobFeesApi = {
    /**
     * Create a job fee for a career.
     */
-   async create(data: CreateJobFeeRequest): Promise<JobFeeResponse> {
-      return await post<JobFeeResponse, CreateJobFeeRequest>(
+   async create(data: CreateJobFeeRequest): Promise<JobFee> {
+      return await post<JobFee, CreateJobFeeRequest>(
          WALLET_ENDPOINTS.JOB_FEES,
          data
       );
@@ -49,11 +48,8 @@ export const jobFeesApi = {
    /**
     * Update the job fee for a career.
     */
-   async update(
-      careerId: number,
-      data: UpdateJobFeeRequest
-   ): Promise<JobFeeResponse> {
-      return await put<JobFeeResponse, UpdateJobFeeRequest>(
+   async update(careerId: number, data: UpdateJobFeeRequest): Promise<JobFee> {
+      return await put<JobFee, UpdateJobFeeRequest>(
          WALLET_ENDPOINTS.JOB_FEE_BY_CAREER(careerId),
          data
       );

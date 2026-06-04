@@ -68,3 +68,10 @@ export type WorkerWalletResponse = WorkerWallet;
 
 export type WorkerWalletTransactionsResponse =
    PaginatedResponse<WorkerWalletTransaction>;
+
+// Career fee for the worker
+export type JobFeeResponse = {
+   data: {
+      fee: number;
+   };
+};

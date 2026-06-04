@@ -1,11 +1,15 @@
 'use client';
 
+import CareerFeeBadge from './career-fee-badge';
+
 interface SidebarIdentityCardProps {
    workerName: string;
 }
 
 export function SidebarIdentityCard({ workerName }: SidebarIdentityCardProps) {
    const initial = workerName.charAt(0).toUpperCase();
+   // career fee displayed in badge component
+
    return (
       <div className="border-b border-border/40 px-4 py-4">
          <div className="worker-identity-card flex items-center gap-3 rounded-xl px-2 py-2.5">
@@ -17,6 +21,7 @@ export function SidebarIdentityCard({ workerName }: SidebarIdentityCardProps) {
                   {workerName}
                </p>
                <p className="text-[11px] font-medium text-primary">فني معتمد</p>
+               <CareerFeeBadge />
             </div>
          </div>
       </div>
