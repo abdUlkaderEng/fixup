@@ -14,6 +14,8 @@ export interface UseWorkerWalletReturn extends Pick<
    'isLoading' | 'error' | 'refetch'
 > {
    wallet: WorkerWallet | null;
+   /** False when the worker has no wallet yet (e.g. pending admin approval). */
+   hasWallet: boolean;
 }
 
 export interface UseWorkerWalletOptions {
@@ -42,6 +44,7 @@ export function useWorkerWallet(
 
    return {
       wallet: data,
+      hasWallet: data !== null,
       isLoading,
       error,
       refetch,

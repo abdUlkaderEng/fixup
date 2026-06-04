@@ -15,7 +15,7 @@ import type {
    AddressType,
    QuickActionProps,
 } from '@/types/admin';
-import { Wrench, ClipboardList, Users, UserPlus, Wallet } from 'lucide-react';
+import { Wrench, ClipboardList, UserPlus, Wallet, History } from 'lucide-react';
 
 // ============================================
 // Services Mock Data
@@ -351,5 +351,11 @@ export const QUICK_ACTIONS: QuickActionProps[] = [
       modal: 'wallet',
       description: 'رسوم المهن وشحن محافظ العمال',
       icon: Wallet,
+   },
+   {
+      label: 'مراجعة حركات المحفظة',
+      modal: 'wallet-transactions',
+      description: 'عرض جميع عمليات الشحن والرسوم',
+      icon: History,
    },
 ];

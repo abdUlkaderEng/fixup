@@ -20,6 +20,7 @@ import { careersApi } from './careers';
 import { addressesApi } from './addresses';
 import { adminMessageTopicsApi, adminMessageTemplatesApi } from './messages';
 import { walletApi, jobFeesApi, topupApi } from './wallet';
+import { adminWalletTransactionsApi } from './wallet-transactions';
 import { statisticsApi } from './statistics';
 import {
    AdminApiError,
@@ -51,6 +52,7 @@ export {
    walletApi,
    jobFeesApi,
    topupApi,
+   adminWalletTransactionsApi,
    statisticsApi,
 };
 

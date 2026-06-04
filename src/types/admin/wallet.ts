@@ -69,3 +69,56 @@ export interface WalletTransaction {
 export interface WalletTopupResponse extends MessageResponse {
    data: WalletTransaction;
 }
+
+// ============================================
+// Admin: Detailed Wallet Transaction Shape
+// ============================================
+
+export interface AdminWalletUser {
+   id: number;
+   name: string;
+   email: string;
+   email_verified_at: string | null;
+   created_at: string;
+   updated_at: string;
+   is_active: number | boolean;
+   phone_number: string | null;
+   profile_image: string | null;
+   birth_date: string | null;
+   fcm_token: string | null;
+   role: string;
+}
+
+export interface AdminWallet {
+   id: number;
+   user_id: number;
+   balance: number;
+   total_charged: number;
+   total_spent: number;
+   status: string;
+   created_at: string;
+   updated_at: string;
+   user?: AdminWalletUser | null;
+}
+
+export interface AdminWalletTransaction {
+   id: number;
+   order_id: number | null;
+   wallet_id: number;
+   type: string;
+   amount: number;
+   balance_before: number;
+   balance_after: number;
+   reference_type: string | null;
+   reference_id: number | null;
+   idempotency_key: string | null;
+   performed_by: number | null;
+   note: string | null;
+   created_at: string;
+   updated_at: string;
+   order?: unknown | null;
+   wallet?: AdminWallet | null;
+}
+
+export type AdminWalletTransactionsResponse =
+   import('./shared').PaginatedResponse<AdminWalletTransaction>;

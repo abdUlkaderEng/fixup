@@ -11,3 +11,4 @@ export {
    PrimaryButton,
 } from './base-modal';
 export type { BaseModalProps } from './base-modal';
+export { WalletTransactionsModal } from './wallet-transactions/wallet-transactions-modal';

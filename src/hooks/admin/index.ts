@@ -92,6 +92,12 @@ export {
    type UseWalletTopupOptions,
 } from './wallet';
 
+export {
+   useAdminWalletTransactions,
+   type UseAdminWalletTransactionsReturn,
+   type UseAdminWalletTransactionsOptions,
+} from './use-wallet-transactions';
+
 // ============================================
 // Statistics Hook
 // ============================================
