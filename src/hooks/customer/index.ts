@@ -15,6 +15,11 @@ export {
    type UseAcceptOfferOptions,
 } from './use-accept-offer';
 export {
+   useCompleteOrder,
+   type UseCompleteOrderReturn,
+   type UseCompleteOrderOptions,
+} from './use-complete-order';
+export {
    useCancelOrder,
    type UseCancelOrderReturn,
    type UseCancelOrderOptions,

@@ -5,6 +5,7 @@ import {
    BadgeCheck,
    Ban,
    Banknote,
+   CheckCheckIcon,
    CheckCircle2,
    Clock3,
    Hourglass,
@@ -34,6 +35,8 @@ interface OrderTab {
    cancellable?: boolean;
    /** Show a "rate worker" button on each order in this tab. */
    rateable?: boolean;
+   /**show complete button */
+   completed?: boolean;
 }
 
 const hasOffers = (order: CustomerOrder) => order.offers.length > 0;
@@ -72,6 +75,14 @@ const ORDER_TABS: OrderTab[] = [
       emptyDescription: 'لا توجد طلبات مقبولة حالياً.',
    },
    {
+      value: 'completion_requested',
+      status: 'completion_requested',
+      label: 'استكمال الطلب',
+      icon: CheckCheckIcon,
+      emptyDescription: 'لا توجد طلبات تحتاج استكمال.',
+      completed: true,
+   },
+   {
       value: 'completed',
       status: 'completed',
       label: 'مكتملة',
@@ -79,13 +90,13 @@ const ORDER_TABS: OrderTab[] = [
       emptyDescription: 'لا توجد طلبات مكتملة.',
       rateable: true,
    },
-   {
-      value: 'rejected',
-      status: 'rejected',
-      label: 'مرفوضة',
-      icon: XCircle,
-      emptyDescription: 'لا توجد طلبات مرفوضة.',
-   },
+   // {
+   //    value: 'rejected',
+   //    status: 'rejected',
+   //    label: 'مرفوضة',
+   //    icon: XCircle,
+   //    emptyDescription: 'لا توجد طلبات مرفوضة.',
+   // },
    {
       value: 'expired',
       status: 'expired',
@@ -93,13 +104,13 @@ const ORDER_TABS: OrderTab[] = [
       icon: Hourglass,
       emptyDescription: 'لا توجد طلبات منتهية الصلاحية.',
    },
-   {
-      value: 'cancelled',
-      status: 'cancelled',
-      label: 'ملغاة',
-      icon: Ban,
-      emptyDescription: 'لا توجد طلبات ملغاة.',
-   },
+   // {
+   //    value: 'cancelled',
+   //    status: 'cancelled',
+   //    label: 'ملغاة',
+   //    icon: Ban,
+   //    emptyDescription: 'لا توجد طلبات ملغاة.',
+   // },
 ];
 
 interface CustomerOrdersStatusTabsProps {
@@ -141,6 +152,7 @@ export function CustomerOrdersStatusTabs({
                filter,
                cancellable,
                rateable,
+               completed,
             }) => (
                <TabsContent key={value} value={value} className="mt-4">
                   <CustomerOrdersStatusPanel
@@ -149,6 +161,7 @@ export function CustomerOrdersStatusTabs({
                      filter={filter}
                      cancellable={cancellable}
                      rateable={rateable}
+                     completed={completed}
                      careers={careers}
                      areas={areas}
                   />

@@ -20,6 +20,11 @@ export {
    useWorkerConfirmedOrders,
    type UseWorkerConfirmedOrdersReturn,
 } from './use-worker-confirmed-orders';
+export {
+   useWorkerRequestCompletion,
+   type UseWorkerRequestCompletionOptions,
+   type UseWorkerRequestCompletionReturn,
+} from './use-worker-request-completion';
 
 // ============================================
 // Wallet Hooks

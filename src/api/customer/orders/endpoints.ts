@@ -4,6 +4,7 @@ export const CUSTOMER_ORDER_ENDPOINTS = {
    ACCEPT_OFFER: (orderId: number, offerId: number) =>
       `/orders/${orderId}/offers/${offerId}/accept`,
    CANCEL: (orderId: number) => `/orders/${orderId}/cancel`,
+   COMPLETE: (orderId: number) => `/orders/${orderId}/complete`,
    RATE: '/orders/Rate',
 } as const;
 

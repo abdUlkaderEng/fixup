@@ -50,6 +50,13 @@ export const customerOrderStatusMap: Record<
       badgeClassName: 'border border-sky-200 bg-sky-50 text-sky-700',
       panelClassName: 'border-sky-200/80 bg-sky-50/70',
    },
+   completion_requested: {
+      label: 'طلب إتمام',
+      description: 'تم تقديم طلب لإتمام الخدمة.',
+      icon: CheckCircle2,
+      badgeClassName: 'border border-sky-200 bg-sky-50 text-sky-700',
+      panelClassName: 'border-sky-200/80 bg-sky-50/70',
+   },
    rejected: {
       label: 'مرفوض',
       description: 'تم رفض الطلب من قبل الفنيين.',

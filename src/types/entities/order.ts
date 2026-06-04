@@ -52,7 +52,12 @@ export interface OrderUser {
 // Order Entity
 // ============================================
 
-export type OrderStatus = 'pending' | 'accepted' | 'completed' | 'cancelled';
+export type OrderStatus =
+   | 'pending'
+   | 'accepted'
+   | 'completion_requested'
+   | 'completed'
+   | 'cancelled';
 
 /**
  * Customer-facing order statuses. Extends the shared {@link OrderStatus} with
@@ -67,7 +72,8 @@ export type CustomerOrderFilterStatus =
    | 'completed'
    | 'rejected'
    | 'expired'
-   | 'cancelled';
+   | 'cancelled'
+   | 'completion_requested';
 
 /** Query filters accepted by the customer orders list endpoint. */
 export interface CustomerOrderFilters {
@@ -259,6 +265,21 @@ export interface CreateOrderResponse {
 export interface AcceptOfferResponse {
    message: string;
    order: Order;
+}
+
+// ============================================
+// Request Completion
+// ============================================
+
+export interface RequestOrderCompletionResponse {
+   message: string;
+}
+
+// ============================================
+// Complete Order
+// ============================================
+export interface CompleteOrderResponse {
+   message: string;
 }
 
 // ============================================
