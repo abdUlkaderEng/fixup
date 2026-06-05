@@ -35,6 +35,13 @@ export const workerOrderStatusMap: Record<OrderStatus, WorkerOrderStatusMeta> =
             'border border-emerald-200 bg-emerald-50 text-emerald-700',
          panelClassName: 'border-emerald-200/80 bg-emerald-50/70',
       },
+      completion_requested: {
+         label: 'بانتظار تأكيد الإكمال',
+         description: 'تم طلب إكمال الخدمة وبانتظار تأكيد العميل.',
+         icon: Clock3,
+         badgeClassName: 'border border-amber-200 bg-amber-50 text-amber-700',
+         panelClassName: 'border-amber-200/80 bg-amber-50/70',
+      },
       completed: {
          label: 'مكتمل',
          description: 'اكتمل تنفيذ الخدمة بنجاح.',

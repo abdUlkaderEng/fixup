@@ -43,9 +43,13 @@ const hasOffers = (order: CustomerOrder) => order.offers.length > 0;
 
 // Treat orders past their expiry as no longer pending. The backend doesn't
 // always flip the status (e.g. it doesn't re-expire on a local dev restart),
-// so we re-filter pending orders by `expires_at` on the client.
-const isLive = (order: CustomerOrder) =>
-   new Date(order.expires_at).getTime() > Date.now();
+// so we re-filter pending orders by `expires_at` on the client. When the
+// backend omits `expires_at` (or sends an unparseable value), we can't prove
+// the order has expired, so we keep it visible rather than silently dropping it.
+const isLive = (order: CustomerOrder) => {
+   const expiry = new Date(order.expires_at).getTime();
+   return Number.isNaN(expiry) || expiry > Date.now();
+};
 
 const ORDER_TABS: OrderTab[] = [
    {

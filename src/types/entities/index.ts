@@ -41,6 +41,8 @@ export type {
    WorkerOrderCareer,
    WorkerOrder,
    WorkerOrdersResponse,
+   RequestOrderCompletionResponse,
+   CompleteOrderResponse,
 } from './order';
 
 export type {

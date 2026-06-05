@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import { useMemo, useState } from 'react';
+import { Suspense, useMemo, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -28,7 +28,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import CreateOrderSettingsSection from '@/components/orders/create/create-order-settings-section';
 
-export default function CreateOrderPage() {
+function CreateOrderContent() {
    useAuthToken();
 
    const router = useRouter();
@@ -269,5 +269,19 @@ export default function CreateOrderPage() {
             </div>
          </div>
       </div>
+   );
+}
+
+export default function CreateOrderPage() {
+   return (
+      <Suspense
+         fallback={
+            <div className="app-page-gradient app-page-spacing flex items-center justify-center">
+               <Loader2 className="h-6 w-6 animate-spin text-primary" />
+            </div>
+         }
+      >
+         <CreateOrderContent />
+      </Suspense>
    );
 }
