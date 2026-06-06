@@ -1,14 +1,14 @@
 'use client';
 
-import React from 'react';
+import { cn } from '@/lib/utils';
 import { useCareerFee } from '@/hooks/worker';
 
-export function CareerFeeBadge() {
+export function CareerFeeBadge({ className }: { className?: string }) {
    const { fee } = useCareerFee();
    if (fee == null) return null;
 
    return (
-      <div className="mt-1 flex items-center">
+      <div className={cn('mt-1 flex items-center', className)}>
          <div className="inline-flex items-center gap-2 rounded-full bg-muted/30 px-3 py-1 text-xs font-medium text-foreground">
             <span className="text-[11px] font-semibold text-primary">
                رسوم المهنة

@@ -1,4 +1,6 @@
 import {
+   Anvil,
+   Cctv,
    Droplets,
    Frame,
    Hammer,
@@ -8,8 +10,10 @@ import {
    PaintBucket,
    Paintbrush,
    Sparkles,
+   Sun,
    Trees,
    Truck,
+   Wifi,
    Wind,
    Wrench,
    Zap,
@@ -104,10 +108,14 @@ export interface IconRule {
 
 /** Arabic keyword → icon/tone mapping. First matching rule wins. */
 export const ICON_RULES: IconRule[] = [
-   { keywords: ['كهرباء', 'إنارة', 'انارة'], icon: Zap, tone: 'amber' },
-   { keywords: ['سباكة', 'صحية', 'مياه'], icon: Droplets, tone: 'sky' },
+   {
+      keywords: ['كهرباء', 'كهربائي', 'إنارة', 'انارة'],
+      icon: Zap,
+      tone: 'amber',
+   },
+   { keywords: ['سباك', 'سباكة', 'صحية', 'مياه'], icon: Droplets, tone: 'sky' },
    { keywords: ['تكييف', 'تبريد'], icon: Wind, tone: 'cyan' },
-   { keywords: ['نجارة', 'خشب', 'أثاث'], icon: Hammer, tone: 'rose' },
+   { keywords: ['نجارة', 'نجار', 'خشب', 'أثاث'], icon: Hammer, tone: 'rose' },
    { keywords: ['دهان', 'دهانات'], icon: Paintbrush, tone: 'violet' },
    { keywords: ['تنظيف'], icon: Sparkles, tone: 'emerald' },
    { keywords: ['ألمنيوم', 'المنيوم'], icon: Frame, tone: 'slate' },
@@ -117,6 +125,18 @@ export const ICON_RULES: IconRule[] = [
    { keywords: ['نقل', 'شحن'], icon: Truck, tone: 'indigo' },
    { keywords: ['حدائق', 'بستنة', 'زراعة'], icon: Trees, tone: 'emerald' },
    { keywords: ['مصابيح'], icon: Lightbulb, tone: 'amber' },
+   { keywords: ['طاقة شمسية', 'شمسية'], icon: Sun, tone: 'amber' },
+   {
+      keywords: ['إنترنت', 'انترنت', 'شبكات', 'شبكة', 'واي فاي'],
+      icon: Wifi,
+      tone: 'blue',
+   },
+   {
+      keywords: ['كاميرات', 'كميرات', 'كاميرا', 'كميرا', 'مراقبة'],
+      icon: Cctv,
+      tone: 'indigo',
+   },
+   { keywords: ['حداد', 'حدادة', 'حديد'], icon: Anvil, tone: 'slate' },
 ];
 
 /** Tones used cyclically for careers that don't match any keyword rule. */

@@ -10,17 +10,6 @@ import type { ComponentType } from 'react';
 
 type IconComponent = ComponentType<{ className?: string }>;
 
-export interface Stat {
-   value: string;
-   label: string;
-}
-
-export const STATS: Stat[] = [
-   { value: '+500', label: 'عميل' },
-   { value: '+50', label: 'فني معتمد' },
-   { value: '24/7', label: 'دعم متواصل' },
-];
-
 /** Orbit animation classes defined in globals.css. */
 export type OrbitAnimation = 'hero-orbit-cw' | 'hero-orbit-ccw';
 

@@ -186,11 +186,45 @@ export interface CustomerOrderCareer {
    name: string;
 }
 
-export interface CustomerOrderWorker {
+export interface CustomerOrderWorkerAreaAddress {
+   id: number | null;
+   area_name: string | null;
+}
+
+export interface CustomerOrderWorkerAddress {
+   latitude: string | null;
+   longitude: string | null;
+   detailed_address: string | null;
+   area_address: CustomerOrderWorkerAreaAddress | null;
+}
+
+export interface CustomerOrderWorkerUser {
    id: number;
    name: string;
+   profile_image: string | null;
    phone?: string | null;
+   address: CustomerOrderWorkerAddress | null;
+}
+
+export interface CustomerOrderWorkerCareer {
+   id: number;
+   name: string;
+}
+
+export interface CustomerOrderWorkerService {
+   id: number;
+   name: string;
+}
+
+export interface CustomerOrderWorker {
+   id: number;
+   about: string | null;
+   status: string;
+   years_experience: number | null;
    rating?: number | null;
+   user: CustomerOrderWorkerUser;
+   career: CustomerOrderWorkerCareer | null;
+   services: CustomerOrderWorkerService[];
 }
 
 export interface CustomerOrder {
@@ -205,6 +239,12 @@ export interface CustomerOrder {
    expires_at: string;
    created_at: string;
    updated_at: string;
+   /**
+    * Whether the customer has already rated this order's worker. Backend sends
+    * a tinyint (0/1); may also arrive as a boolean. Truthy means "already
+    * rated" — the rate action is hidden so a second rating can't be submitted.
+    */
+   is_rating?: boolean | number | null;
    career?: CustomerOrderCareer | null;
    services: CustomerOrderService[];
    images: CustomerOrderImage[];

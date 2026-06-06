@@ -26,7 +26,9 @@ function WorkerLayoutInner({ children }: { children: React.ReactNode }) {
          {/* Desktop: margin tracks sidebar width via Tailwind class swap.  */}
          <main
             className={cn(
-               'min-h-screen p-4 pt-18 sm:p-6 xl:pt-6 transition-[margin] duration-300 ease-in-out',
+               // Mobile: pt for the fixed top bar, pb for the fixed bottom tabs.
+               // Desktop (xl): no top bar / bottom tabs, margin tracks sidebar.
+               'min-h-screen px-4 pt-16 pb-24 sm:px-6 xl:pt-6 xl:pb-6 transition-[margin] duration-300 ease-in-out',
                open ? 'xl:mr-72' : 'xl:mr-16'
             )}
          >

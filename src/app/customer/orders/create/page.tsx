@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import { Suspense, useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -55,6 +55,7 @@ function CreateOrderContent() {
    const [mapPicked, setMapPicked] = useState(false);
    const [reviewValues, setReviewValues] =
       useState<CreateOrderFormValues | null>(null);
+   const summaryRef = useRef<HTMLDivElement>(null);
 
    const mapTilerKey = process.env.NEXT_PUBLIC_MAPTILER_KEY;
 
@@ -167,6 +168,22 @@ function CreateOrderContent() {
       setReviewValues(values);
    };
 
+   // On the stacked (mobile/tablet) layout the review summary renders below the
+   // form, so scroll it into view once a review is opened. Desktop shows it as a
+   // sticky sidebar already in view, so it's skipped there.
+   useEffect(() => {
+      if (!reviewValues || typeof window === 'undefined') return;
+      if (!window.matchMedia('(max-width: 1023px)').matches) return;
+
+      const el = summaryRef.current;
+      if (!el) return;
+
+      const NAVBAR_OFFSET = 88; // fixed top navbar height + small gap
+      const top =
+         el.getBoundingClientRect().top + window.scrollY - NAVBAR_OFFSET;
+      window.scrollTo({ top, behavior: 'smooth' });
+   }, [reviewValues]);
+
    const reviewData = useMemo<OrderSummaryData | null>(() => {
       if (!reviewValues) return null;
       return {
@@ -259,6 +276,7 @@ function CreateOrderContent() {
                </Form>
 
                <CreateOrderSummary
+                  ref={summaryRef}
                   selectedServices={selectedServices}
                   selectedCareerDisplayName={selectedCareerDisplayName}
                   onClear={clearSelections}

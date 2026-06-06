@@ -8,6 +8,8 @@ export type WorkerNotification = ReturnType<
 export interface ResolvedNavLink {
    href: string;
    label: string;
+   /** Compact label used by the mobile bottom tab bar. */
+   shortLabel: string;
    icon: LucideIcon;
    isActive: boolean;
 }

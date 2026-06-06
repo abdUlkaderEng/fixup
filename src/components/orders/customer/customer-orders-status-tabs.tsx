@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
    BadgeCheck,
    Ban,
@@ -131,7 +132,26 @@ export function CustomerOrdersStatusTabs({
    careers,
    areas,
 }: CustomerOrdersStatusTabsProps) {
-   const [tab, setTab] = useState<string>(ORDER_TABS[0].value);
+   const router = useRouter();
+   const pathname = usePathname();
+   const searchParams = useSearchParams();
+
+   // Persist the active tab in the URL so it survives navigating into an order's
+   // details modal and back (which otherwise remounts this component and resets
+   // local state to the first tab).
+   const tabFromUrl = searchParams.get('tab');
+   const tab = ORDER_TABS.some((t) => t.value === tabFromUrl)
+      ? (tabFromUrl as string)
+      : ORDER_TABS[0].value;
+
+   const setTab = useCallback(
+      (value: string) => {
+         const params = new URLSearchParams(searchParams);
+         params.set('tab', value);
+         router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+      },
+      [pathname, router, searchParams]
+   );
 
    return (
       <Tabs dir="rtl" value={tab} onValueChange={setTab} className="w-full">

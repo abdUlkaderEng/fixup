@@ -1,4 +1,4 @@
 export const MESSAGE_ENDPOINTS = {
-   TOPICS: '/Topics',
+   TOPICS: '/topics',
    TEMPLATES: '/message-templates',
 } as const;

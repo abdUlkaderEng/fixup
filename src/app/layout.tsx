@@ -4,6 +4,7 @@ import './globals.css';
 import { cn } from '@/lib/utils';
 import { ThemeProvider } from '@/components/providers/theme-provider';
 import { ConditionalNavbar } from '@/components/layout/conditional-navbar';
+import { AppMain } from '@/components/layout/app-main';
 import { Toaster } from '@/components/ui/sonner';
 import { AuthProvider } from '@/components/providers/auth-provider';
 import { FCMProvider } from '@/components/providers/fcm-provider';
@@ -63,7 +64,7 @@ export default function RootLayout({
                <AuthProvider>
                   <FCMProvider />
                   <ConditionalNavbar />
-                  <main className="flex-1">{children}</main>
+                  <AppMain>{children}</AppMain>
                   <FixChatbot />
                   <Toaster position="top-center" richColors closeButton />
                </AuthProvider>

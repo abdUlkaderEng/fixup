@@ -15,6 +15,9 @@ export { publicAreasApi, getAreas } from './areas';
 // Worker rating
 export { workerRatingApi, getWorkerRating } from './worker-rating';
 
+// Statistics
+export { statisticsApi, getHomepageStatistics } from './statistics';
+
 // Types
 export type {
    PublicServicesResponse,
@@ -22,3 +25,7 @@ export type {
    PublicPaginationLinks,
    PublicPaginationMeta,
 } from '@/types/public/services';
+export type {
+   HomepageStatistics,
+   HomepageStatisticsResponse,
+} from '@/types/public/statistics';

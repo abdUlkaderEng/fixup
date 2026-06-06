@@ -17,3 +17,7 @@ export {
    useWorkerRating,
    type UseWorkerRatingReturn,
 } from './use-worker-rating';
+export {
+   useHomepageStatistics,
+   type UseHomepageStatisticsReturn,
+} from './use-homepage-statistics';

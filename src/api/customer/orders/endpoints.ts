@@ -1,6 +1,6 @@
 export const CUSTOMER_ORDER_ENDPOINTS = {
    CREATE: '/order',
-   LIST: '/costmer-orders',
+   LIST: '/customer/orders',
    ACCEPT_OFFER: (orderId: number, offerId: number) =>
       `/orders/${orderId}/offers/${offerId}/accept`,
    CANCEL: (orderId: number) => `/orders/${orderId}/cancel`,

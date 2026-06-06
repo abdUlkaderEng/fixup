@@ -24,6 +24,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { cn } from '@/lib/utils';
 import { useAiChat } from '@/hooks/chat';
+import { useShowCustomerMobileNav } from '@/hooks/use-customer-mobile-nav';
 import type { AppModalTheme } from '@/components/ui/app-modal';
 
 const CHAT_THEME_STYLES: Record<
@@ -90,9 +91,20 @@ export function FixChatbot() {
    const bottomRef = useRef<HTMLDivElement | null>(null);
    const { messages, isLoadingHistory, isSending, sendMessage, reloadHistory } =
       useAiChat();
+   // Lift the launcher above the customer mobile bottom nav when it's present.
+   const liftLauncher = useShowCustomerMobileNav();
 
    const isWorker =
       session?.user?.role === 'worker' || pathname.startsWith('/worker');
+
+   // Keep the launcher clear of the mobile bottom bars: the customer bottom nav
+   // (hidden at `md`) and the worker bottom tabs (hidden at `xl`).
+   const launcherBottomClass = liftLauncher
+      ? 'bottom-20 md:bottom-6'
+      : isWorker
+        ? 'bottom-20 xl:bottom-6'
+        : 'bottom-6';
+
    const theme: AppModalTheme = isWorker ? 'worker' : 'customer';
    const styles = CHAT_THEME_STYLES[theme];
 
@@ -142,7 +154,8 @@ export function FixChatbot() {
             type="button"
             onClick={() => setOpen(true)}
             className={cn(
-               'group fixed bottom-6 left-4 z-50 flex h-11 items-center overflow-hidden rounded-full md:left-6',
+               'group fixed left-4 z-50 flex h-11 items-center overflow-hidden rounded-full md:left-6',
+               launcherBottomClass,
                'shadow-lg transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:shadow-xl ',
                styles.launcher
             )}

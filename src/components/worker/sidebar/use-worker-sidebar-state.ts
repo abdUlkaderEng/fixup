@@ -14,15 +14,36 @@ import { useSidebar } from './sidebar-context';
 import type { ResolvedNavLink } from './types';
 
 const NAV_LINKS = [
-   { href: '/worker/dashboard', label: 'لوحة التحكم', icon: LayoutDashboard },
-   { href: '/worker/offers', label: 'عروضي المرسلة', icon: Clock3 },
+   {
+      href: '/worker/dashboard',
+      label: 'لوحة التحكم',
+      shortLabel: 'الرئيسية',
+      icon: LayoutDashboard,
+   },
+   {
+      href: '/worker/offers',
+      label: 'عروضي المرسلة',
+      shortLabel: 'عروضي',
+      icon: Clock3,
+   },
    {
       href: '/worker/confirmed-orders',
       label: 'الطلبات المؤكدة',
+      shortLabel: 'المؤكدة',
       icon: CheckCircle2,
    },
-   { href: '/worker/wallet', label: 'محفظتي', icon: Wallet },
-   { href: '/worker/profile', label: 'الملف الشخصي', icon: User },
+   {
+      href: '/worker/wallet',
+      label: 'محفظتي',
+      shortLabel: 'المحفظة',
+      icon: Wallet,
+   },
+   {
+      href: '/worker/profile',
+      label: 'الملف الشخصي',
+      shortLabel: 'حسابي',
+      icon: User,
+   },
 ] as const;
 
 export function useWorkerSidebarState() {
@@ -32,9 +53,10 @@ export function useWorkerSidebarState() {
    const notifications = useWorkerNotifications();
 
    const navLinks: ResolvedNavLink[] = NAV_LINKS.map(
-      ({ href, label, icon }) => ({
+      ({ href, label, shortLabel, icon }) => ({
          href,
          label,
+         shortLabel,
          icon,
          isActive: pathname === href || pathname?.startsWith(href + '/'),
       })

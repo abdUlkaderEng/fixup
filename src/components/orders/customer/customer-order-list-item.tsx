@@ -2,7 +2,16 @@
 
 import type { ReactNode } from 'react';
 import Link from 'next/link';
-import { CalendarDays, ChevronLeft, MapPin, Wrench, Zap } from 'lucide-react';
+import {
+   Briefcase,
+   CalendarDays,
+   ChevronLeft,
+   MapPin,
+   Phone,
+   User,
+   Wrench,
+   Zap,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
    AuthDashboardActionPill,
@@ -18,7 +27,7 @@ import {
    formatOrderDate,
    getCustomerOrderStatusMeta,
    getOrderAreaName,
-   getOrderCareerName,
+   getOrderTitle,
 } from './order-utils';
 
 interface CustomerOrderListItemProps {
@@ -37,7 +46,7 @@ export function CustomerOrderListItem({
 }: CustomerOrderListItemProps) {
    const statusMeta = getCustomerOrderStatusMeta(order.status);
    const StatusIcon = statusMeta.icon;
-   const careerName = getOrderCareerName(order, careers);
+   const orderTitle = getOrderTitle(order, careers);
    const areaName = getOrderAreaName(order, areas);
 
    return (
@@ -72,7 +81,7 @@ export function CustomerOrderListItem({
 
                      <div>
                         <h2 className="text-lg font-semibold text-foreground">
-                           {careerName}
+                           {orderTitle}
                         </h2>
                         <p className="mt-1 line-clamp-2 text-sm leading-7 text-muted-foreground">
                            {order.description}
@@ -90,7 +99,7 @@ export function CustomerOrderListItem({
                   <AuthDashboardMetaItem
                      icon={<Wrench className="h-4 w-4" />}
                      label="التصنيف"
-                     value={careerName}
+                     value={orderTitle}
                   />
                   <AuthDashboardMetaItem
                      icon={<MapPin className="h-4 w-4" />}
@@ -130,6 +139,30 @@ export function CustomerOrderListItem({
                </div>
             </div>
          </Link>
+
+         {order.worker ? (
+            <div className="mt-4 grid gap-3 rounded-2xl border border-border/60 bg-muted/35 p-3 sm:grid-cols-3">
+               <AuthDashboardMetaItem
+                  icon={<User className="h-4 w-4" />}
+                  label="الفني"
+                  value={order.worker.user.name}
+               />
+               {order.worker.career ? (
+                  <AuthDashboardMetaItem
+                     icon={<Briefcase className="h-4 w-4" />}
+                     label="التخصص"
+                     value={order.worker.career.name}
+                  />
+               ) : null}
+               {order.worker.user.phone ? (
+                  <AuthDashboardMetaItem
+                     icon={<Phone className="h-4 w-4" />}
+                     label="رقم الهاتف"
+                     value={order.worker.user.phone}
+                  />
+               ) : null}
+            </div>
+         ) : null}
 
          {action ? (
             <div className="mt-4 flex justify-end border-t border-border/60 pt-4">

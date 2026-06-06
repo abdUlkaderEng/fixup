@@ -113,14 +113,27 @@ export function getOrderAreaName(
    return match?.area_name ?? 'منطقة غير محددة';
 }
 
-export function getOrderCareerName(
+/**
+ * A human-friendly title for an order, resilient to the backend not embedding
+ * the career. Falls back through the data we reliably have rather than showing
+ * a meaningless "خدمة غير محددة":
+ *   1. the career name (embedded, or matched from the public careers list)
+ *   2. the first requested service name (always present on the order)
+ *   3. the order number as a last resort
+ */
+export function getOrderTitle(
    order: CustomerOrder,
    careers: PublicCareer[] = []
 ) {
-   const fromOrder = order.career?.name;
-   if (fromOrder) return fromOrder;
-   const match = careers.find((career) => career.id === order.career_id);
-   return match?.name ?? 'خدمة غير محددة';
+   const careerName =
+      order.career?.name ??
+      careers.find((career) => career.id === order.career_id)?.name;
+   if (careerName) return careerName;
+
+   const firstService = order.services?.find((service) => service.name)?.name;
+   if (firstService) return firstService;
+
+   return `طلب رقم #${order.id}`;
 }
 
 export function getOrderPriorityLabel(priority?: number) {

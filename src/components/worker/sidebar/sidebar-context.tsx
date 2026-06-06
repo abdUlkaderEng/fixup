@@ -11,7 +11,9 @@ interface SidebarContextValue {
 const SidebarContext = createContext<SidebarContextValue | null>(null);
 
 export function SidebarProvider({ children }: { children: React.ReactNode }) {
-   const [open, setOpen] = useState(false);
+   // Desktop sidebar starts expanded. On mobile the sidebar is replaced by the
+   // bottom tab bar, so this only governs the desktop expand/collapse state.
+   const [open, setOpen] = useState(true);
    const toggle = () => setOpen((v) => !v);
    const close = () => setOpen(false);
    return (

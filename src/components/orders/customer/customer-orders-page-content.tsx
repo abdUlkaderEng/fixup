@@ -1,5 +1,6 @@
 'use client';
 
+import { Suspense } from 'react';
 import { useAuthToken, usePublicAreas, usePublicCareers } from '@/hooks';
 import { AuthDashboardPageShell } from '@/components/AuthDashboard';
 import { CustomerOrdersHeader } from './customer-orders-header';
@@ -16,7 +17,9 @@ export function CustomerOrdersPageContent() {
          <CustomerOrdersHeader />
 
          <div className="space-y-6">
-            <CustomerOrdersStatusTabs careers={careers} areas={areas} />
+            <Suspense fallback={null}>
+               <CustomerOrdersStatusTabs careers={careers} areas={areas} />
+            </Suspense>
          </div>
       </AuthDashboardPageShell>
    );

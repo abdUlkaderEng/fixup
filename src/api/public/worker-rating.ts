@@ -14,7 +14,16 @@ export async function getWorkerRating(workerId: number): Promise<WorkerRating> {
    const response = await apiClient.get<WorkerRatingResponse>(
       `/workers/${workerId}/rating`
    );
-   return response.data.data;
+   const raw = response.data.data;
+
+   // The backend serializes these aggregate values as strings (Laravel AVG/
+   // decimal columns), so coerce them to numbers to honour the typed contract
+   // and keep `.toFixed()` and arithmetic safe downstream.
+   return {
+      ...raw,
+      average_rating: Number(raw.average_rating) || 0,
+      ratings_count: Number(raw.ratings_count) || 0,
+   };
 }
 
 /**

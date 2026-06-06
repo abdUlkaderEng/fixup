@@ -1,4 +1,5 @@
-import { HEADLINE, STATS } from './data';
+import { HEADLINE } from './data';
+import { StatsStrip } from './stats-strip';
 
 function EyebrowBadge() {
    return (
@@ -22,23 +23,6 @@ function Headline() {
             {HEADLINE.titleAccent}
          </span>
       </h1>
-   );
-}
-
-function StatsStrip() {
-   return (
-      <div className="mt-5 grid max-w-md grid-cols-3 gap-15 sm:gap-14">
-         {STATS.map((stat) => (
-            <div key={stat.label}>
-               <div className="text-2xl font-bold text-foreground sm:text-3xl">
-                  {stat.value}
-               </div>
-               <div className="mt-1 text-xs text-muted-foreground sm:text-sm">
-                  {stat.label}
-               </div>
-            </div>
-         ))}
-      </div>
    );
 }
 

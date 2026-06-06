@@ -21,7 +21,7 @@ import {
    formatOrderDate,
    getCustomerOrderStatusMeta,
    getOrderAreaName,
-   getOrderCareerName,
+   getOrderTitle,
    getOrderPrimaryImage,
    getOrderPriorityLabel,
 } from './order-utils';
@@ -45,7 +45,7 @@ export function CustomerOrderDetails({
    const statusMeta = getCustomerOrderStatusMeta(order.status);
    const StatusIcon = statusMeta.icon;
    const imageUrl = getOrderPrimaryImage(order);
-   const careerName = getOrderCareerName(order, careers);
+   const orderTitle = getOrderTitle(order, careers);
    const areaName = getOrderAreaName(order, areas);
 
    return (
@@ -69,7 +69,7 @@ export function CustomerOrderDetails({
 
                   <div>
                      <h2 className="text-2xl font-bold text-foreground">
-                        {careerName}
+                        {orderTitle}
                      </h2>
                      <p className="mt-2 max-w-2xl text-sm leading-7 text-muted-foreground">
                         {statusMeta.description}
@@ -256,17 +256,24 @@ export function CustomerOrderDetails({
                            {order.worker ? (
                               <>
                                  <p className="text-muted-foreground">
-                                    {order.worker.name}
+                                    {order.worker.user.name}
                                  </p>
-                                 {order.worker.phone && (
+                                 {order.worker.user.phone && (
                                     <p className="text-xs text-muted-foreground">
-                                       {order.worker.phone}
+                                       {order.worker.user.phone}
+                                    </p>
+                                 )}
+                                 {order.worker.career && (
+                                    <p className="text-xs text-muted-foreground">
+                                       {order.worker.career.name}
                                     </p>
                                  )}
                                  {order.worker.rating != null && (
                                     <p className="inline-flex items-center gap-1 text-xs text-amber-600">
                                        <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
-                                       {order.worker.rating.toFixed(1)}
+                                       {(
+                                          Number(order.worker.rating) || 0
+                                       ).toFixed(1)}
                                     </p>
                                  )}
                               </>

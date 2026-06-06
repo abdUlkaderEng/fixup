@@ -2,10 +2,12 @@
 
 import { usePathname } from 'next/navigation';
 import { Navbar } from './navbar';
+import { CustomerMobileNav } from './customer-mobile-nav';
 
 /**
  * Conditional Navbar Component
- * Hides navbar for admin routes
+ * Hides the customer chrome (top navbar + mobile bottom nav) for the
+ * admin/worker dashboards, which provide their own navigation.
  */
 export function ConditionalNavbar() {
    const pathname = usePathname();
@@ -16,5 +18,10 @@ export function ConditionalNavbar() {
       return null;
    }
 
-   return <Navbar />;
+   return (
+      <>
+         <Navbar />
+         <CustomerMobileNav />
+      </>
+   );
 }

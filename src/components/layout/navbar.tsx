@@ -2,7 +2,16 @@
 
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
-import { Menu, User, LogIn } from 'lucide-react';
+import {
+   Menu,
+   User,
+   LogIn,
+   LogOut,
+   Home,
+   ChevronLeft,
+   Moon,
+   type LucideIcon,
+} from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
@@ -43,6 +52,8 @@ export function Navbar({ className = '' }: NavbarProps) {
       [profileImage]
    );
 
+   const closeMobileMenu = () => setIsMobileMenuOpen(false);
+
    return (
       <nav
          className={`fixed top-0 left-0 right-0 z-50 w-full  bg-background backdrop-blur supports-backdrop-filter:bg-background/1 ${className}`}
@@ -68,10 +79,13 @@ export function Navbar({ className = '' }: NavbarProps) {
                </div>
 
                {/* Left side actions */}
-               <div className="flex items-center space-x-8 space-x-reverse">
-                  <ThemeToggle />
+               <div className="flex items-center gap-2 sm:gap-4">
+                  {/* Theme toggle — desktop only (mobile toggles it from the menu) */}
+                  <div className="hidden md:flex">
+                     <ThemeToggle />
+                  </div>
 
-                  {/* Notification Bell — desktop, authenticated only */}
+                  {/* Notification Bell — authenticated only */}
                   {isAuthenticated && (
                      <NotificationBell
                         notifications={notifications}
@@ -83,36 +97,38 @@ export function Navbar({ className = '' }: NavbarProps) {
                      />
                   )}
 
-                  {/* User Icon or Login Button - Desktop */}
-                  {isAuthenticated ? (
-                     <Link
-                        href="/customer/profile"
-                        className="hover:scale-110 transition-all duration-300"
-                     >
-                        <div className="relative w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden">
-                           {resolvedStoredImage ? (
-                              <Image
-                                 src={resolvedStoredImage}
-                                 alt={session.user.name || ''}
-                                 fill
-                                 className="rounded-full object-cover"
-                                 unoptimized
-                              />
-                           ) : (
-                              <User className="h-5 w-5 text-primary" />
-                           )}
-                        </div>
-                     </Link>
-                  ) : (
-                     <Link
-                        href="/auth/login"
-                        className="hover:translate-x-0.5 transition-all duration-300"
-                     >
-                        <LogIn className="" />
-                     </Link>
-                  )}
+                  {/* User / Login icon — desktop only (mobile uses the bottom nav) */}
+                  <div className="hidden md:block">
+                     {isAuthenticated ? (
+                        <Link
+                           href="/customer/profile"
+                           className="hover:scale-110 transition-all duration-300"
+                        >
+                           <div className="relative w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden">
+                              {resolvedStoredImage ? (
+                                 <Image
+                                    src={resolvedStoredImage}
+                                    alt={session.user.name || ''}
+                                    fill
+                                    className="rounded-full object-cover"
+                                    unoptimized
+                                 />
+                              ) : (
+                                 <User className="h-5 w-5 text-primary" />
+                              )}
+                           </div>
+                        </Link>
+                     ) : (
+                        <Link
+                           href="/auth/login"
+                           className="hover:translate-x-0.5 transition-all duration-300"
+                        >
+                           <LogIn />
+                        </Link>
+                     )}
+                  </div>
 
-                  {/* Mobile Menu */}
+                  {/* Mobile menu — account & settings */}
                   <Sheet
                      open={isMobileMenuOpen}
                      onOpenChange={setIsMobileMenuOpen}
@@ -123,85 +139,104 @@ export function Navbar({ className = '' }: NavbarProps) {
                            <span className="sr-only">فتح القائمة</span>
                         </Button>
                      </SheetTrigger>
-                     <SheetContent side="right" className="w-75 sm:w-100">
-                        <SheetHeader>
-                           <SheetTitle className="text-right">
-                              القائمة
-                           </SheetTitle>
-                           <SheetDescription className="text-right">
-                              اختر من القائمة أدناه
-                           </SheetDescription>
-                        </SheetHeader>
-
-                        <div className="flex flex-col space-y-4 mt-6">
-                           {/* Mobile Navigation */}
-                           <nav className="flex flex-col space-y-3 text-right">
-                              {navigationItems.map((item) => (
-                                 <Link
-                                    key={item.name}
-                                    href={item.href}
-                                    className="text-sm font-medium transition-colors hover:text-primary py-2"
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                 >
-                                    {item.name}
-                                 </Link>
-                              ))}
-                           </nav>
-
-                           {/* Mobile Login/Profile Button */}
-                           <div className="pt-4 border-t">
-                              {isAuthenticated ? (
-                                 <Link
-                                    href="/profile"
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                 >
-                                    <Button className="w-full" variant="ghost">
-                                       <User className="h-4 w-4 ml-2" />
+                     <SheetContent
+                        side="right"
+                        showCloseButton={false}
+                        className="flex w-80 flex-col p-0"
+                     >
+                        {/* Identity / greeting */}
+                        <SheetHeader className="border-b p-4">
+                           {isAuthenticated ? (
+                              <div className="flex items-center gap-3 text-right">
+                                 <div className="relative size-11 shrink-0 overflow-hidden rounded-full bg-primary/10">
+                                    {resolvedStoredImage ? (
+                                       <Image
+                                          src={resolvedStoredImage}
+                                          alt={session.user.name || ''}
+                                          fill
+                                          className="object-cover"
+                                          unoptimized
+                                       />
+                                    ) : (
+                                       <span className="flex h-full w-full items-center justify-center">
+                                          <User className="size-5 text-primary" />
+                                       </span>
+                                    )}
+                                 </div>
+                                 <div className="min-w-0">
+                                    <SheetTitle className="truncate text-base">
                                        {session?.user?.name || 'حسابي'}
-                                    </Button>
-                                 </Link>
-                              ) : (
-                                 <Link
-                                    href="/auth/login"
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                 >
-                                    <Button className="w-full" variant="ghost">
-                                       <LogIn className="h-4 w-4 ml-2" />
-                                       تسجيل الدخول
-                                    </Button>
-                                 </Link>
-                              )}
-                           </div>
-
-                           {/* Notifications — mobile, authenticated only */}
-                           {isAuthenticated && (
-                              <div className="pt-4 border-t">
-                                 <NotificationBell
-                                    notifications={notifications}
-                                    unreadCount={unreadCount}
-                                    isLoading={isLoading}
-                                    theme="customer"
-                                    onRefresh={refetch}
-                                    onMarkRead={markRead}
-                                    className="w-full justify-start gap-2 rounded-lg px-3"
-                                 />
+                                    </SheetTitle>
+                                    <SheetDescription className="text-xs">
+                                       عميل
+                                    </SheetDescription>
+                                 </div>
+                              </div>
+                           ) : (
+                              <div className="text-right">
+                                 <SheetTitle className="text-base">
+                                    مرحبًا بك في FIXUP
+                                 </SheetTitle>
+                                 <SheetDescription>
+                                    سجّل الدخول للوصول إلى طلباتك وإنشاء طلب
+                                    جديد
+                                 </SheetDescription>
                               </div>
                            )}
+                        </SheetHeader>
 
-                           {/* User Profile Section */}
-                           {isAuthenticated && (
-                              <div className="pt-4 border-t">
-                                 <Button
-                                    className="w-full"
-                                    variant="destructive"
-                                    onClick={() => {
-                                       signOut();
-                                       setIsMobileMenuOpen(false);
-                                    }}
-                                 >
-                                    تسجيل الخروج
+                        {/* Quick links / settings */}
+                        <div className="flex flex-1 flex-col gap-1 overflow-y-auto p-3">
+                           {isAuthenticated ? (
+                              <MobileMenuLink
+                                 href="/customer/profile"
+                                 icon={User}
+                                 label="حسابي"
+                                 onNavigate={closeMobileMenu}
+                              />
+                           ) : (
+                              <MobileMenuLink
+                                 href="/"
+                                 icon={Home}
+                                 label="الرئيسية"
+                                 onNavigate={closeMobileMenu}
+                              />
+                           )}
+
+                           {/* Theme */}
+                           <div className="flex items-center justify-between rounded-xl px-3 py-2.5">
+                              <span className="flex items-center gap-3 text-sm font-medium">
+                                 <Moon className="size-4 text-muted-foreground" />
+                                 المظهر
+                              </span>
+                              <ThemeToggle />
+                           </div>
+                        </div>
+
+                        {/* Auth action */}
+                        <div className="border-t p-3">
+                           {isAuthenticated ? (
+                              <Button
+                                 variant="destructive"
+                                 className="w-full justify-center gap-2"
+                                 onClick={() => {
+                                    signOut();
+                                    closeMobileMenu();
+                                 }}
+                              >
+                                 <LogOut className="size-4" />
+                                 تسجيل الخروج
+                              </Button>
+                           ) : (
+                              <Link
+                                 href="/auth/login"
+                                 onClick={closeMobileMenu}
+                              >
+                                 <Button className="w-full justify-center gap-2">
+                                    <LogIn className="size-4" />
+                                    تسجيل الدخول
                                  </Button>
-                              </div>
+                              </Link>
                            )}
                         </div>
                      </SheetContent>
@@ -210,5 +245,31 @@ export function Navbar({ className = '' }: NavbarProps) {
             </div>
          </div>
       </nav>
+   );
+}
+
+interface MobileMenuLinkProps {
+   href: string;
+   icon: LucideIcon;
+   label: string;
+   onNavigate?: () => void;
+}
+
+function MobileMenuLink({
+   href,
+   icon: Icon,
+   label,
+   onNavigate,
+}: MobileMenuLinkProps) {
+   return (
+      <Link
+         href={href}
+         onClick={onNavigate}
+         className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors hover:bg-muted"
+      >
+         <Icon className="size-4 text-muted-foreground" />
+         <span className="flex-1">{label}</span>
+         <ChevronLeft className="size-4 text-muted-foreground/50" />
+      </Link>
    );
 }

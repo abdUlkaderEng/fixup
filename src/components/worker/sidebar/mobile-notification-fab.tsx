@@ -17,7 +17,7 @@ export function MobileNotificationFAB({
          type="button"
          onClick={onClick}
          aria-label="الإشعارات"
-         className="fixed bottom-4 right-4 z-50 flex h-12 w-12 items-center justify-center rounded-full border border-border bg-background shadow-lg xl:hidden"
+         className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] right-4 z-50 flex h-12 w-12 items-center justify-center rounded-full border border-border bg-background shadow-lg xl:hidden"
       >
          <Bell className="h-5 w-5 text-secondary" />
          <UnreadBadge count={unreadCount} inline={false} />

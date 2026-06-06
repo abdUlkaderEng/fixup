@@ -24,7 +24,10 @@ export function WorkerRating({ workerId }: WorkerRatingProps) {
       );
    }
 
-   if (!rating || rating.ratings_count === 0) {
+   const ratingsCount = Number(rating?.ratings_count) || 0;
+   const averageRating = Number(rating?.average_rating) || 0;
+
+   if (!rating || ratingsCount === 0) {
       return (
          <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
             <Star className="h-3.5 w-3.5 fill-muted-foreground/30 text-muted-foreground/40" />
@@ -36,10 +39,8 @@ export function WorkerRating({ workerId }: WorkerRatingProps) {
    return (
       <span className="inline-flex items-center gap-1 text-xs font-medium text-amber-600">
          <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-         {rating.average_rating.toFixed(1)}
-         <span className="text-muted-foreground">
-            ({rating.ratings_count} تقييم)
-         </span>
+         {averageRating.toFixed(1)}
+         <span className="text-muted-foreground">({ratingsCount} تقييم)</span>
       </span>
    );
 }

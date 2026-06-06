@@ -1,5 +1,6 @@
 ﻿'use client';
 
+import type { Ref } from 'react';
 import { Loader2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -26,6 +27,8 @@ interface CreateOrderSummaryProps {
    reviewData?: OrderSummaryData | null;
    onConfirm?: () => void;
    isSubmitting?: boolean;
+   /** Attached to the root so the page can scroll the review into view on mobile. */
+   ref?: Ref<HTMLDivElement>;
 }
 
 export function CreateOrderSummary({
@@ -35,9 +38,13 @@ export function CreateOrderSummary({
    reviewData,
    onConfirm,
    isSubmitting,
+   ref,
 }: CreateOrderSummaryProps) {
    return (
-      <div className="relative bottom-0 self-end space-y-4 lg:sticky lg:top-20">
+      <div
+         ref={ref}
+         className="relative bottom-0 self-end space-y-4 lg:sticky lg:top-20"
+      >
          <SelectedServicesSidebar
             selectedServices={selectedServices}
             onClear={onClear}

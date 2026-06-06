@@ -1,6 +1,7 @@
 'use client';
 
-import { ClipboardList } from 'lucide-react';
+import { useCallback, useState } from 'react';
+import { ClipboardList, Star } from 'lucide-react';
 import { EmptyState } from '@/components/ui';
 import { AuthDashboardListSection } from '@/components/AuthDashboard';
 import { useCustomerOrders } from '@/hooks';
@@ -47,6 +48,25 @@ export function CustomerOrdersStatusPanel({
 }: CustomerOrdersStatusPanelProps) {
    const { orders, isLoading, refetch } = useCustomerOrders({ status });
 
+   // Orders rated during this session. We track them locally so the rate button
+   // flips to "rated" immediately and stays that way, even if the backend list
+   // doesn't echo `is_rating` on the follow-up refetch.
+   const [ratedOrderIds, setRatedOrderIds] = useState<Set<number>>(
+      () => new Set()
+   );
+
+   const handleRated = useCallback(
+      (orderId: number) => {
+         setRatedOrderIds((prev) => {
+            const next = new Set(prev);
+            next.add(orderId);
+            return next;
+         });
+         refetch();
+      },
+      [refetch]
+   );
+
    const visibleOrders = filter ? filter(orders) : orders;
 
    return (
@@ -78,10 +98,17 @@ export function CustomerOrdersStatusPanel({
                               onCancelled={refetch}
                            />
                         ) : rateable ? (
-                           <RateWorkerButton
-                              orderId={order.id}
-                              onRated={refetch}
-                           />
+                           order.is_rating || ratedOrderIds.has(order.id) ? (
+                              <span className="inline-flex items-center gap-2 rounded-xl border border-amber-300/60 bg-amber-50 px-3 py-2 text-sm font-medium text-amber-700">
+                                 <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                                 تم تقييم الفني
+                              </span>
+                           ) : (
+                              <RateWorkerButton
+                                 orderId={order.id}
+                                 onRated={() => handleRated(order.id)}
+                              />
+                           )
                         ) : completed ? (
                            <CompleteOrderButton
                               orderId={order.id}

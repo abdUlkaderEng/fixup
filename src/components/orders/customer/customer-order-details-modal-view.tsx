@@ -1,7 +1,7 @@
 'use client';
 
 import { Loader2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import {
    useAuthToken,
@@ -10,8 +10,23 @@ import {
    usePublicCareers,
 } from '@/hooks';
 import { AppModal } from '@/components/ui';
+import type { CustomerOrderFilterStatus } from '@/types/entities/order';
 import { CustomerOrderDetails } from './customer-order-details';
 import { getCustomerOrderStatusMeta } from './order-utils';
+
+/**
+ * Maps the orders page `?tab=` value to the status the list fetched with, so the
+ * modal reads the SAME cached dataset the user was looking at (instead of a
+ * separate unfiltered fetch that may not contain the order).
+ */
+const TAB_TO_STATUS: Record<string, CustomerOrderFilterStatus> = {
+   'awaiting-offers': 'pending',
+   'with-offers': 'pending',
+   accepted: 'accepted',
+   completion_requested: 'completion_requested',
+   completed: 'completed',
+   expired: 'expired',
+};
 
 interface CustomerOrderDetailsModalViewProps {
    orderId: number;
@@ -23,8 +38,11 @@ export function CustomerOrderDetailsModalView({
    useAuthToken();
 
    const router = useRouter();
+   const searchParams = useSearchParams();
    const { status: sessionStatus } = useSession();
-   const { orders, isLoading, refetch } = useCustomerOrders();
+   const tab = searchParams.get('tab');
+   const status = tab ? TAB_TO_STATUS[tab] : undefined;
+   const { orders, isLoading, refetch } = useCustomerOrders({ status });
    const { careers } = usePublicCareers();
    const { areas } = usePublicAreas();
    const order = orders.find((item) => item.id === orderId);
