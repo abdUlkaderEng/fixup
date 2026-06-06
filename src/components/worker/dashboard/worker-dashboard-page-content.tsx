@@ -104,7 +104,7 @@ export function WorkerDashboardPageContent() {
          />
 
          <div className="space-y-6">
-            <WorkerDashboardOverview orders={visibleOrders} />
+            {/* <WorkerDashboardOverview orders={visibleOrders} /> */}
 
             <AuthDashboardListSection
                theme="worker"
