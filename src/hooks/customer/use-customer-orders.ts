@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { customerOrdersApi } from '@/api/customer';
 import { useFetch, generateRequestKey } from '@/hooks/admin/shared';
 import type {
@@ -40,21 +40,11 @@ export function useCustomerOrders(
       }
    );
 
-   // When a status is requested the server already returns the right set
-   // (including expired orders), so we trust it. Without a status we keep the
-   // legacy behaviour of hiding orders past their expiry date — but only when
-   // `expires_at` is actually present and parseable. The backend sometimes
-   // omits it, in which case `new Date(undefined)` is Invalid Date and the
-   // order would be wrongly dropped, so we keep those visible.
-   // Snapshot "now" once at mount. Reading the clock during render is impure;
-   // an approximate cutoff is fine for hiding already-expired orders.
-   const [nowMs] = useState(() => Date.now());
-   const orders = status
-      ? (data ?? [])
-      : (data ?? []).filter((order) => {
-           const expiryMs = new Date(order.expires_at).getTime();
-           return Number.isNaN(expiryMs) || expiryMs > nowMs;
-        });
+   // Expiry filtering is handled by the backend in production — expired orders
+   // are returned under the "expired" status. The previous client-side
+   // `expires_at` re-filtering dropped live orders due to timezone/format skew,
+   // so we trust the server list as-is.
+   const orders = data ?? [];
 
    return {
       orders,

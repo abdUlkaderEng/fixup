@@ -33,8 +33,12 @@ export function useWorkerOrders(
          options
       );
 
-   const now = new Date();
-   const orders = items.filter((order) => new Date(order.expires_at) > now);
+   // Expiry filtering is handled by the backend in production — it only returns
+   // still-live pending orders. Re-filtering by `expires_at` on the client was
+   // dropping live orders due to timezone/format skew, so we trust the server.
+   // const now = new Date();
+   // const orders = items.filter((order) => new Date(order.expires_at) > now);
+   const orders = items;
 
    const removeOrder = useCallback(
       (orderId: number) => {
