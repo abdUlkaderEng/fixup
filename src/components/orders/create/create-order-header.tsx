@@ -33,9 +33,9 @@ export function CreateOrderHeader({
                </div>
 
                <div className="rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-sm">
-                  <p className="text-muted-foreground">التصنيف المختار</p>
+                  <p className="text-muted-foreground">المهن المختارة</p>
                   <p className="font-semibold text-primary">
-                     {selectedCareerDisplayName}
+                     {selectedCareerDisplayName || 'لم يتم اختيار مهنة بعد'}
                   </p>
                </div>
             </div>

@@ -22,7 +22,7 @@ export function UploadZone({
    buttonText = 'اختيار صور متعددة',
    hintText = 'يمكنك اختيار أكثر من صورة دفعة واحدة، وستظهر المعاينة هنا قبل الحفظ.',
    statsText,
-   accept = 'image/jpg,image/jpeg,image/png',
+   accept = 'image/*',
    multiple = true,
 }: UploadZoneProps) {
    return (

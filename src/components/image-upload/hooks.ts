@@ -52,8 +52,11 @@ export function useImageUploadLogic({
 
    const handleNewFiles = useCallback(
       (event: React.ChangeEvent<HTMLInputElement>) => {
+         // Some mobile browsers (notably certain Android file providers) report
+         // an empty `file.type` for picked photos. Treat an empty type as
+         // potentially valid so those files aren't silently dropped.
          const pickedFiles = Array.from(event.target.files ?? []).filter(
-            (file) => file.type.startsWith('image/')
+            (file) => file.type === '' || file.type.startsWith('image/')
          );
 
          if (pickedFiles.length === 0) {

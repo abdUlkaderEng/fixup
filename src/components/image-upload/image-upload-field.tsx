@@ -61,7 +61,7 @@ export function ImageUploadField({
 
    const {
       imageBaseUrl,
-      accept = 'image/jpg,image/jpeg,image/png',
+      accept = 'image/*',
       multiple = true,
       emptyStateText = 'لا توجد صور مضافة حتى الآن',
       savedLabel = 'صورة محفوظة',

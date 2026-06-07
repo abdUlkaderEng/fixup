@@ -21,18 +21,16 @@ export function CreateOrderServicesSection({
 }: CreateOrderServicesSectionProps) {
    return (
       <SectionPanel
-         title="اختيار التصنيف والخدمات"
+         title="اختيار المهنة والخدمات"
          icon={<Sparkles className="h-5 w-5" />}
       >
          <div className="mb-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-               <label className="mb-2 block text-sm font-medium">
-                  التصنيف المهني
-               </label>
+               <label className="mb-2 block text-sm font-medium">المهنة</label>
                <CareerSelect
                   value={selectedCareerId}
                   onChange={(value) => onCareerChange(value ?? 0)}
-                  placeholder="اختر التصنيف"
+                  placeholder="اختر المهنة"
                />
             </div>
          </div>

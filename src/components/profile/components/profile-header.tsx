@@ -150,7 +150,7 @@ export function ProfileHeader({
                         <input
                            ref={inputRef}
                            type="file"
-                           accept="image/jpeg,image/png,image/jpg"
+                           accept="image/*"
                            className="hidden"
                            onChange={(e) => {
                               const file = e.target.files?.[0];
